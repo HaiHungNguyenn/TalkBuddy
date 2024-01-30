@@ -6,4 +6,11 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="DatabaseMappings\" />
+      <Folder Include="Dtos\" />
+      <Folder Include="Entities\" />
+      <Folder Include="Interfaces\" />
+    </ItemGroup>
+
 </Project>

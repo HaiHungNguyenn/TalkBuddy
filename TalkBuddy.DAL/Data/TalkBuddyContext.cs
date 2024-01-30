@@ -1,6 +1,6 @@
 ﻿namespace TalkBuddy.DAL.Data;
 
-public class TalkBuddyContext
+public partial class TalkBuddyContext 
 {
     
 }
