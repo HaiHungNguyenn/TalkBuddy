@@ -1,4 +1,5 @@
-﻿using TalkBuddy.Domain.Entities.BaseEntities;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using TalkBuddy.Domain.Entities.BaseEntities;
 
 namespace TalkBuddy.Domain.Entities;
 
@@ -9,9 +10,10 @@ public partial class Report : BaseEntity<Guid>
     public DateTime CreatedDate { get; set; }
     public bool Status { get; set; }
     public string? Details { get; set; }
-
+    [ForeignKey("ReportedClientId")]
     public Client ReportedClient { get; set; }
+    [ForeignKey("InformantClientId")]
     public Client InformantClient { get; set; }
 
-    public List<TaggedClientMessage> TaggedClientMessages { get; set; }
+    public ICollection<TaggedClientMessage> TaggedClientMessages { get; set; }
 }

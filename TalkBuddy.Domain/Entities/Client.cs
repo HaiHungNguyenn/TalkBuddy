@@ -12,14 +12,12 @@ public partial class Client: BaseEntity<Guid>
     public DateTime LastLoginDate { get; set; }
     public string ProfilePicture { get; set; }
 
-    public List<TaggedClientMessage>? TaggedClientMessages { get; set; }
-    public List<Friendship>? Friends { get; set; }
-    public List<Report>? ReportedClients { get; set; }
-    public List<Report>? InformantClients { get; set; }
-    public List<ClientChatbox>? InChatboxes { get; set; }
-    public List<ChatBox>? CreatedChatBoxes { get; set; }
-    public List<ClientMessage>? ClientMessages { get; set; }
-
-
+    public ICollection<TaggedClientMessage>? TaggedClientMessages { get; set; }
+    public ICollection<Friendship>? Friends { get; set; }
+    public ICollection<Report>? ReportedClients { get; set; }
+    public ICollection<Report>? InformantClients { get; set; }
+    public ICollection<ClientChatBox>? InChatboxes { get; set; }
+    public ICollection<ChatBox>? CreatedChatBoxes { get; set; }
+    public ICollection<ClientMessage>? ClientMessages { get; set; }
 
 }
