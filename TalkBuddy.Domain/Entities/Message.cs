@@ -4,5 +4,4 @@ namespace TalkBuddy.Domain.Entities;
 
 public partial class Message : BaseEntity<Guid>
 {
-    
 }

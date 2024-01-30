@@ -4,5 +4,6 @@ namespace TalkBuddy.Domain.Entities;
 
 public partial class ChatBox : BaseEntity<Guid>
 {
+
     
 }
