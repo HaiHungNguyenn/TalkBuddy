@@ -9,4 +9,6 @@ public partial class ClientMessage :  BaseEntity<Guid>
     public Guid MessageId { get; set; }
     public Message Message { get; set; } = null!;
     public Client Client { get; set; } = null!;
+
+   
 }

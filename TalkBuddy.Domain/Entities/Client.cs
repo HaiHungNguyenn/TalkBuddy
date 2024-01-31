@@ -10,7 +10,7 @@ public partial class Client: BaseEntity<Guid>
     public DateTime DateOfBirth { get; set; }
     public string Gender { get; set; } = null!;
     public DateTime LastLoginDate { get; set; }
-    public string ProfilePicture { get; set; }
+    public string? ProfilePicture { get; set; }
 
     public ICollection<TaggedClientMessage>? TaggedClientMessages { get; set; }
     public ICollection<Friendship>? Friends { get; set; }

@@ -4,8 +4,8 @@ using TalkBuddy.Domain.Enums;
 namespace TalkBuddy.Domain.Entities;
 
 public partial class ChatBox : BaseEntity<Guid>
-{ 
-    public string ChatBoxName { get; set; } 
+{
+    public string ChatBoxName { get; set; } = null!;
     public DateTime CreatedDate { get; set; }
     public ChatBoxType Type { get; set; }
 

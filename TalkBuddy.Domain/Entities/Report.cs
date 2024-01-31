@@ -11,9 +11,9 @@ public partial class Report : BaseEntity<Guid>
     public bool Status { get; set; }
     public string? Details { get; set; }
     [ForeignKey("ReportedClientId")]
-    public Client ReportedClient { get; set; }
+    public Client? ReportedClient { get; set; }
     [ForeignKey("InformantClientId")]
-    public Client InformantClient { get; set; }
+    public Client? InformantClient { get; set; }
 
-    public ICollection<TaggedClientMessage> TaggedClientMessages { get; set; }
+    
 }
