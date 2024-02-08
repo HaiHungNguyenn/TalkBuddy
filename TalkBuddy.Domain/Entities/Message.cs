@@ -4,7 +4,6 @@ namespace TalkBuddy.Domain.Entities;
 
 public partial class Message : BaseEntity<Guid>
 {
-
     public string Content { get; set; }
     public DateTime SentDate { get; set; }
     

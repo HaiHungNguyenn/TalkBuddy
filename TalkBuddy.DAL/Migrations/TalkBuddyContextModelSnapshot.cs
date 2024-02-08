@@ -22,6 +22,31 @@ namespace TalkBuddy.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TalkBuddy.Domain.Entities.AdminChatBox", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdminId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChatBoxId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("ChatBoxId");
+
+                    b.ToTable("AdminChatBoxes");
+                });
+
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.Property<Guid>("Id")
@@ -300,6 +325,25 @@ namespace TalkBuddy.DAL.Migrations
                     b.ToTable("TaggedClientMessages");
                 });
 
+            modelBuilder.Entity("TalkBuddy.Domain.Entities.AdminChatBox", b =>
+                {
+                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Admin")
+                        .WithMany("AdminChatBoxes")
+                        .HasForeignKey("AdminId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TalkBuddy.Domain.Entities.ChatBox", "ChatBox")
+                        .WithMany()
+                        .HasForeignKey("ChatBoxId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("ChatBox");
+                });
+
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.HasOne("TalkBuddy.Domain.Entities.Client", "GroupCreator")
@@ -437,6 +481,8 @@ namespace TalkBuddy.DAL.Migrations
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Client", b =>
                 {
+                    b.Navigation("AdminChatBoxes");
+
                     b.Navigation("ClientMessages");
 
                     b.Navigation("CreatedChatBoxes");
