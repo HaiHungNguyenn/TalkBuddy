@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Data;
 using TalkBuddy.Presentation.Extensions;
+using TalkBuddy.Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 EnsureMigrate(app);
@@ -25,6 +27,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseEndpoints(endpoints => {
+    endpoints.MapHub<ChatHub>("/chat");
+});
 
 app.MapRazorPages();
 
