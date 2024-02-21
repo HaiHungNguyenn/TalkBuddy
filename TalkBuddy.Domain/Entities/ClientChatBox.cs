@@ -7,6 +7,7 @@ public partial class ClientChatBox : BaseEntity<Guid>
     public bool IsBlocked { get; set; }
     public bool IsLeft { get; set; }
     public bool IsNotificationOn { get; set; }
+    public bool IsModerator { get; set; }
     
     public Guid ClientId { get; set; }
     public Guid ChatBoxId { get; set; }
