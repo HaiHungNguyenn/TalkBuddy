@@ -16,8 +16,6 @@ public partial class TalkBuddyContext : DbContext
     public DbSet<Media> Medias { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Report> Reports { get; set; }
-    public DbSet<TaggedClientMessage> TaggedClientMessages { get; set; }
-    public DbSet<AdminChatBox> AdminChatBoxes { get; set; }
 
     public TalkBuddyContext(DbContextOptions<TalkBuddyContext> options) : base(options)
     {
@@ -81,17 +79,7 @@ public partial class TalkBuddyContext : DbContext
                 .HasForeignKey(x => x.ClientId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<AdminChatBox>()
-                .HasOne(x => x.Admin)
-                .WithMany(x => x.AdminChatBoxes)
-                .HasForeignKey(x => x.AdminId)
-                .OnDelete(DeleteBehavior.NoAction);
-
-        modelBuilder.Entity<TaggedClientMessage>()
-                .HasOne(x => x.Client)
-                .WithMany(x => x.TaggedClientMessages)
-                .HasForeignKey(x => x.TaggedClientId)
-                .OnDelete(DeleteBehavior.NoAction);
+     
     }
     public override int SaveChanges()
     {

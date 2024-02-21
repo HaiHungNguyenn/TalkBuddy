@@ -22,31 +22,6 @@ namespace TalkBuddy.DAL.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.AdminChatBox", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("AdminId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ChatBoxId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
-
-                    b.HasIndex("ChatBoxId");
-
-                    b.ToTable("AdminChatBoxes");
-                });
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.Property<Guid>("Id")
@@ -133,6 +108,9 @@ namespace TalkBuddy.DAL.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLeft")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsModerator")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsNotificationOn")
@@ -300,50 +278,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.TaggedClientMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("MessageId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TaggedClientId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MessageId");
-
-                    b.HasIndex("TaggedClientId");
-
-                    b.ToTable("TaggedClientMessages");
-                });
-
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.AdminChatBox", b =>
-                {
-                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Admin")
-                        .WithMany("AdminChatBoxes")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("TalkBuddy.Domain.Entities.ChatBox", "ChatBox")
-                        .WithMany()
-                        .HasForeignKey("ChatBoxId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-
-                    b.Navigation("ChatBox");
-                });
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.HasOne("TalkBuddy.Domain.Entities.Client", "GroupCreator")
@@ -453,25 +387,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("ReportedClient");
                 });
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.TaggedClientMessage", b =>
-                {
-                    b.HasOne("TalkBuddy.Domain.Entities.Message", "Message")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Client")
-                        .WithMany("TaggedClientMessages")
-                        .HasForeignKey("TaggedClientId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Client");
-
-                    b.Navigation("Message");
-                });
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.Navigation("ClientChatBoxes");
@@ -481,8 +396,6 @@ namespace TalkBuddy.DAL.Migrations
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Client", b =>
                 {
-                    b.Navigation("AdminChatBoxes");
-
                     b.Navigation("ClientMessages");
 
                     b.Navigation("CreatedChatBoxes");
@@ -494,8 +407,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("InformantClients");
 
                     b.Navigation("ReportedClients");
-
-                    b.Navigation("TaggedClientMessages");
                 });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Message", b =>

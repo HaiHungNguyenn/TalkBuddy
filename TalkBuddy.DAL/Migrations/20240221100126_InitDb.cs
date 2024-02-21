@@ -109,31 +109,6 @@ namespace TalkBuddy.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdminChatBoxes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AdminId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChatBoxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AdminChatBoxes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AdminChatBoxes_ChatBoxes_ChatBoxId",
-                        column: x => x.ChatBoxId,
-                        principalTable: "ChatBoxes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AdminChatBoxes_Clients_AdminId",
-                        column: x => x.AdminId,
-                        principalTable: "Clients",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ClientChatBoxes",
                 columns: table => new
                 {
@@ -141,6 +116,7 @@ namespace TalkBuddy.DAL.Migrations
                     IsBlocked = table.Column<bool>(type: "bit", nullable: false),
                     IsLeft = table.Column<bool>(type: "bit", nullable: false),
                     IsNotificationOn = table.Column<bool>(type: "bit", nullable: false),
+                    IsModerator = table.Column<bool>(type: "bit", nullable: false),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChatBoxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
@@ -229,41 +205,6 @@ namespace TalkBuddy.DAL.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "TaggedClientMessages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TaggedClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaggedClientMessages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TaggedClientMessages_Clients_TaggedClientId",
-                        column: x => x.TaggedClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_TaggedClientMessages_Messages_MessageId",
-                        column: x => x.MessageId,
-                        principalTable: "Messages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AdminChatBoxes_AdminId",
-                table: "AdminChatBoxes",
-                column: "AdminId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AdminChatBoxes_ChatBoxId",
-                table: "AdminChatBoxes",
-                column: "ChatBoxId");
-
             migrationBuilder.CreateIndex(
                 name: "IX_ChatBoxes_GroupCreatorId",
                 table: "ChatBoxes",
@@ -318,24 +259,11 @@ namespace TalkBuddy.DAL.Migrations
                 name: "IX_Reports_ReportedClientId",
                 table: "Reports",
                 column: "ReportedClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaggedClientMessages_MessageId",
-                table: "TaggedClientMessages",
-                column: "MessageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TaggedClientMessages_TaggedClientId",
-                table: "TaggedClientMessages",
-                column: "TaggedClientId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "AdminChatBoxes");
-
             migrationBuilder.DropTable(
                 name: "ClientChatBoxes");
 
@@ -350,9 +278,6 @@ namespace TalkBuddy.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Reports");
-
-            migrationBuilder.DropTable(
-                name: "TaggedClientMessages");
 
             migrationBuilder.DropTable(
                 name: "Messages");
