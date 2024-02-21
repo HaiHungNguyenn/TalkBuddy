@@ -7,4 +7,42 @@
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <div>
+        <label>Your name: </label>
+        <input type="text" id="displayName" />
+    </div>
+    <div class="mt-5">
+        <input type="text" id="message" />
+        <input type="button" id="sendMessage" value="Send"/>
+    </div>
+    <div class="mt-3">
+        <ul id="discussion"></ul>
+    </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.14/signalr.js"></script>
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+
+    connection.start().catch(function (err) {
+        return console.log(err.toString());
+    });
+
+    document.getElementById("sendMessage").addEventListener("click", (e) => {
+        var user = document.getElementById("displayName").value;
+        var message = document.getElementById("message").value;
+
+        connection.invoke("SendMessage", user, message).catch(function (err){
+            return console.log(err.toString());
+        });
+        
+        e.preventDefault();
+    });
+
+    connection.on("ReceiveMessage", function (user, message){
+        var mess = user + ": "+ message;
+        var li = document.createElement("li");
+
+        li.textContent = mess;
+        document.getElementById("discussion").appendChild(li);
+    });
+</script>
