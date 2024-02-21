@@ -12,7 +12,7 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    [Migration("20240202132546_InitDb")]
+    [Migration("20240221092000_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
