@@ -17,4 +17,8 @@ public static class AutoMapperConfiguration
 			instance?.Configure(mapper);
 		}
     }
+
+    private static void CreateClientMaps(IMapperConfigurationExpression mapper)
+    {
+    }
 }

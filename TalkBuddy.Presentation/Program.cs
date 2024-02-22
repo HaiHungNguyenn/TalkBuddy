@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Data;
+using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Presentation.Extensions;
 using TalkBuddy.Service.SignalRHub;
 
@@ -9,9 +10,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.RegisterServices();
+
+
+
 var app = builder.Build();
 EnsureMigrate(app);
-builder.Services.RegisterServices();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

@@ -1,18 +1,19 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using TalkBuddy.DAL.Data;
 using TalkBuddy.DAL.Interfaces;
 
 namespace TalkBuddy.DAL.Implementations;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly IAppDbContext _dbContext;
+    private readonly TalkBuddyContext _dbContext;
     private readonly DbSet<T> _dbSet;
 
-    public GenericRepository()
+    public GenericRepository(TalkBuddyContext dbContext)
     {
-        IAppDbContext dbContext;
-        _dbSet = _dbContext.CreateSet<T>();
+        _dbContext =  dbContext;
+        _dbSet = _dbContext.Set<T>();
     }
     public void Add(T entity)
     {
@@ -81,13 +82,13 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public void DeleteMany(Expression<Func<T, bool>> predicate)
     {
         var entities = _dbSet.Where(predicate);
-        entities.ForEachAsync(c => _dbContext.SetDeleted<T>(c));
+        entities.ForEachAsync(c => _dbContext.Entry(c).State = EntityState.Deleted);
     }
 
     public async Task DeleteManyAsync(Expression<Func<T, bool>> predicate)
     {
         var entities = _dbSet.Where(predicate);
-        await entities.ForEachAsync(c => _dbContext.SetDeleted<T>(c));
+        await entities.ForEachAsync(c => _dbContext.Entry(c).State = EntityState.Deleted);
     }
 
     public IQueryable<T> GetAll()
