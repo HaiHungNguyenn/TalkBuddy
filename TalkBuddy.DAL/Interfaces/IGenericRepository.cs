@@ -23,4 +23,11 @@ public interface IGenericRepository<T> where T : class
     
     bool Exists(Expression<Func<T, bool>> predicate);
     Task<bool> ExistsAsync(Expression<Func<T, bool>> predicate);
+    
+    IQueryable<T> GetAll();
+    Task<IQueryable<T>> GetAllAsync();
+    T? Get(Expression<Func<T, bool>> predicate);
+    Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
+    IQueryable<T> Find(Expression<Func<T, bool>> predicate);
+    Task<IQueryable<T>> FindAsync(Expression<Func<T, bool>> predicate);
 }

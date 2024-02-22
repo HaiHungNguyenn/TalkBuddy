@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
+using TalkBuddy.DAL.Implementations;
+using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Service.AutoMappings;
+using TalkBuddy.Service.Implementations;
+using TalkBuddy.Service.Interfaces;
 
 namespace TalkBuddy.Presentation.Extensions;
 
@@ -7,6 +11,9 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
+
+        services.AddScoped<IClientRepo, ClientRepo>();
+        services.AddScoped<IClientService, ClientService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);

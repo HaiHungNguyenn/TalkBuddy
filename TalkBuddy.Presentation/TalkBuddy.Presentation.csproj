@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <Folder Include="Exceptions\" />
+      <Folder Include="Pages\Client\" />
       <Folder Include="Scripts\" />
       <Folder Include="Settings\" />
     </ItemGroup>

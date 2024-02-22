@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Security.Principal;
+using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Entities.BaseEntities;
 
@@ -81,6 +82,12 @@ public partial class TalkBuddyContext : DbContext
 
      
     }
+
+    public async Task SaveChangesAsync()
+    {
+        await base.SaveChangesAsync();
+    }
+
     public override int SaveChanges()
     {
         UpdateVersionForModifiedEntities();
