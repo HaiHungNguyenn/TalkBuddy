@@ -27,7 +27,7 @@ public class Login : PageModel
 
     public void OnGet()
     {
-        
+        ErrorMessage = Request.Query["error"].ToString() ?? string.Empty;
     }
 
     public IActionResult OnPostClearMessage()

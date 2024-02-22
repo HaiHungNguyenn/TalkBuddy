@@ -1,12 +1,13 @@
-﻿using TalkBuddy.DAL.Interfaces;
+﻿using TalkBuddy.DAL.Data;
+using TalkBuddy.DAL.Interfaces;
 
 namespace TalkBuddy.DAL.Implementations;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
-    private readonly IAppDbContext _dbContext;
+    private readonly TalkBuddyContext _dbContext;
 
-    public UnitOfWork(IAppDbContext dbContext)
+    public UnitOfWork(TalkBuddyContext dbContext)
     {
         _dbContext = dbContext;
     }

@@ -14,6 +14,8 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IClientRepo, ClientRepo>();
         services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);

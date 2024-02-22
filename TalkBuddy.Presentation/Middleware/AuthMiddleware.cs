@@ -1,4 +1,5 @@
-﻿using TalkBuddy.Common.Constants;
+﻿using Microsoft.AspNetCore.Authentication;
+using TalkBuddy.Common.Constants;
 using TalkBuddy.Presentation.Pages;
 
 namespace TalkBuddy.Presentation.Middleware
@@ -15,7 +16,7 @@ namespace TalkBuddy.Presentation.Middleware
 		public Task Invoke(HttpContext context)
 		{
 			var isLoggedIn = context.Session.GetString(SessionConstants.IS_LOGGED_IN) ?? "false";
-			if (context.Request.Path.Value!.Contains(nameof(Login)))
+			if (context.Request.Path.Value != null && IsAuthenticationPath(context.Request.Path.Value))
 			{
 				if (isLoggedIn == SessionConstants.LOGGED_IN)
 				{
@@ -31,8 +32,13 @@ namespace TalkBuddy.Presentation.Middleware
 				return _next(context);
 			}
 
-			context.Response.Redirect(nameof(Login));
+			context.Response.Redirect("/Login");
 			return Task.CompletedTask;
+		}
+
+		private bool IsAuthenticationPath(string path)
+		{ 
+			return path.StartsWith("/Login", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/OAuth", StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }
