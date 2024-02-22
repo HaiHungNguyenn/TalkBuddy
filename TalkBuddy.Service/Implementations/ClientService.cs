@@ -7,17 +7,17 @@ namespace TalkBuddy.Service.Implementations;
 
 public class ClientService : IClientService
 {
-    private readonly IClientRepo _clientRepo;
-    public ClientService(IClientRepo clientRepo) 
+    private readonly IClientRepository _clientRepository;
+    public ClientService(IClientRepository clientRepository) 
     {
-        _clientRepo = clientRepo;
+        _clientRepository = clientRepository;
     }
 
 
     public async Task<IQueryable<Client>> FindClient(string clientName)
     {
-        return (await _clientRepo.GetAllAsync()).Where(c =>
-            c.Name.Contains(clientName) || c.Email.Contains(clientName));
+        return (await _clientRepository.GetAllAsync()).Where(c =>
+            c.Name.Contains(clientName));
     }
 
 	public async Task<Client?> LoginAsync(string username, string password)

@@ -2,7 +2,7 @@
 
 namespace TalkBuddy.DAL.Interfaces;
 
-public interface IClientRepo : IGenericRepository<Client>
+public interface IFriendShipRepository : IGenericRepository<Friendship>
 {
     
 }

@@ -25,6 +25,7 @@
     padding: 10px;
     cursor: pointer; /* Show pointer cursor on hover */
     transition: background-color 0.3s ease; /* Smooth transition for background color */
+    justify-content: space-between;
 }
 
 .friend-avatar {
@@ -41,7 +42,7 @@
 }
 
 .friend-list-item:hover {
-    background-color: #e9ecef; /* Light gray background color on hover */
+    background-color: #297bcd; /* Light gray background color on hover */
 }
 
 /* Add custom scrollbar styles */
@@ -50,3 +51,11 @@
     margin-top: 30px
 }
 
+.add-icon{
+    margin-left: auto; /* Push the icon to the right */
+    color: #ffffff;
+    cursor: pointer;
+}
+.add-icon:hover {
+    color: #f80c18; /* Change color on hover */
+}
