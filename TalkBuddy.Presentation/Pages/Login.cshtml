@@ -56,6 +56,11 @@
 		.btn-fb:hover {
 			background-color: blue!important;
 		}
+
+		.toast {
+			right: 1rem;
+			top: 1rem;
+		}
 	</style>
 </head>
 <body>
@@ -66,15 +71,15 @@
 				<h3 class="text-center">Log in to TalkBuddy</h3>
 			</div>
 			<div class="card-body">
-				<form class="d-flex flex-column justify-content-around align-items-center h-100">
+				<form class="d-flex flex-column justify-content-around align-items-center h-100" method="post">
 					<div class="d-flex flex-column gap-4 w-100">
 						<div class="input-group form-group d-flex flex-column align-items-start gap-2">
 							<label for="username">Username: </label>
-							<input name="username" type="text" class="form-control w-100" placeholder="username or email">
+							<input name="username" type="text" class="form-control w-100" placeholder="username or email" required>
 						</div>
 						<div class="input-group form-group d-flex flex-column align-items-start gap-2">
 							<label for="password">Password: </label>
-							<input name="password" type="password" class="form-control w-100" placeholder="password">
+							<input name="password" type="password" class="form-control w-100" placeholder="password" required>
 						</div>
 					</div>
 					@*<div class="w-100">
@@ -92,7 +97,7 @@
 			<span class="text-center">Or</span>
 			<div class="card-footer d-flex flex-column gap-1">
 				<div class="d-flex flex-column justify-content-center align-items-center gap-2">
-					<a href="#" class="btn bg-primary btn-auth btn-gg d-flex justify-content-center align-items-center gap-1">
+					<a href="@Model.GoogleOAuthUrl" class="btn bg-primary btn-auth btn-gg d-flex justify-content-center align-items-center gap-1">
 						<img src="~/Google.png" width="17" />
 						<span class="fw-bold">Continue with Google</span>
 					</a>
@@ -110,7 +115,22 @@
 				</div>
 			</div>
 		</div>
-	</div>
+    </div>
+
+	@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+	{
+		<div class="toast show position-fixed" role="alert" aria-live="assertive" aria-atomic="true">
+			<div class="toast-header">
+				<img src="..." class="rounded me-2" alt="...">
+				<strong class="me-auto">Error</strong>
+				<small>11 mins ago</small>
+				<form method="post" asp-page-handler="ClearMessage">
+					<button type="submit" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+				</form>
+			</div>
+			<div class="toast-body text-black">@Model.ErrorMessage</div>
+		</div>
+	}
 </div>
 </body>
 </html>
