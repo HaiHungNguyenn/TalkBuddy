@@ -1,10 +1,11 @@
 ﻿@page
 @using TalkBuddy.Domain.Entities
+@using TalkBuddy.Domain.Dtos
 @model AddFriendPage
 
 
 @{
-    var friendList = TempData["friendList"] as List<Client> ?? new List<Client>();
+    var friendList = TempData["friendList"] as List<DtoClientForFriend> ?? new List<DtoClientForFriend>();
 }
 
 <!DOCTYPE html>
@@ -30,18 +31,27 @@
                                     </button>
                                 </div>
                             </div>
-                            @if(friendList.Count > 0){
-                                @foreach(var client in friendList)
-                                {
-                                    <div class="friend-list" id="friendList">
-                                        <div class="friend-list-item">
-                                            <div class="friend-avatar"><a href="@client.ProfilePicture"></a></div>
-                                            <p class="friend-name">@client.Name</p>
-                                        </div>
-                                    </div>
-                                }
-                            }
                         </form>
+                         @if(friendList.Count > 0){
+                             <div class="friend-list" id="friendList">
+                            @foreach(var client in friendList)
+                            {
+                                    <div class="friend-list-item">
+                                        <div class="friend-avatar"><a href="@client.ProfilePicture"></a></div>
+                                        <p class="friend-name">@client.Name</p>
+                                        @if(!client.isFriend){
+                                            <form method="post" asp-page-handler="HandleAddFriend">
+                                                <input type="hidden" asp-for="ClientID" value="@client.id"/>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa-solid fa-user-plus add-icon"></i>                      
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                            }
+                            </div>
+                        }
+                         
                     </div>
                 </div>
             </div>
