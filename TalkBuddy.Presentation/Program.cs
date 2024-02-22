@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Data;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Presentation.Extensions;
+using TalkBuddy.Presentation.Middleware;
 using TalkBuddy.Service.SignalRHub;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,8 @@ builder.Services.AddSignalR();
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.RegisterServices();
 
-
+builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(30));
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 EnsureMigrate(app);
@@ -29,6 +31,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseSession();
+app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
