@@ -1,15 +1,16 @@
-﻿using TalkBuddy.Domain.Entities.BaseEntities;
+﻿using TalkBuddy.Common.Enums;
+using TalkBuddy.Domain.Entities.BaseEntities;
 
 namespace TalkBuddy.Domain.Entities;
 
 public partial class Friendship : BaseEntity<Guid>
 {
-    public Guid Client1Id { get; set; }
-    public Guid Client2Id { get; set; }
-    public bool Status { get; set; }
+    public Guid SenderID { get; set; }
+    public Guid ReceiverId { get; set; }
+    public FriendShipRequestStatus Status { get; set; } = FriendShipRequestStatus.WAITING;
     public DateTime RequestDate { get; set; }
     public DateTime AcceptDate { get; set; }
 
-    public Client Client1 { get; set; }
-    public Client Client2 { get; set; }
+    public Client Sender { get; set; }
+    public Client Receiver { get; set; }
 }

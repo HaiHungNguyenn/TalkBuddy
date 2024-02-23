@@ -7,10 +7,10 @@ namespace TalkBuddy.Service.Implementations;
 
 public class ClientService : IClientService
 {
-    private readonly IClientRepo _clientRepo;
+    private readonly IClientRepository _clientRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ClientService(IClientRepo clientRepo, IUnitOfWork unitOfWork) 
+    public ClientService(IClientRepository clientRepo, IUnitOfWork unitOfWork) 
     {
         _clientRepo = clientRepo;
         _unitOfWork = unitOfWork;
@@ -19,13 +19,13 @@ public class ClientService : IClientService
 
     public async Task<IQueryable<Client>> FindClient(string clientName)
     {
-        return (await _clientRepo.GetAllAsync()).Where(c =>
-            c.Name.Contains(clientName) || c.Email.Contains(clientName));
+        return (await _clientRepository.GetAllAsync()).Where(c =>
+            c.Name.Contains(clientName));
     }
 
 	public async Task<Client?> LoginAsync(string username, string password)
 	{
-        var client = await _clientRepo.GetAsync(c => c.Email == username);
+        var client = await _clientRepository.GetAsync(c => c.Email == username);
         if (client != null && PasswordHelper.IsValidPassword(password, client.Password))
         {
             return client;
@@ -34,6 +34,10 @@ public class ClientService : IClientService
         return null;
 	}
 
+    public async Task<Client> GetClientById(Guid clientId)
+    {
+        return await _clientRepository.GetAsync(x => x.Id == clientId) ?? throw new Exception("Not found client");
+    }
 	public async Task<Client> RegisterAsync(string username, string password)
 	{
 		var client = await _clientRepo.GetAsync(c => c.Email == username);
@@ -53,4 +57,5 @@ public class ClientService : IClientService
 
         return client;
 	}
+
 }
