@@ -4,9 +4,9 @@ using TalkBuddy.Domain.Entities;
 
 namespace TalkBuddy.DAL.Implementations;
 
-public class ClientRepo : GenericRepository<Client>, IClientRepo
+public class ClientRepository : GenericRepository<Client>, IClientRepository
 {
-    public ClientRepo(TalkBuddyContext dbContext) : base(dbContext)
+    public ClientRepository(TalkBuddyContext dbContext) : base(dbContext)
     {
     }
 }

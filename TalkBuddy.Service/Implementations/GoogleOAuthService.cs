@@ -17,11 +17,11 @@ namespace TalkBuddy.Service.Implementations
 {
     public class GoogleOAuthService : IGoogleOAuthService
     {
-        private readonly IClientRepo _clientRepo;
+        private readonly IClientRepository _clientRepo;
         private readonly IConfiguration _configuration;
         private readonly IUnitOfWork _unitOfWork;
 
-        public GoogleOAuthService(IClientRepo clientRepo, IConfiguration configuration, IUnitOfWork unitOfWork)
+        public GoogleOAuthService(IClientRepository clientRepo, IConfiguration configuration, IUnitOfWork unitOfWork)
         {
             _clientRepo = clientRepo;
             _configuration = configuration;

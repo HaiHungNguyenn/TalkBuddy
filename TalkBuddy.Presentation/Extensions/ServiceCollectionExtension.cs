@@ -12,8 +12,10 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterServices(this IServiceCollection services)
     {
 
-        services.AddScoped<IClientRepo, ClientRepo>();
+        services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IFriendShipRepository, FriendShipRepository>();
+        services.AddScoped<IFriendShipService, FriendShipService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();
