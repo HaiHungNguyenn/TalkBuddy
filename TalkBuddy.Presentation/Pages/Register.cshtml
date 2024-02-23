@@ -1,0 +1,129 @@
+﻿@page
+@model TalkBuddy.Presentation.Pages.Register
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Log in to TalkBuddy</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/Login.cshtml.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<style>
+		body {
+			background-color: #141325;
+			color: #FBFDF5;
+			height: 100dvh;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		.container .card {
+			background-color: #0A0A14;
+		}
+
+		.form-input {
+			width: 28rem;
+		}
+
+		.h-60 {
+			height: 60%;
+		}
+
+		.btn-auth {
+			width: 20rem;
+		}
+
+		.btn-gg {
+			background-color: white !important;
+		}
+
+			.btn-gg:hover {
+				background-color: antiquewhite !important;
+			}
+
+		.btn-fb {
+			background-color: #0c84fc;
+		}
+
+			.btn-fb:hover {
+				background-color: blue !important;
+			}
+
+		.toast {
+			right: 1rem;
+			top: 1rem;
+		}
+	</style>
+</head>
+<body>
+	<div class="container h-100">
+		<div class="d-flex justify-content-center align-items-center h-100">
+			<div class="card h-60 d-flex flex-column justify-content-between py-2 px-4">
+				<div class="card-header">
+					<h3 class="text-center">Log in to TalkBuddy</h3>
+				</div>
+				<div class="card-body">
+					<form class="d-flex flex-column justify-content-around align-items-center h-100" method="post">
+						<div class="d-flex flex-column gap-4 w-100">
+							<div class="input-group form-group d-flex flex-column align-items-start gap-2">
+								<label for="username">Username: </label>
+								<input name="username" type="text" class="form-control w-100" placeholder="username or email" required>
+							</div>
+							<div class="input-group form-group d-flex flex-column align-items-start gap-2">
+								<label for="password">Password: </label>
+								<input name="password" type="password" class="form-control w-100" placeholder="password" required>
+							</div><div class="input-group form-group d-flex flex-column align-items-start gap-2">
+								<label for="password">Confirm password: </label>
+								<input name="confirmPassword" type="password" class="form-control w-100" placeholder="confirm password" required>
+							</div>
+						</div>
+						<input type="submit" value="Register" class="btn btn-primary w-100 mt-2">
+					</form>
+				</div>
+				<span class="text-center">Or</span>
+				<div class="card-footer d-flex flex-column gap-1">
+					<div class="d-flex flex-column justify-content-center align-items-center gap-2">
+						<a href="@Model.GoogleOAuthUrl" class="btn bg-primary btn-auth btn-gg d-flex justify-content-center align-items-center gap-1">
+							<img src="~/Google.png" width="17" />
+							<span class="fw-bold">Continue with Google</span>
+						</a>
+						<a href="#" class="btn bg-primary btn-auth btn-fb d-flex justify-content-center align-items-center gap-1">
+							<img src="~/Facebook.png" width="17" />
+							<span class="text-white fw-bold">Continue with Facebook</span>
+						</a>
+					</div>
+					<div class="d-flex justify-content-center gap-2">
+						<span>Already have an account?</span>
+						<a href="/Login">Sign In</a>
+					</div>
+					<div class="d-flex justify-content-center">
+						<a href="#">Forgot your password?</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+		{
+			<div class="toast show position-fixed" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header">
+					<img src="..." class="rounded me-2" alt="...">
+					<strong class="me-auto">Error</strong>
+					<small>11 mins ago</small>
+					<form method="post" asp-page-handler="ClearMessage">
+						<button type="submit" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+					</form>
+				</div>
+				<div class="toast-body text-black">@Model.ErrorMessage</div>
+			</div>
+		}
+	</div>
+</body>
+</html>

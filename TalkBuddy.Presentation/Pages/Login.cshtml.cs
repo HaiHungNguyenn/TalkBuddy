@@ -34,7 +34,6 @@ public class Login : PageModel
     {
         ErrorMessage = string.Empty;
         return RedirectToPage(nameof(Login));
-        
     }
 
     public async Task<IActionResult> OnPost()
