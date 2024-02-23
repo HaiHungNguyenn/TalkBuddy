@@ -3,9 +3,11 @@
 @using TalkBuddy.Domain.Dtos
 @using System.Collections
 @using TalkBuddy.Common.Enums
+
 @model AddFriendPage
 @{
     var friendList =  TempData["friendList"] as IEnumerable<DtoClientForFriend> ?? new List<DtoClientForFriend>();
+
 }
 <div class="container">
     <div class="row justify-content-center mt-5">
@@ -23,10 +25,10 @@
                             </div>
                         </div>
                     </form>
-                     @if(friendList.Count() > 0){
-                         <div class="friend-list" id="friendList">
-                        @foreach(var client in friendList)
-                        {
+                    @if(friendList.Count() > 0){
+                        <div class="friend-list" id="friendList">
+                            @foreach(var client in friendList)
+                            {
                                 <div class="friend-list-item">
                                     <div class="friend-avatar"><a href="@client.ProfilePicture"></a></div>
                                     <p class="friend-name">@client.Name</p>
@@ -56,8 +58,8 @@
                                             </form>
                                         }
                                     }
-                            </div>
-                        }
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -65,3 +67,4 @@
         </div>
     </div>
 </div>
+        
