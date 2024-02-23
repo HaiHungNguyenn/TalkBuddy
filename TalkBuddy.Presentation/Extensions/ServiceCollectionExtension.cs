@@ -14,6 +14,8 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IClientService, ClientService>();
+        services.AddScoped<IFriendShipRepository, FriendShipRepository>();
+        services.AddScoped<IFriendShipService, FriendShipService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);

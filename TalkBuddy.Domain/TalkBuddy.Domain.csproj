@@ -11,4 +11,8 @@
       <Folder Include="Interfaces\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\TalkBuddy.Common\TalkBuddy.Common.csproj" />
+    </ItemGroup>
+
 </Project>

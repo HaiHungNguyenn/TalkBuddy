@@ -22,7 +22,7 @@ public class ClientService : IClientService
 
 	public async Task<Client?> LoginAsync(string username, string password)
 	{
-        var client = await _clientRepo.GetAsync(c => c.Email == username);
+        var client = await _clientRepository.GetAsync(c => c.Email == username);
         if (client != null && PasswordHelper.IsValidPassword(password, client.Password))
         {
             return client;
@@ -30,4 +30,9 @@ public class ClientService : IClientService
 
         return null;
 	}
+
+    public async Task<Client> GetClientById(Guid clientId)
+    {
+        return await _clientRepository.GetAsync(x => x.Id == clientId) ?? throw new Exception("Not found client");
+    }
 }
