@@ -20,6 +20,8 @@ public class Login : PageModel
 
     public string GoogleOAuthUrl { get; } = GoogleOAuthConstants.GOOGLE_OAUTH_URL;
 
+    public string FacebookOAuthUrl { get; } = FacebookOAuthConstants.FACEBOOK_OAUTH_URL;
+
 	public Login(IClientService clientService)
 	{
 		_clientService = clientService;

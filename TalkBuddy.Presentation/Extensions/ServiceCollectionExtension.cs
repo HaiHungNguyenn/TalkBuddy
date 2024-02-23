@@ -16,6 +16,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IClientService, ClientService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
+        services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);

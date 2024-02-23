@@ -32,7 +32,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 app.UseSession();
-app.UseMiddleware<AuthMiddleware>();
+//app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
