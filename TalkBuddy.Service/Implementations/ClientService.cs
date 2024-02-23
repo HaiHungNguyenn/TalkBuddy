@@ -8,9 +8,12 @@ namespace TalkBuddy.Service.Implementations;
 public class ClientService : IClientService
 {
     private readonly IClientRepository _clientRepository;
-    public ClientService(IClientRepository clientRepository) 
+    private readonly IUnitOfWork _unitOfWork;
+
+    public ClientService(IClientRepository clientRepo, IUnitOfWork unitOfWork) 
     {
-        _clientRepository = clientRepository;
+        _clientRepo = clientRepo;
+        _unitOfWork = unitOfWork;
     }
 
 
@@ -35,4 +38,24 @@ public class ClientService : IClientService
     {
         return await _clientRepository.GetAsync(x => x.Id == clientId) ?? throw new Exception("Not found client");
     }
+	public async Task<Client> RegisterAsync(string username, string password)
+	{
+		var client = await _clientRepo.GetAsync(c => c.Email == username);
+        if (client != null)
+            throw new Exception("User already exists");
+
+        client = new Client
+        {
+            Name = username,
+            Email = username,
+            Password = PasswordHelper.HashPassword(password),
+            Gender = "N/A"
+        };
+        
+        await _clientRepo.AddAsync(client);
+        await _unitOfWork.CommitAsync();
+
+        return client;
+	}
+
 }
