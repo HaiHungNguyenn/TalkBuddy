@@ -12,7 +12,7 @@ public class ClientService : IClientService
 
     public ClientService(IClientRepository clientRepo, IUnitOfWork unitOfWork) 
     {
-        _clientRepo = clientRepo;
+        _clientRepository = clientRepo;
         _unitOfWork = unitOfWork;
     }
 
@@ -40,7 +40,7 @@ public class ClientService : IClientService
     }
 	public async Task<Client> RegisterAsync(string username, string password)
 	{
-		var client = await _clientRepo.GetAsync(c => c.Email == username);
+		var client = await _clientRepository.GetAsync(c => c.Email == username);
         if (client != null)
             throw new Exception("User already exists");
 
@@ -52,7 +52,7 @@ public class ClientService : IClientService
             Gender = "N/A"
         };
         
-        await _clientRepo.AddAsync(client);
+        await _clientRepository.AddAsync(client);
         await _unitOfWork.CommitAsync();
 
         return client;
