@@ -5,7 +5,7 @@
 .profile-picture{
     width: 150px;
     display: block;
-    margin: auto 0;
+    margin: 10px 0;
 }
 
 .edit-profile-row{
@@ -24,9 +24,18 @@
 .input-after{
     color: #47499D;
     font-size: 20px;
+    max-height: 30px;
+    transition: opacity 1s;
+}
+
+.disappear{
+    opacity: 0;
+    display: none;
 }
 
 .switch-input-btn{
+    border: none;
+    padding: 8px;
     width: 92px;
     border-radius: 0 0 8% 50%;
     position: absolute;
@@ -35,7 +44,7 @@
     top: 90%;
     z-index: 5;
     background: #41404F;
-    transition: top 1s;
+    transition: top 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
 #form-card{
@@ -48,7 +57,7 @@
 }
 
 .btn-go-down{
-    top: 432%;
+    top: 458%;
 }
 
 .switch-input-btn svg{
@@ -60,4 +69,6 @@
     border-radius: 2%/50%;
     height: 50px;
     font-size: 16px;
+    transition: opacity 1s;
 }
+
