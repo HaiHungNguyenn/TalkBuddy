@@ -1,0 +1,88 @@
+@page
+@using TalkBuddy.Domain.Entities
+@model Profile
+
+<link rel="stylesheet" href="~/Profile.cshtml.css" />
+<div class="">
+    <div class="row image-row mt-5">
+        <img src="@Model.ProfilePicture" class="profile-picture rounded-circle" alt="Profile Picture"/>
+        <button class="switch-input-btn">
+            <svg fill="#ffffff" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_88_"> <path id="XMLID_89_" d="M304.394,139.394l-139.39,139.393L25.607,139.393c-5.857-5.857-15.355-5.858-21.213,0.001 c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393s7.794-1.581,10.606-4.394l149.996-150 c5.858-5.858,5.858-15.355,0-21.213C319.749,133.536,310.251,133.535,304.394,139.394z"></path> <path id="XMLID_90_" d="M154.398,190.607c2.813,2.813,6.628,4.393,10.606,4.393s7.794-1.581,10.606-4.394l149.996-150 c5.858-5.858,5.858-15.355,0-21.213c-5.857-5.858-15.355-5.858-21.213,0l-139.39,139.393L25.607,19.393 c-5.857-5.858-15.355-5.858-21.213,0c-5.858,5.858-5.858,15.355,0,21.213L154.398,190.607z"></path> </g> </g></svg>
+        </button>
+    </div>
+    <div class="row edit-profile-row form-bg-color h-50vh justify-content-center">
+        <div id="form-card" class="card-body">
+            <h5 class="card-title">Profile</h5>
+            <form method="post">
+                <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />
+                <input type="hidden" name="CurrentUser.ProfilePicture" value="@Model.CurrentUser.ProfilePicture" />
+                <input type="hidden" name="CurrentUser.Password" value="@Model.CurrentUser.Password" />
+                <div class="form-group mb-3">
+                    <label for="floatingInput">Name</label>
+                    <p class="input-after">@Model.CurrentUser.Name</p>
+                    <input name="CurrentUser.Name" type="text" class="form-control input-round disappear" id="floatingInput" placeholder="Name" 
+                        value="@Model.CurrentUser.Name"> 
+                    <span asp-validation-for="@Model.CurrentUser.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="floatingInput">Email address</label>
+                    <p class="input-after">@Model.CurrentUser.Email</p>
+                    <input name="CurrentUser.Email" type="email" class="form-control input-round disappear" id="floatingInput" placeholder="name@example.com"
+                        value="@Model.CurrentUser.Email">
+                    <span asp-validation-for="@Model.CurrentUser.Email" class="text-danger"></span>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="floatingPassword">Date of birth</label>
+                    <p class="input-after">@Model.CurrentUser.DateOfBirth</p>
+                    <input name="CurrentUser.DateOfBirth" type="datetime-local" class="form-control input-round disappear" id="floatingPassword" value="@Model.CurrentUser.DateOfBirth">
+                    <span asp-validation-for="@Model.CurrentUser.DateOfBirth" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="floatingPassword">Gender</label>
+                    <p class="input-after">@Model.CurrentUser.Gender</p>
+                    <input name="CurrentUser.Gender" type="text" class="form-control input-round disappear" id="floatingPassword" placeholder="Gender"
+                        value="@Model.CurrentUser.Gender">
+                    <span asp-validation-for="@Model.CurrentUser.Gender" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary"/>
+                </div>
+
+                @foreach (var modelState in ViewData.ModelState.Values)
+                {
+                foreach (var error in modelState.Errors)
+                {
+                <div>@error.ErrorMessage</div>
+                }
+                }
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    //set date input
+    let dateTime = document.querySelector("input[type=datetime-local]");
+    var inputDate = new Date("@Model.CurrentUser.DateOfBirth"+" UTC");
+    var outputStr = inputDate.toISOString().slice(0, 16);
+    dateTime.value = outputStr;
+
+    let switchModeBtn = document.getElementsByClassName("switch-input-btn")[0];
+    switchModeBtn.addEventListener("click", () => {
+        let editProfileRow = document.getElementsByClassName("edit-profile-row")[0];
+        let formCard = document.getElementById("form-card");
+        let inputs = document.getElementsByClassName("input-round");
+        let details = document.getElementsByClassName("input-after");
+
+        formCard.classList.toggle("text-white");
+        editProfileRow.classList.toggle("background-go-down");
+        switchModeBtn.classList.toggle("btn-go-down");
+        for(let i=0;i<inputs.length;i++){
+            inputs[i].classList.toggle("disappear");
+            details[i].classList.toggle("disappear");
+        }
+        
+    });
+</script>
