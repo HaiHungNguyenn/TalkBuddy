@@ -12,10 +12,10 @@ namespace TalkBuddy.Service.Implementations
 {
     public class FacebookOAuthService : IFacebookOAuthService
 	{
-        private readonly IClientRepo _clientRepo;
+        private readonly IClientRepository _clientRepo;
         private readonly IUnitOfWork _unitOfWork;
 
-        public FacebookOAuthService(IClientRepo clientRepo, IUnitOfWork unitOfWork)
+        public FacebookOAuthService(IClientRepository clientRepo, IUnitOfWork unitOfWork)
         {
             _clientRepo = clientRepo;
             _unitOfWork = unitOfWork;
