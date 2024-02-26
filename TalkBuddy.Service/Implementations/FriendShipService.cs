@@ -26,7 +26,7 @@ public class FriendShipService : IFriendShipService
             await _friendShipRepository.AddAsync(friendShip);
             await _unitOfWork.CommitAsync();
         }
-        else if (friendShipStatus.Equals(FriendShipRequestStatus.REJECTED))
+        else if (friendShipStatus.Equals(FriendShipRequestStatus.REJECTED) || friendShipStatus.Equals(FriendShipRequestStatus.CANCEL))
         {
             var x = await _friendShipRepository.GetAsync(x =>
                 (x.SenderID == friendShip.SenderID && x.ReceiverId == friendShip.ReceiverId)||

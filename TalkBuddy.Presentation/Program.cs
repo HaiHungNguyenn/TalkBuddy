@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Data;
+using TalkBuddy.DAL.Implementations;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Presentation.Extensions;
 using TalkBuddy.Presentation.Middleware;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.RegisterServices();
 
 builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(30));
