@@ -42,8 +42,11 @@ app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chat");
 });
 
+<<<<<<< HEAD
 app.MapRazorPages();
 
+=======
+>>>>>>> 978bd02 (update hub, add js)
 app.Run();
 
 void EnsureMigrate(WebApplication webApp)

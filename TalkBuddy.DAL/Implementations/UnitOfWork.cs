@@ -11,6 +11,14 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     {
         _dbContext = dbContext;
     }
+<<<<<<< HEAD
+=======
+    public IMessageRepository MessageRepository { get; set; }
+
+    public IChatBoxRepository ChatBoxRepository { get; set; }
+
+    public IClientChatBoxRepository ClientChatBoxRepository => new ClientChatBoxRepository(_dbContext);
+>>>>>>> 978bd02 (update hub, add js)
 
     public void Commit()
     {
