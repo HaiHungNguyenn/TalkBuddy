@@ -2,13 +2,15 @@
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
+using TalkBuddy.Domain.Dtos;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TalkBuddy.Presentation.SignalR
 {
     public class ChatHub : Hub
     {
-        //public readonly static List<UserConnection> _Connections = new List<UserConnection>();
-        private readonly static Dictionary<string, string> _ConnectionsMap = new Dictionary<string, string>();
+        public readonly static List<UserConnection> _ConnectionRooms = new List<UserConnection>();
+        private readonly static List<string> _ConnectionPresences = new List<string>();
 
         private readonly IChatBoxService _chatBoxService;
         private readonly IMessageService _messageService;
@@ -22,43 +24,46 @@ namespace TalkBuddy.Presentation.SignalR
             _messageService = messageService;
             _clientChatBoxService = clientChatBoxService;
         }
-       
+
         public override async Task OnConnectedAsync()
         {
-            var httpContext = Context.GetHttpContext();
-            var user = httpContext.Session.GetString(SessionConstants.USER_ID);
-            var chatBoxId = httpContext.Request.Query["chatBoxId"];
-            if(!string.IsNullOrEmpty(chatBoxId) )
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId);
+          
+                var httpContext = Context.GetHttpContext();
+                var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+              
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+                    await Clients.Caller.SendAsync("InitializeChat", clientChatBoxes);
+                if (!_ConnectionPresences.Contains(userId))
+                {
+                    _ConnectionPresences.Add(userId);
+                }
             }
-
-            var clientChatBoxes = _clientChatBoxService.GetClientChatBoxes(new Guid(user));
-            //load chatbox
-            await Clients.Caller.SendAsync("InitializeChat", clientChatBoxes);
-
-            // if (!_Connections.Any(u => u.ChatBoxId == chatBoxId))
-            //{
-            // _Connections.Add(new UserConnection { ChatBoxId = chatBoxId, UserName = fromUser});
-            // _ConnectionsMap.Add(chatBoxId, Context.ConnectionId);
-            // }
-
+                else
+                {
+                    // Handle the case where the user ID is null or empty
+                }
             
-             base.OnConnectedAsync();
+          
+            base.OnConnectedAsync();
         }
+
 
         public override Task OnDisconnectedAsync(Exception ex)
         {
             try
             {
                 var httpContext = Context.GetHttpContext();
-                var chatBoxId = httpContext.Request.Query["chatBoxId"];
-                var fromUser = httpContext.Session.GetString(SessionConstants.USER_ID);
-               // var user = _Connections.Where(u => u.UserName == fromUser).First();
-              //  _Connections.Remove(user);
+              
+                var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+               var user = _ConnectionPresences.Where(u => u.Equals(userId)).First();
+                _ConnectionPresences.Remove(user);
+                foreach (var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId)&&x.ConnectionId.Equals(httpContext.Connection.Id)))
+                {
+                    _ConnectionRooms.Remove(room);
+                }
 
-                // Remove mapping
-                //_ConnectionsMap.Remove(user.UserName);
             }
             catch (Exception exep)
             {
@@ -70,6 +75,22 @@ namespace TalkBuddy.Presentation.SignalR
 
         public async Task<IList<Message>> GetMessages(Guid chatBoxId)
         {
+            var httpContext = Context.GetHttpContext();         
+            var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+            await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+            if (_ConnectionPresences.Contains(userId))
+            {
+                if (_ConnectionRooms.Where(x => x.UserId.Equals(userId)&&!x.ChatBoxId.Equals(chatBoxId)&&x.ConnectionId.Equals(httpContext.Connection.Id)).Any())
+                {                    foreach(var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId) && !x.ChatBoxId.Equals(chatBoxId) && x.ConnectionId.Equals(httpContext.Connection.Id)))
+                    {
+                        _ConnectionRooms.Remove(room);
+                    }
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+                    await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+
+                }
+                
+            }
             // Retrieve messages from a data source (e.g., database)
             var messages = await _messageService.GetMessages(chatBoxId);
             return messages;
@@ -89,10 +110,19 @@ namespace TalkBuddy.Presentation.SignalR
             var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
             //if chua co tin nhan load lai chatbox
             //two user have not text each other before, need to load chatbox again
-            if (chatBox == null) 
-            { 
-
-            }
+            //if (chatBox != null) 
+            //{
+            //    if (!chatBox.Messages.Any())
+            //    {
+            //        var clientChatBoxes = _clientChatBoxService.GetClientChatBoxes(new Guid(receiverId)).Result;
+            //        if(_ConnectionPresences.Contains(receiverId))
+            //        {
+            //            var receiver=_ConnectionRooms.Where(x => x.ChatBoxId.EndsWith(chatBoxId)&&x.UserId).FirstOrDefault();
+            //            await Clients.Clients().SendAsync("InitializeChat", clientChatBoxes);
+            //        }
+                    
+            //    }
+            //}
             await _messageService.AddMessage(messageObject);
          
             await Clients.Group(chatBoxId).SendAsync("NewMessage", message);

@@ -38,8 +38,16 @@ app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
+<<<<<<< HEAD
 app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chat");
+=======
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapHub<ChatHub>("/chat");
+  
+>>>>>>> 8a81058 (update js signalR)
 });
 
 <<<<<<< HEAD
