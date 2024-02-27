@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using TalkBuddy.Common.Enums;
 using TalkBuddy.DAL.Interfaces;
-
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Service.Interfaces;
 
@@ -84,5 +83,21 @@ public class FriendShipService : IFriendShipService
         friendship.Status = FriendShipRequestStatus.CANCEL;
         await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
+    }
+
+    public async Task<IEnumerable<Client>> GetClientFriends(Guid clientId)
+    {
+        var friendships = await (await _friendShipRepository.GetAllAsync())
+            .Include(fs => fs.Sender)
+            .Include(fs => fs.Receiver)
+            .ToListAsync();
+
+        return friendships.Select(fs =>
+        {
+            if (fs.SenderID == clientId)
+                return fs.Receiver;
+
+            return fs.Sender;
+        });
     }
 }

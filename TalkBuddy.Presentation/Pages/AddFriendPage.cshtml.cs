@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Common.Enums;
-
 using TalkBuddy.Domain.Dtos;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Service.Interfaces;
@@ -16,8 +14,6 @@ public class AddFriendPage : PageModel
     private readonly IFriendShipService _friendShipService;
 
     private List<Client> clientList;
-
-
 
     public AddFriendPage( IClientService clientService, IFriendShipService friendShipService)
     {
@@ -55,12 +51,12 @@ public class AddFriendPage : PageModel
         return Page();
     }
 
-    public async Task<RedirectToPageResult> OnPostHandleAddFriend()
+    public async Task<IActionResult> OnPostHandleAddFriend()
     {
         var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID!)!) ;
         var x = FriendId;
         await _friendShipService.CreateFriendShip(new Friendship() {SenderID = clientId,ReceiverId = FriendId, RequestDate = DateTime.Today});
-        return RedirectToPage("/AddFriendPage");
+		return Page();
     }
 
     public async Task<RedirectToPageResult> OnPostHandleCancelInvitation()

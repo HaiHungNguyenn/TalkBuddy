@@ -1,0 +1,41 @@
+﻿@page
+@using TalkBuddy.Domain.Entities;
+@model TalkBuddy.Presentation.Pages.FriendsListModel
+@{
+    var friendsList = TempData["friendsList"] as IEnumerable<Client> ?? new List<Client>();
+}
+
+<section class="h-100 w-100 d-flex justify-content-center align-items-center p-5">
+    <div class="d-flex flex-column gap-4 justify-content-center align-items-start bg-white p-2 rounded-2 w-50">
+        <h2 class="text-center w-100">Friends list:</h2>
+
+        <ul class="navbar-nav flex-grow-1 flex-column w-100">
+            @foreach (var friend in friendsList)
+            {
+                <li class="nav-item p-2 d-flex justify-content-between align-items-center">
+                    <span>@friend.Name</span>
+                    <div class="d-flex justify-content-between gap-2">
+                        <form method="post" asp-page-handler="HandleAddFriend">
+                        @{
+
+                            //<input type="hidden" asp-for="FriendId" value="@client.id" />
+                        }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-message"></i>
+                            </button>
+                        </form>
+                        <form method="post" asp-page-handler="HandleAddFriend">
+                        @{
+
+                            //<input type="hidden" asp-for="FriendId" value="@client.id" />
+                        }
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </form>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</section>

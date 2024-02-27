@@ -1,4 +1,5 @@
-﻿using TalkBuddy.Common.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using TalkBuddy.Common.Helpers;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Service.Interfaces;
@@ -34,9 +35,16 @@ public class ClientService : IClientService
         return null;
 	}
 
-    public async Task<Client> GetClientById(Guid clientId)
+    public async Task<Client?> GetClientById(Guid clientId)
     {
-        return await _clientRepository.GetAsync(x => x.Id == clientId) ?? throw new Exception("Not found client");
+        return await (await _clientRepository.FindAsync(x => x.Id == clientId))
+            .Include(c => c.Friends)
+            .Include(c => c.InformantClients)
+            .Include(c => c.ReportedClients)
+            .Include(c => c.InChatboxes)
+            .Include(c => c.ClientMessages)
+            .Include(c => c.CreatedChatBoxes)
+            .FirstOrDefaultAsync();
     }
 	public async Task<Client> RegisterAsync(string username, string password)
 	{
