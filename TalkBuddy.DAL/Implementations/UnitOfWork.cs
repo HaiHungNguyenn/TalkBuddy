@@ -17,7 +17,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     public IChatBoxRepository ChatBoxRepository { get; set; }
 
-    public IUserConnectionRepository UserConnectionRepository => new UserConnectionRepository(_dbContext);
+    public IClientChatBoxRepository ClientChatBoxRepository => new ClientChatBoxRepository(_dbContext);
 
     public void Commit()
     {

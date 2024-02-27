@@ -46,8 +46,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ChatHub>($"/hubs/{nameof(ChatHub)}");
 });
 
-
-
 app.Run();
 
 void EnsureMigrate(WebApplication webApp)

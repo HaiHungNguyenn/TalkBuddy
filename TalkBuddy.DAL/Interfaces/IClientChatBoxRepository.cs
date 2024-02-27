@@ -2,7 +2,7 @@
 
 namespace TalkBuddy.DAL.Interfaces
 {
-    public interface IUserConnectionRepository : IGenericRepository<UserConnection>
+    public interface IClientChatBoxRepository : IGenericRepository<ClientChatBox>
     {
     }
 }

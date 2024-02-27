@@ -126,8 +126,7 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
           data-tag="font" />
-    <link rel="stylesheet"
-          href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+  
 </head>
 <body>
 
@@ -136,30 +135,35 @@
     <div class="screen7-screen7">
         <div class="left-container">
             <div class="screen7-frame18">
-                <div>
-                    <div class="screen7-frame14" onclick="replaceDiv()">
-                        <div class="screen7-avatar">
+                <ul id="chatBoxtList">
+                   <li>
+                        <div class="screen7-frame14">
+                            <div class="screen7-avatar">
 
-                            <img alt="Vector2670"
-                                 src="public/external/vector2670-0kto.svg"
-                                 class="screen7-vector20" />
-
-                        </div>
-                        <span class="screen7-text"><span>avi_chovatiya</span></span>
-                    </div>
-                </div>
-                <div class="screen7-frame10">
-                    <div class="screen7-frame16">
-                        <div class="screen7-avatar1">
-                            <div class="screen7-frame11">
                                 <img alt="Vector2670"
                                      src="public/external/vector2670-0kto.svg"
                                      class="screen7-vector20" />
+
                             </div>
+                            <span class="screen7-text"><span>avi_chovatiya</span></span>
                         </div>
-                        <span class="screen7-text02"><span>kishu_patel68</span></span>
+                    </li>
+                    <li>
+                    <div class="screen7-frame10">
+                        <div class="screen7-frame16">
+                            <div class="screen7-avatar1">
+                                <div class="screen7-frame11">
+                                    <img alt="Vector2670"
+                                         src="public/external/vector2670-0kto.svg"
+                                         class="screen7-vector20" />
+                                </div>
+                            </div>
+                            <span class="screen7-text02"><span>kishu_patel68</span></span>
+                        </div>
                     </div>
-                </div>
+                    </li>
+                </ul>
+                
 
             </div>
 
@@ -193,9 +197,11 @@
                          class="screen8-rectangle2" />
                     <div class="screen8-frame23">
                         <span class="screen8-text12">
-                            <span>Type your message here</span>
+                            <span>
+                                <input placeholder="Type your message here" id="messageInput" />
+                                </span>
                         </span>
-                        <div class="screen8-group21">
+                        <div class="screen8-group21" id="sendButton">
                             <img src="public/external/send2895-qt9u.svg"
                                  alt="Send2895"
                                  class="screen8-send" />
@@ -203,9 +209,15 @@
                     </div>
                 </div>
             </div>
-            <div class="screen8-group3">
-                <span class="screen8-text14"><span>Hi</span></span>
-            </div>
+         
+            <ul id="messages">
+                <li>
+                    <div class="screen8-group3">
+                        <span class="screen8-text14"><span>Hi</span></span>
+                    </div>
+                </li>                
+            </ul>
+            
         </div>
         <div class="chat-box-container">
             <img alt="robot12744"
@@ -222,25 +234,129 @@
             </span>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.0/signalr.min.js"></script>
     <script>
-             function replaceDiv() {
-          var windows = document.getElementsByClassName('chat-box-container');
-          var inChats = document.getElementsByClassName('chat-window');
+        var connection = new signalR.HubConnectionBuilder().withUrl("/chathub").build();
 
-          // Loop through each chat window
-          for (var i = 0; i < inChats.length; i++) {
-            var inChat = inChats[i];
-            var window = windows[i];
+        connection.on("ReceiveMessage", function (user, message) {           
+            var li = document.createElement("li");
+            li.textContent = message;
+            li.classList.add("screen8-group3");
+            document.getElementById("messages").appendChild(li);
+        });
 
-            if (inChat.classList.contains('hidden')) {
-              inChat.classList.remove('hidden');
-              window.style.display = 'none';
-            } else {
-              inChat.classList.add('hidden');
-              window.style.display = 'flex';
-            }
-          }
+        connection.start().then(function () {
+            console.log("SignalR Connected");
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+
+        document.getElementById("sendButton").addEventListener("click", function (event) {
+            var chatBoxId = "User"; // replace by chat box Id
+            var message = document.getElementById("messageInput").value;
+            connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+            event.preventDefault();
+        });
+
+        connection.on("InitializeChat", function (chatBoxes) {
+            // Handle received messages
+            displayChatBoxs(chatBoxes);
+        });
+
+        // Function to display messages on the UI
+        function displayChatBoxs(chatBoxes) {
+            var chatBoxList = document.getElementById("chatBoxList");
+            chatBoxList.innerHTML = ""; // Clear previous chat boxes
+
+            chatBoxes.forEach(function (chatBox) {
+                var li = document.createElement("li");
+
+                // Create the outer div with class 'screen7-frame14' or 'screen7-frame10' based on some condition
+                var divOuter = document.createElement("div");
+                divOuter.className ="screen7-frame14" 
+
+                // Create the inner div with class 'screen7-avatar' or 'screen7-frame16' based on some condition
+                var divInner = document.createElement("div");
+                divInner.className = "screen7-avatar"
+
+                // Create the image element
+                var img = document.createElement("img");
+                img.alt = "Vector2670";
+                img.src = chatBox.imageUrl;
+                img.className = "screen7-vector20";
+
+                // Create the span element for the text
+                var span = document.createElement("span");
+                span.className = "screen7-text" 
+                span.innerHTML = "<span>" + chatBox.ChatBoxName + "</span>";
+
+                // Append the elements to construct the HTML structure
+                divOuter.appendChild(divInner);
+                divInner.appendChild(img);
+                li.appendChild(divOuter);
+                li.appendChild(span);
+                li.onclick = GetMessageFromChatBox()
+                li.id = chatBox.Id;
+                // Append the list item to the chat box list
+                chatBoxList.appendChild(li);
+            });
         }
+
+        function requestMessagesForChatBox(chatBoxId) {
+            connection.invoke("GetMessages", chatBoxId).then(function (messages) {
+                // Handle received messages
+                displayMessages(messages);
+            }).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        // Function to handle click event on a chat box item
+        function handleChatBoxClick(event) {
+            // Extract chatBoxId from the clicked element
+            var chatBoxId = event.currentTarget.dataset.chatBox.Id;
+
+            // Request messages for the clicked chat box
+            requestMessagesForChatBox(chatBoxId);
+        }
+
+        // Example usage: Attach click event handler to each chat box item
+        var chatBoxItems = document.querySelectorAll("#chatBoxtList > li");
+        chatBoxItems.forEach(function (item) {
+            item.addEventListener("click", handleChatBoxClick);
+        });
+        
+        // Function to display messages on the UI
+        function displayMessages(messages) {
+            var messagesList = document.getElementById("messages");
+            messagesList.innerHTML = ""; // Clear previous messages
+
+            messages.forEach(function (messageText) {
+                // Create a new list item for each message
+                var li = document.createElement("li");
+
+                // Create a div for the message content
+                var div = document.createElement("div");
+                div.className = "screen8-group3";
+
+                // Create a span for the message text
+                var span = document.createElement("span");
+                span.className = "screen8-text14";
+                span.textContent = messageText;
+
+                // Append the span to the div
+                div.appendChild(span);
+
+                // Append the div to the list item
+                li.appendChild(div);
+
+                // Append the list item to the messages list
+                messagesList.appendChild(li);
+            });
+        }
+
     </script>
 </body>
 
