@@ -30,38 +30,38 @@
                         <div class="friend-list" id="friendList">
                             @foreach(var client in friendList)
                             {
-                                    @if (!client.RelationStatus.Equals(FriendShipRequestStatus.YOURSELF))
-                                    {
-                                        <div class="friend-list-item">
-                                            <div class="friend-avatar"><a href="@client.ProfilePicture"></a></div>
-                                            <p class="friend-name">@client.Name</p>
-                                            @if(client.RelationStatus.Equals(FriendShipRequestStatus.REJECTED) || 
-                                                client.RelationStatus == null ||
-                                                client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL) ){
-                                                <form method="post" asp-page-handler="HandleAddFriend">
-                                                    <input type="hidden" asp-for="FriendId" value="@client.id"/>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="fa-solid fa-user-plus add-icon"></i>                      
-                                                    </button>
-                                                </form>
-                                            }
-                                            else if(client.RelationStatus.Equals(FriendShipRequestStatus.ACCEPTED))
-                                            {
+                                @if (!client.RelationStatus.Equals(FriendShipRequestStatus.YOURSELF))
+                                {
+                                    <div class="friend-list-item">
+                                        <div class="friend-avatar"><a href="@client.ProfilePicture"></a></div>
+                                        <p class="friend-name">@client.Name</p>
+                                        @if(client.RelationStatus.Equals(FriendShipRequestStatus.REJECTED) || 
+                                            client.RelationStatus == null ||
+                                            client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL) ){
+                                            <form method="post" asp-page-handler="HandleAddFriend">
+                                                <input type="hidden" asp-for="FriendId" value="@client.id"/>
                                                 <button type="submit" class="btn btn-primary">
-                                                    <i class="fa-solid fa-message add-icon"></i> 
+                                                    <i class="fa-solid fa-user-plus add-icon"></i>                      
                                                 </button>
-                                            }
-                                            else if(client.RelationStatus.Equals(FriendShipRequestStatus.WAITING))
-                                            {
-												<form method="post" asp-page-handler="HandleCancelInvitation">
-												    <input type="hidden" asp-for="FriendId" value="@client.id"/>
-												    <button type="submit" class="btn btn-primary">
-													    <i class="fa-solid fa-xmark"></i>
-    												</button>
-												</form>
-                                            }
-                                        </div>
-                                    }
+                                            </form>
+                                        }
+                                        else if(client.RelationStatus.Equals(FriendShipRequestStatus.ACCEPTED))
+                                        {
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa-solid fa-message add-icon"></i> 
+                                            </button>
+                                        }
+                                        else if(client.RelationStatus.Equals(FriendShipRequestStatus.WAITING))
+                                        {
+											<form method="post" asp-page-handler="HandleCancelInvitation">
+												<input type="hidden" asp-for="FriendId" value="@client.id"/>
+												<button type="submit" class="btn btn-primary">
+													<i class="fa-solid fa-xmark"></i>
+    											</button>
+											</form>
+                                        }
+                                    </div>
+                                }
                             }
                         </div>
                     }

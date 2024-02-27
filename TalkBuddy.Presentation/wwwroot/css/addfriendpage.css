@@ -11,51 +11,51 @@
     border-radius: 25px;
 }
 .friend-list {
-    display: block; /* Initially hide the friend list */
+    display: block;  Initially hide the friend list 
     margin-top: 10px;
     border-color: none;
-    border-radius: 5px; /* Rounded corners */
-    max-height: 600px; /* Max height of the list */
-    overflow-y: auto; /* Enable vertical scrolling */
+    border-radius: 5px;  Rounded corners 
+    max-height: 600px;  Max height of the list 
+    overflow-y: auto;  Enable vertical scrolling 
 }
 
 .friend-list-item {
-    display: flex; /* Use flexbox for layout */
-    align-items: center; /* Center items vertically */
+    display: flex;  Use flexbox for layout 
+    align-items: center;  Center items vertically 
     padding: 10px;
-    cursor: pointer; /* Show pointer cursor on hover */
-    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    cursor: pointer;  Show pointer cursor on hover 
+    transition: background-color 0.3s ease;  Smooth transition for background color 
     justify-content: space-between;
 }
 
 .friend-avatar {
     width: 30px;
     height: 30px;
-    border-radius: 50%; /* Make it round */
-    background-color: #ccc; /* Default background color */
-    margin-right: 10px; /* Add spacing */
+    border-radius: 50%;  Make it round 
+    background-color: #ccc;  Default background color 
+    margin-right: 10px;  Add spacing 
 }
 
 .friend-name {
-    margin: 0; /* Remove margin for consistency */
-    font-weight: bold; /* Make the name bold */
+    margin: 0;  Remove margin for consistency 
+    font-weight: bold;  Make the name bold 
 }
 
 .friend-list-item:hover {
-    background-color: #297bcd; /* Light gray background color on hover */
+    background-color: #297bcd;  Light gray background color on hover 
 }
 
-/* Add custom scrollbar styles */
+ Add custom scrollbar styles 
 .friend-list {
-    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-y: auto;  Enable vertical scrolling 
     margin-top: 30px
 }
 
 .add-icon{
-    margin-left: auto; /* Push the icon to the right */
+    margin-left: auto;  Push the icon to the right 
     color: #ffffff;
     cursor: pointer;
 }
 .add-icon:hover {
-    color: #f80c18; /* Change color on hover */
+    color: #f80c18;  Change color on hover 
 }

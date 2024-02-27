@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
 
@@ -19,7 +20,7 @@ public class AddFriendRequest : PageModel
     public async Task OnGet()
     {
         var clientId = HttpContext.Session.GetString(SessionConstants.USER_ID);
-        var invitationList =  await _friendShipService.GetFriendInvitation(new Guid(clientId));
+        var invitationList =  (await _friendShipService.GetFriendInvitation(new Guid(clientId))).Include(c => c.Sender);
         TempData["invitationList"] = invitationList.AsEnumerable();
     }
 

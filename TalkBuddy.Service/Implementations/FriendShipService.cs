@@ -31,6 +31,8 @@ public class FriendShipService : IFriendShipService
                 (x.SenderID == friendShip.SenderID && x.ReceiverId == friendShip.ReceiverId)||
                 (x.SenderID == friendShip.ReceiverId && x.ReceiverId == friendShip.SenderID));
             x.Status = FriendShipRequestStatus.WAITING;
+            x.SenderID = friendShip.SenderID;
+            x.ReceiverId = friendShip.ReceiverId;
             await _friendShipRepository.UpdateAsync(x);
             await _unitOfWork.CommitAsync();
         }
@@ -79,7 +81,7 @@ public class FriendShipService : IFriendShipService
     public async Task CancelInvitation(Guid senderId, Guid receiverId)
     {
         var friendship =
-            await _friendShipRepository.GetAsync(x => x.SenderID == senderId && x.ReceiverId == receiverId);
+        await _friendShipRepository.GetAsync(x => x.SenderID == senderId && x.ReceiverId == receiverId);
         friendship.Status = FriendShipRequestStatus.CANCEL;
         await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
@@ -88,6 +90,7 @@ public class FriendShipService : IFriendShipService
     public async Task<IEnumerable<Client>> GetClientFriends(Guid clientId)
     {
         var friendships = await (await _friendShipRepository.GetAllAsync())
+            .Where(fs => fs.Status == FriendShipRequestStatus.ACCEPTED)
             .Include(fs => fs.Sender)
             .Include(fs => fs.Receiver)
             .ToListAsync();
@@ -99,5 +102,16 @@ public class FriendShipService : IFriendShipService
 
             return fs.Sender;
         });
+    }
+
+    public async Task DeleteFriendShip(Guid friendId, Guid clientId)
+    {
+        var x = await _friendShipRepository.GetAsync(x =>
+               (x.SenderID == friendId && x.ReceiverId == clientId) ||
+               (x.SenderID == clientId && x.ReceiverId == friendId));
+
+        x.Status = FriendShipRequestStatus.REJECTED;
+        await _friendShipRepository.UpdateAsync(x);
+        await _unitOfWork.CommitAsync();
     }
 }

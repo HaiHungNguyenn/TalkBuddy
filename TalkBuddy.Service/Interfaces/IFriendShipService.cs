@@ -17,4 +17,5 @@ public interface IFriendShipService
     Task RejectFriendInvitation(Guid friendShipId);
     Task CancelInvitation(Guid senderId, Guid receiver);
     Task<IEnumerable<Client>> GetClientFriends(Guid clientId);
+    Task DeleteFriendShip(Guid friendId, Guid guid);
 }

@@ -1,0 +1,30 @@
+﻿<style>
+    .popup {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.4);
+    }
+</style>
+
+<div class="popup">
+    <div class="bg-white p-4 rounded-2" style="box-shadow: 10px 10px 20px 0px rgba(0, 0, 0, 0.6);">
+        <p>@Message</p>
+        <div class="d-flex justify-content-end">
+            <div class="d-flex gap-3">
+                <button class="btn btn-secondary" onclick="hidePopup()">No</button>
+                <button class="btn btn-danger" onclick="confirmPopup()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Message { get; set; } = "Message";
+}
