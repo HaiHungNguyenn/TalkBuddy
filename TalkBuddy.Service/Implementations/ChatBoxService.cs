@@ -1,4 +1,5 @@
-﻿using TalkBuddy.DAL.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Service.Interfaces;
 
@@ -14,7 +15,7 @@ namespace TalkBuddy.Service.Implementations
         }
         public async Task<ChatBox> GetChatBoxAsync(Guid chatBoxId)
         {
-            return _unitOfWork.ChatBoxRepository.FindAsync(x=>x.Id == chatBoxId).Result.FirstOrDefault();   
+            return _unitOfWork.ChatBoxRepository.Find(x => x.Id == chatBoxId).Include(x => x.Messages).FirstOrDefault();  
         }
     }
 }

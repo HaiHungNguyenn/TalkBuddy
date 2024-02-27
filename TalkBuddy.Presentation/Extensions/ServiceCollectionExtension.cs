@@ -14,7 +14,7 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IClientService, ClientService>();
-
+        services.AddScoped<IClientChatBoxService, ClientChatBoxService>();
         services.AddScoped<IChatBoxService, ChatBoxService>();
         services.AddScoped<IMessageService, MessageService>();
 

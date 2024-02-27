@@ -15,7 +15,7 @@ namespace TalkBuddy.Presentation.SignalR
         {
             var httpContext = Context.GetHttpContext();
             var chatBoxId = httpContext.Request.Query["chatBox"];
-           // await Groups.AddToGroupAsync()
+           
         }
     }
 }
