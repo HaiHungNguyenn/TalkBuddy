@@ -13,48 +13,68 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            border: 0;
         }
 
         .nav-item:hover {
             background-color: lightgrey;
             border-radius: 0.5rem;
         }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 4fr;
+        }
+
+        .fw-semibold {
+            font-weight: 600;
+        }
+
+        .nav-item-container {
+            display: grid;
+            grid-template-columns: 1fr 9fr;
+        }
     </style>
 </head>
 <body class="bg-color">
 
-<div class="d-flex justify-content-between" style="height: 100dvh;">
+<div class="layout" style="height: 100vh;">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 align-items-start h-100" style="background-color:#41404F">
             <div class="container d-flex flex-column justify-content-start gap-4">
-                <a class="navbar-brand" asp-area="" asp-page="/Index"><img width="80px" height="80px" src="img/TalkBuddy.png"/></a>
+                <a class="navbar-brand" asp-area="" asp-page="/Index"><img width="100px" height="100px" src="img/TalkBuddy.png"/></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1 flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Chat">Chat</a>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between w-100">
+                    <ul class="navbar-nav flex-grow-1 flex-column fs-5">
+                        <li class="nav-item nav-item-container align-items-center px-2">
+                            <i class="fa-solid fa-message add-icon text-primary"></i>
+                            <a class="nav-link text-dark w-100 fw-semibold" asp-area="" asp-page="/ChatPage">Chat</a>
                         </li>
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-page="/FriendsList">Friends</a>
+                        <li class="nav-item nav-item-container align-items-center px-2">
+                            <i class="fa-solid fa-user-group add-icon text-primary"></i>
+                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/FriendsList">Friends</a>
 						</li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/AddFriendPage">Add Friend</a>
+                        <li class="nav-item nav-item-container align-items-center px-2">
+                            <i class="fa-solid fa-user-plus add-icon text-primary"></i>
+                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/AddFriendPage">Add Friend</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/AddFriendRequest">Friend Invitations</a>
+                        <li class="nav-item nav-item-container align-items-center px-2">
+                            <i class="fa-solid fa-envelope-open add-icon text-primary"></i>
+                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/AddFriendRequest">Friend Invitations</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Profile">Profile</a>
+                        <li class="nav-item nav-item-container align-items-center px-2">
+                            <i class="fa-solid fa-user add-icon text-primary"></i>
+                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/Profile">Profile</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container" >
+    <div class="bg-primary" >
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
