@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using TalkBuddy.Common.Constants;
-using TalkBuddy.Presentation.Pages;
 
 namespace TalkBuddy.Presentation.Middleware
 {

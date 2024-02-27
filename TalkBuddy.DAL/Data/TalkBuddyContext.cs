@@ -1,5 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+
+using System.Security.Principal;
+using Microsoft.Extensions.Configuration;
+using TalkBuddy.DAL.Interfaces;
+
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Entities.BaseEntities;
 
@@ -15,14 +20,19 @@ public partial class TalkBuddyContext : DbContext
     public DbSet<Media> Medias { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Report> Reports { get; set; }
-
+    public TalkBuddyContext()
+    {
+    }
     public TalkBuddyContext(DbContextOptions<TalkBuddyContext> options) : base(options)
     {
         
     }
-    public TalkBuddyContext()
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        
+        if (optionsBuilder.IsConfigured) return;
+        optionsBuilder.UseSqlServer(new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.Development.json").Build() .GetConnectionString("DefaultConnection"));
+        base.OnConfiguring(optionsBuilder);
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -30,17 +40,16 @@ public partial class TalkBuddyContext : DbContext
         
 
         modelBuilder.Entity<Friendship>()
-            .HasOne(f => f.Client1)
+            .HasOne(f => f.Sender)
             .WithMany(u => u.Friends)
-            .HasForeignKey(f => f.Client1Id)
+            .HasForeignKey(f => f.SenderID)
             .OnDelete(DeleteBehavior.NoAction);
 
 
         modelBuilder.Entity<Friendship>()
-            .HasOne(f => f.Client2)
+            .HasOne(f => f.Receiver)
             .WithMany()
-            .HasForeignKey(f => f.Client2Id);
-        
+            .HasForeignKey(f => f.ReceiverId);
 
         modelBuilder.Entity<Report>()
                 .HasOne(x => x.InformantClient)
