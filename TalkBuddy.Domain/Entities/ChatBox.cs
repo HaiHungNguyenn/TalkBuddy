@@ -14,4 +14,5 @@ public partial class ChatBox : BaseEntity<Guid>
     public Guid GroupCreatorId { get; set; }
     public virtual Client GroupCreator { get; set; } = null!;
     public virtual ICollection<ClientChatBox> ClientChatBoxes { get; set; } = new List<ClientChatBox>();
+ 
 }

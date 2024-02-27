@@ -1,10 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Data;
+
 using TalkBuddy.DAL.Implementations;
 using TalkBuddy.DAL.Interfaces;
+
 using TalkBuddy.Presentation.Extensions;
 using TalkBuddy.Presentation.Middleware;
-using TalkBuddy.Service.SignalRHub;
+using TalkBuddy.Presentation.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,11 +40,13 @@ app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => {
-    endpoints.MapHub<ChatHub>("/chat");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
+    endpoints.MapHub<ChatHub>($"/hubs/{nameof(ChatHub)}");
 });
 
-app.MapRazorPages();
+
 
 app.Run();
 

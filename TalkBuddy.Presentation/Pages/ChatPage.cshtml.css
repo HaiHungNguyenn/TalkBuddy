@@ -1,0 +1,336 @@
+﻿
+.screen7-screen7 {
+    width: 100%;
+    height: 1024px;
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+    background-color: rgba(10, 10, 20, 1);
+}
+
+.left-container {
+    top: 70px;
+    left: 70px;
+    width: 413px;
+    height: 884px;
+    display: flex;
+    overflow: hidden;
+    position: absolute;
+    align-items: flex-start;
+    flex-shrink: 0;
+    background-color: rgba(26, 25, 35, 1);
+}
+
+.screen7-frame18 {
+    gap: 32px;
+    top: 147px;
+    left: 22px;
+    width: 369px;
+    display: flex;
+    position: absolute;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.screen7-frame14 {
+    gap: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen7-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    position: relative;
+    box-sizing: content-box;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+
+.screen7-text {
+    color: rgba(245, 237, 245, 1);
+    height: auto;
+    font-size: 20px;
+    font-style: Medium;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.screen7-frame10 {
+    gap: 10px;
+    width: 369px;
+    height: 70px;
+    display: flex;
+    padding: 15px 9px 15px 15px;
+    overflow: hidden;
+    align-items: flex-start;
+    flex-shrink: 0;
+    border-radius: 3px;
+    flex-direction: column;
+    background-color: rgba(59, 55, 78, 1);
+}
+
+.screen7-frame16 {
+    gap: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen7-avatar1 {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    position: relative;
+    box-sizing: content-box;
+    align-items: flex-start;
+    flex-shrink: 0;
+    border-radius: 50px;
+}
+
+.screen7-text02 {
+    color: rgba(245, 237, 245, 1);
+    height: auto;
+    font-size: 20px;
+    font-style: Medium;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+
+.screen7-text08 {
+    top: 72px;
+    left: 98px;
+    color: rgba(251, 253, 245, 1);
+    height: auto;
+    position: absolute;
+    font-size: 24px;
+    font-style: SemiBold;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 600;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.chat-box-container {
+    gap: 10px;
+    top: 379px;
+    left: 754px;
+    width: 415px;
+    display: flex;
+    position: absolute;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.screen7-robot1 {
+    width: 200px;
+    height: 200px;
+}
+
+.screen7-text10 {
+    color: rgba(254, 252, 243, 1);
+    height: auto;
+    font-size: 26px;
+    font-style: SemiBold;
+    text-align: center;
+    font-family: Roboto;
+    font-weight: 600;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.screen7-text11 {
+    color: rgba(254, 252, 243, 1);
+}
+
+.screen7-text12 {
+    color: rgba(68, 26, 211, 1);
+}
+
+.screen8-frame22 {
+    gap: 620px;
+    top: 70px;
+    left: 523px;
+    width: 857px;
+    display: flex;
+    position: absolute;
+    align-items: center;
+}
+
+.screen8-frame21 {
+    gap: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.screen8-avatar4 {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.screen8-frame19 {
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    overflow: hidden;
+    position: absolute;
+    align-items: flex-start;
+    flex-shrink: 0;
+    border-radius: 5px;
+    background-color: rgba(154, 133, 251, 1);
+}
+
+.screen8-powersettingsnew {
+    top: 4px;
+    left: 4px;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+}
+
+.screen8-frame26 {
+    gap: 25px;
+    top: 919px;
+    left: 523px;
+    width: 857px;
+    display: flex;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+}
+
+.screen8-smile {
+    width: 30px;
+    height: 30px;
+}
+
+.screen8-frame25 {
+    width: 802px;
+    height: 35px;
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+
+.screen8-rectangle2 {
+    top: 0px;
+    left: 0px;
+    width: 800px;
+    height: 35px;
+    position: absolute;
+    border-radius: 50px;
+}
+
+.screen8-frame23 {
+    gap: 560px;
+    top: 0px;
+    left: 15px;
+    width: 787px;
+    display: flex;
+    position: absolute;
+    align-items: center;
+}
+
+.screen8-text12 {
+    color: rgba(129, 133, 143, 1);
+    height: auto;
+    font-size: 15px;
+    font-style: Medium;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.screen8-group21 {
+    width: 63px;
+    height: 35px;
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    flex-shrink: 1;
+    background-color: rgba(154, 133, 251, 1);
+}
+
+.screen8-send {
+    top: 4px;
+    left: 18px;
+    width: 28px;
+    height: 28px;
+    position: absolute;
+}
+
+.screen8-group3 {
+    top: 140px;
+    left: 1250px;
+    width: 130px;
+    height: 60px;
+    display: flex;
+    position: absolute;
+    align-items: flex-start;
+    flex-shrink: 1;
+    background-color: rgba(22, 6, 75, 1);
+}
+
+.screen8-text14 {
+    top: 16px;
+    left: 53px;
+    color: rgba(230, 230, 230, 1);
+    height: auto;
+    position: absolute;
+    font-size: 24px;
+    font-style: SemiBold;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 600;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.screen8-text10 {
+    color: rgba(245, 237, 245, 1);
+    height: auto;
+    font-size: 20px;
+    font-style: Medium;
+    text-align: left;
+    font-family: Roboto;
+    font-weight: 500;
+    line-height: normal;
+    font-stretch: normal;
+    text-decoration: none;
+}
+
+.screen8-group2 {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    position: relative;
+    align-items: flex-start;
+    flex-shrink: 1;
+}

@@ -1,0 +1,247 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Chit</title>
+
+    <style data-tag="reset-style-sheet">
+        html {
+            line-height: 1.15;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            border-width: 0;
+            border-style: solid;
+        }
+
+        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
+            margin: 0;
+            padding: 0;
+        }
+
+        button {
+            background-color: transparent;
+        }
+
+        button, input, optgroup, select, textarea {
+            font-family: inherit;
+            font-size: 100%;
+            line-height: 1.15;
+            margin: 0;
+        }
+
+        button, select {
+            text-transform: none;
+        }
+
+        button, [type="button"], [type="reset"], [type="submit"] {
+            -webkit-appearance: button;
+        }
+
+            button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
+                border-style: none;
+                padding: 0;
+            }
+
+            button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {
+                outline: 1px dotted ButtonText;
+            }
+
+        a {
+            color: inherit;
+            text-decoration: inherit;
+        }
+
+        input {
+            padding: 2px 4px;
+        }
+
+        img {
+            display: block;
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+    </style>
+    <style data-tag="default-style-sheet">
+        html {
+            font-family: Inter;
+            font-size: 16px;
+        }
+
+        body {
+            font-weight: 400;
+            font-style: normal;
+            text-decoration: none;
+            text-transform: none;
+            letter-spacing: normal;
+            line-height: 1.15;
+            color: var(--dl-color-gray-black);
+            background-color: var(--dl-color-gray-white);
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet"
+          href="https://unpkg.com/animate.css@4.1.1/animate.css" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+          data-tag="font" />
+    <link rel="stylesheet"
+          href="https://unpkg.com/@teleporthq/teleport-custom-scripts/dist/style.css" />
+</head>
+<body>
+
+    <link href="~/ChatPage.cshtml.css" rel="stylesheet" />
+
+    <div class="screen7-screen7">
+        <div class="left-container">
+            <div class="screen7-frame18">
+                <div>
+                    <div class="screen7-frame14" onclick="replaceDiv()">
+                        <div class="screen7-avatar">
+
+                            <img alt="Vector2670"
+                                 src="public/external/vector2670-0kto.svg"
+                                 class="screen7-vector20" />
+
+                        </div>
+                        <span class="screen7-text"><span>avi_chovatiya</span></span>
+                    </div>
+                </div>
+                <div class="screen7-frame10">
+                    <div class="screen7-frame16">
+                        <div class="screen7-avatar1">
+                            <div class="screen7-frame11">
+                                <img alt="Vector2670"
+                                     src="public/external/vector2670-0kto.svg"
+                                     class="screen7-vector20" />
+                            </div>
+                        </div>
+                        <span class="screen7-text02"><span>kishu_patel68</span></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <span class="screen7-text08"><span>CHIT CHAT</span></span>
+        </div>
+        <div class="chat-window hidden">
+            <div class="screen8-frame22">
+                <div class="screen8-frame21">
+                    <div class="screen8-avatar4">
+                        <img src="public/external/vector2858-hs2.svg"
+                             alt="Vector2858"
+                             class="screen8-vector68" />
+                    </div>
+                    <span class="screen8-text10"><span>avi_chovatiya67</span></span>
+                </div>
+                <div class="screen8-group2">
+                    <div class="screen8-frame19">
+                        <img src="public/external/powersettingsnew2884-dwc.svg"
+                             alt="Powersettingsnew2884"
+                             class="screen8-powersettingsnew" />
+                    </div>
+                </div>
+            </div>
+            <div class="screen8-frame26">
+                <img src="https://aheioqhobo.cloudimg.io/v7/_playground-bucket-v2.teleporthq.io_/66053f34-6bb3-4397-b4da-407eda394ce3/2dc0792e-ed01-4084-88b6-f7ac3a44d433?org_if_sml=11361&amp;force_format=original"
+                     alt="Smile2888"
+                     class="screen8-smile" />
+                <div class="screen8-frame25">
+                    <img src="https://aheioqhobo.cloudimg.io/v7/_playground-bucket-v2.teleporthq.io_/66053f34-6bb3-4397-b4da-407eda394ce3/d6fdcdf0-25d0-4c49-ac99-30f68bb088a0?org_if_sml=1856&amp;force_format=original"
+                         alt="Rectangle22890"
+                         class="screen8-rectangle2" />
+                    <div class="screen8-frame23">
+                        <span class="screen8-text12">
+                            <span>Type your message here</span>
+                        </span>
+                        <div class="screen8-group21">
+                            <img src="public/external/send2895-qt9u.svg"
+                                 alt="Send2895"
+                                 class="screen8-send" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="screen8-group3">
+                <span class="screen8-text14"><span>Hi</span></span>
+            </div>
+        </div>
+        <div class="chat-box-container">
+            <img alt="robot12744"
+                 src="public/external/robot12744-v1y-200h.png"
+                 class="screen7-robot1" />
+            <span class="screen7-text10">
+                <span class="screen7-text11">Welcome,</span>
+                <span class="screen7-text12">
+                    <span>Richa_denials!</span>
+                    <br />
+                    <span></span>
+                </span>
+                <span>please select a chat to start messaging.</span>
+            </span>
+        </div>
+    </div>
+    <script>
+             function replaceDiv() {
+          var windows = document.getElementsByClassName('chat-box-container');
+          var inChats = document.getElementsByClassName('chat-window');
+
+          // Loop through each chat window
+          for (var i = 0; i < inChats.length; i++) {
+            var inChat = inChats[i];
+            var window = windows[i];
+
+            if (inChat.classList.contains('hidden')) {
+              inChat.classList.remove('hidden');
+              window.style.display = 'none';
+            } else {
+              inChat.classList.add('hidden');
+              window.style.display = 'flex';
+            }
+          }
+        }
+    </script>
+</body>
+
+</html>

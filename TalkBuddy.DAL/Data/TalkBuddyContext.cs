@@ -1,8 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+
 using System.Security.Principal;
 using Microsoft.Extensions.Configuration;
 using TalkBuddy.DAL.Interfaces;
+
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Entities.BaseEntities;
 
