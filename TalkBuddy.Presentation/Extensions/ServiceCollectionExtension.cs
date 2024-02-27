@@ -14,13 +14,8 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IClientRepository, ClientRepository>();
         services.AddScoped<IClientService, ClientService>();
-
-        services.AddScoped<IChatBoxService, ChatBoxService>();
-        services.AddScoped<IMessageService, MessageService>();
-
         services.AddScoped<IFriendShipRepository, FriendShipRepository>();
         services.AddScoped<IFriendShipService, FriendShipService>();
-
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();

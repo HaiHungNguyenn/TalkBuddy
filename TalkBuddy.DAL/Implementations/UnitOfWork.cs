@@ -9,15 +9,8 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
     public UnitOfWork(TalkBuddyContext dbContext)
     {
-        _dbContext = dbContext;   
-        ChatBoxRepository = new ChatBoxRepository(_dbContext);
-        MessageRepository = new MessageRepository(_dbContext);
+        _dbContext = dbContext;
     }
-    public IMessageRepository MessageRepository { get; set; }
-
-    public IChatBoxRepository ChatBoxRepository { get; set; }
-
-    public IUserConnectionRepository UserConnectionRepository => new UserConnectionRepository(_dbContext);
 
     public void Commit()
     {
