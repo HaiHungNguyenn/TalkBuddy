@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TalkBuddy.Presentation.Pages
 {
-    public class ChatPageModel : PageModel
+    public class ChatPage : PageModel
     {
         public void OnGet()
         {

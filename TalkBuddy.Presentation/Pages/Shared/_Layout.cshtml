@@ -23,11 +23,12 @@
 
         .layout {
             display: grid;
-            grid-template-columns: 1fr 4fr;
+            grid-template-columns: 1fr 5fr;
         }
 
         .fw-semibold {
             font-weight: 600;
+            opacity: 0.75;
         }
 
         .nav-item-container {
@@ -74,11 +75,11 @@
             </div>
         </nav>
     </header>
-    <div class="bg-primary" >
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <main role="main">
+        @RenderBody()
+    </main>
+    @*<div class="bg-primary" >
+    </div>*@
 </div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>

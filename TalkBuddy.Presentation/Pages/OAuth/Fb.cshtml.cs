@@ -37,7 +37,7 @@ namespace TalkBuddy.Presentation.Pages.OAuth
                 HttpContext.Session.SetString(SessionConstants.USER_ID, user.Id.ToString());
                 HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
 
-                return RedirectToPage($"/{nameof(Index)}");
+                return RedirectToPage($"/{nameof(ChatPage)}");
             }
             catch (Exception ex)
             {
