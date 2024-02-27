@@ -34,6 +34,11 @@
         .nav-item-container {
             display: grid;
             grid-template-columns: 1fr 9fr;
+            transition: background-color 0.3s ease-out;
+        }
+
+        .nav-icon {
+            color: #a160fe;
         }
     </style>
 </head>
@@ -51,23 +56,23 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between w-100">
                     <ul class="navbar-nav flex-grow-1 flex-column fs-5">
                         <li class="nav-item nav-item-container align-items-center px-2">
-                            <i class="fa-solid fa-message add-icon text-primary"></i>
+                            <i class="fa-solid fa-message add-icon nav-icon"></i>
                             <a class="nav-link text-dark w-100 fw-semibold" asp-area="" asp-page="/ChatPage">Chat</a>
                         </li>
                         <li class="nav-item nav-item-container align-items-center px-2">
-                            <i class="fa-solid fa-user-group add-icon text-primary"></i>
+                            <i class="fa-solid fa-user-group add-icon nav-icon"></i>
                             <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/FriendsList">Friends</a>
 						</li>
                         <li class="nav-item nav-item-container align-items-center px-2">
-                            <i class="fa-solid fa-user-plus add-icon text-primary"></i>
+                            <i class="fa-solid fa-user-plus add-icon nav-icon"></i>
                             <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/AddFriendPage">Add Friend</a>
                         </li>
                         <li class="nav-item nav-item-container align-items-center px-2">
-                            <i class="fa-solid fa-envelope-open add-icon text-primary"></i>
+                            <i class="fa-solid fa-envelope-open add-icon nav-icon"></i>
                             <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/AddFriendRequest">Friend Invitations</a>
                         </li>
                         <li class="nav-item nav-item-container align-items-center px-2">
-                            <i class="fa-solid fa-user add-icon text-primary"></i>
+                            <i class="fa-solid fa-user add-icon nav-icon"></i>
                             <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/Profile">Profile</a>
                         </li>
                     </ul>
@@ -78,8 +83,6 @@
     <main role="main">
         @RenderBody()
     </main>
-    @*<div class="bg-primary" >
-    </div>*@
 </div>
 
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
