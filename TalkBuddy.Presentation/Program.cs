@@ -38,23 +38,13 @@ app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
-<<<<<<< HEAD
 app.UseEndpoints(endpoints => {
     endpoints.MapHub<ChatHub>("/chat");
-=======
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages();
-    endpoints.MapHub<ChatHub>("/chat");
-  
->>>>>>> 8a81058 (update js signalR)
 });
 
-<<<<<<< HEAD
+// Add pages to the web app.
 app.MapRazorPages();
 
-=======
->>>>>>> 978bd02 (update hub, add js)
 app.Run();
 
 void EnsureMigrate(WebApplication webApp)
