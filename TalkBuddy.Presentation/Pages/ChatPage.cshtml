@@ -1,7 +1,7 @@
 ﻿@page
 @model TalkBuddy.Presentation.Pages.ChatPageModel
 @{
-    
+
 }
 <html lang="en">
 <head>
@@ -9,566 +9,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Chit</title>
 
-    <style data-tag="reset-style-sheet">
-        html {
-            line-height: 1.15;
-        }
-
-        body {
-            margin: 0;
-        }
-
-        * {
-            box-sizing: border-box;
-            border-width: 0;
-            border-style: solid;
-        }
-
-        p, li, ul, pre, div, h1, h2, h3, h4, h5, h6, figure, blockquote, figcaption {
-            margin: 0;
-            padding: 0;
-        }
-
-        button {
-            background-color: transparent;
-        }
-
-        button, input, optgroup, select, textarea {
-            font-family: inherit;
-            font-size: 100%;
-            line-height: 1.15;
-            margin: 0;
-        }
-
-        button, select {
-            text-transform: none;
-        }
-
-        button, [type="button"], [type="reset"], [type="submit"] {
-            -webkit-appearance: button;
-        }
-
-            button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner {
-                border-style: none;
-                padding: 0;
-            }
-
-            button:-moz-focus, [type="button"]:-moz-focus, [type="reset"]:-moz-focus, [type="submit"]:-moz-focus {
-                outline: 1px dotted ButtonText;
-            }
-
-        a {
-            color: inherit;
-            text-decoration: inherit;
-        }
-
-        input {
-            padding: 2px 4px;
-        }
-
-        img {
-            display: block;
-        }
-
-        html {
-            scroll-behavior: smooth
-        }
-    </style>
-    <style data-tag="default-style-sheet">
-        html {
-            font-family: Inter;
-            font-size: 16px;
-        }
-
-        body {
-            font-weight: 400;
-            font-style: normal;
-            text-decoration: none;
-            text-transform: none;
-            letter-spacing: normal;
-            line-height: 1.15;
-            color: var(--dl-color-gray-black);
-            background-color: var(--dl-color-gray-white);
-        }
-
-        .hidden {
-            display: none;
-        }
-
-
-        .screen7-screen7 {
-            width: 100%;
-            height: 1024px;
-            display: flex;
-            position: relative;
-            flex-shrink: 0;
-            background-color: rgba(10, 10, 20, 1);
-        }
-
-        .left-container {
-            top: 70px;
-            left: 70px;
-            width: 413px;
-            height: 884px;
-            display: flex;
-            overflow: hidden;
-            position: absolute;
-            align-items: flex-start;
-            flex-shrink: 0;
-            background-color: rgba(26, 25, 35, 1);
-        }
-
-        .screen7-frame18 {
-            gap: 32px;
-            top: 147px;
-            left: 22px;
-            width: 369px;
-            display: flex;
-            position: absolute;
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        .screen7-frame14 {
-            gap: 21px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .screen7-avatar {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            position: relative;
-            box-sizing: content-box;
-            align-items: flex-start;
-            flex-shrink: 0;
-        }
-
-
-        .screen7-text {
-            color: rgba(245, 237, 245, 1);
-            height: auto;
-            font-size: 20px;
-            font-style: Medium;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 500;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .screen7-frame10 {
-            gap: 10px;
-            width: 369px;
-            height: 70px;
-            display: flex;
-            padding: 15px 9px 15px 15px;
-            overflow: hidden;
-            align-items: flex-start;
-            flex-shrink: 0;
-            border-radius: 3px;
-            flex-direction: column;
-            background-color: rgba(59, 55, 78, 1);
-        }
-
-        .screen7-frame16 {
-            gap: 17px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .screen7-avatar1 {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            position: relative;
-            box-sizing: content-box;
-            align-items: flex-start;
-            flex-shrink: 0;
-            border-radius: 50px;
-        }
-
-        .screen7-text02 {
-            color: rgba(245, 237, 245, 1);
-            height: auto;
-            font-size: 20px;
-            font-style: Medium;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 500;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-
-        .screen7-text08 {
-            top: 72px;
-            left: 98px;
-            color: rgba(251, 253, 245, 1);
-            height: auto;
-            position: absolute;
-            font-size: 24px;
-            font-style: SemiBold;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 600;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .chat-box-container {
-            gap: 10px;
-            top: 379px;
-            left: 754px;
-            width: 415px;
-            display: flex;
-            position: absolute;
-            align-items: center;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .screen7-robot1 {
-            width: 200px;
-            height: 200px;
-        }
-
-        .screen7-text10 {
-            color: rgba(254, 252, 243, 1);
-            height: auto;
-            font-size: 26px;
-            font-style: SemiBold;
-            text-align: center;
-            font-family: Roboto;
-            font-weight: 600;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .screen7-text11 {
-            color: rgba(254, 252, 243, 1);
-        }
-
-        .screen7-text12 {
-            color: rgba(68, 26, 211, 1);
-        }
-
-        .screen8-frame22 {
-            gap: 620px;
-            top: 70px;
-            left: 523px;
-            width: 857px;
-            display: flex;
-            position: absolute;
-            align-items: center;
-        }
-
-        .screen8-frame21 {
-            gap: 14px;
-            display: flex;
-            align-items: center;
-        }
-
-        .screen8-avatar4 {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            position: relative;
-            align-items: flex-start;
-            flex-shrink: 0;
-        }
-
-        .screen8-frame19 {
-            top: 0px;
-            left: 0px;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            overflow: hidden;
-            position: absolute;
-            align-items: flex-start;
-            flex-shrink: 0;
-            border-radius: 5px;
-            background-color: rgba(154, 133, 251, 1);
-        }
-
-        .screen8-powersettingsnew {
-            top: 4px;
-            left: 4px;
-            width: 32px;
-            height: 32px;
-            position: absolute;
-        }
-
-        .screen8-frame26 {
-            gap: 25px;
-            top: 919px;
-            left: 523px;
-            width: 857px;
-            display: flex;
-            position: absolute;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .screen8-smile {
-            width: 30px;
-            height: 30px;
-        }
-
-        .screen8-frame25 {
-            width: 802px;
-            height: 35px;
-            display: flex;
-            position: relative;
-            align-items: flex-start;
-            flex-shrink: 0;
-        }
-
-        .screen8-rectangle2 {
-            top: 0px;
-            left: 0px;
-            width: 800px;
-            height: 35px;
-            position: absolute;
-            border-radius: 50px;
-        }
-
-        .screen8-frame23 {
-            gap: 560px;
-            top: 0px;
-            left: 15px;
-            width: 787px;
-            display: flex;
-            position: absolute;
-            align-items: center;
-        }
-
-        .screen8-text12 {
-            color: rgba(129, 133, 143, 1);
-            height: auto;
-            font-size: 15px;
-            font-style: Medium;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 500;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .screen8-group21 {
-            width: 63px;
-            height: 35px;
-            display: flex;
-            position: relative;
-            align-items: flex-start;
-            flex-shrink: 1;
-            background-color: rgba(154, 133, 251, 1);
-        }
-
-        .screen8-send {
-            top: 4px;
-            left: 18px;
-            width: 28px;
-            height: 28px;
-            position: absolute;
-        }
-
-        .screen8-group3 {
-            top: 140px;
-            left: 1250px;
-            width: 130px;
-            height: 60px;
-            display: flex;
-            position: absolute;
-            align-items: flex-start;
-            flex-shrink: 1;
-            background-color: rgba(22, 6, 75, 1);
-        }
-
-        .screen8-text14 {
-            top: 16px;
-            left: 53px;
-            color: rgba(230, 230, 230, 1);
-            height: auto;
-            position: absolute;
-            font-size: 24px;
-            font-style: SemiBold;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 600;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .screen8-text10 {
-            color: rgba(245, 237, 245, 1);
-            height: auto;
-            font-size: 20px;
-            font-style: Medium;
-            text-align: left;
-            font-family: Roboto;
-            font-weight: 500;
-            line-height: normal;
-            font-stretch: normal;
-            text-decoration: none;
-        }
-
-        .screen8-group2 {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            position: relative;
-            align-items: flex-start;
-            flex-shrink: 1;
-        }
-
-    </style>
-    <link rel="stylesheet"
-          href="https://unpkg.com/animate.css@4.1.1/animate.css" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
-          data-tag="font" />
-    <link rel="stylesheet" href="~/ChatPage.cshtml.css" />
 </head>
 <body>
 
-    <div class="screen7-screen7">
+    <div>
         <div class="left-container">
-            <div class="screen7-frame18">
+            <div>
                 <ul id="chatBoxtList">
-                    <li onclick="requestMessagesForChatBox(1)">
-                        <div class="screen7-frame14">
-                            <div class="screen7-avatar">
-
-                                <img alt="Vector2670"
-                                     src="public/external/vector2670-0kto.svg"
-                                     class="screen7-vector20" />
-
-                            </div>
-                            <span class="screen7-text"><span>avi_chovatiya</span></span>
-                        </div>
-                    </li>
                     <li>
-                        <div class="screen7-frame10">
-                            <div class="screen7-frame16">
-                                <div class="screen7-avatar1">
-                                    <div class="screen7-frame11">
-                                        <img alt="Vector2670"
-                                             src="public/external/vector2670-0kto.svg"
-                                             class="screen7-vector20" />
-                                    </div>
-                                </div>
-                                <span class="screen7-text02"><span>kishu_patel68</span></span>
-                            </div>
+                        <div>
+                            <img alt="Vector2670"
+                                 src="public/external/vector2670-0kto.svg" />
                         </div>
+                        <span><span>avi_chovatiya</span></span>
+                    </li>
+
+                    <li>
+                        <div>
+                            <img alt="Vector2670"
+                                 src="public/external/vector2670-0kto.svg" />
+                        </div>
+
+                        <span><span>kishu_patel68</span></span>
                     </li>
                 </ul>
-
-
             </div>
 
-            <span class="screen7-text08"><span>CHIT CHAT</span></span>
+            <span><span class="logo">CHIT CHAT</span></span>
         </div>
+
         <div class="chat-window ">
-            <div class="screen8-frame22">
-                <div class="screen8-frame21">
-                    <div class="screen8-avatar4">
-                        <img src="public/external/vector2858-hs2.svg"
-                             alt="Vector2858"
-                             class="screen8-vector68" />
-                    </div>
-                    <span class="screen8-text10"><span>avi_chovatiya67</span></span>
+            <div>
+                <div class="avatar-of-chat">
+                    <img src="public/external/vector2858-hs2.svg"
+                         alt="Vector2858" />
                 </div>
-                <div class="screen8-group2">
-                    <div class="screen8-frame19">
+                <span class="name-of-chat"><span>avi_chovatiya67</span></span>
+
+                <div>
+                    <div class="setting">
                         <img src="public/external/powersettingsnew2884-dwc.svg"
                              alt="Powersettingsnew2884"
                              class="screen8-powersettingsnew" />
                     </div>
                 </div>
             </div>
-            <div class="screen8-frame26">
-                <img src="https://aheioqhobo.cloudimg.io/v7/_playground-bucket-v2.teleporthq.io_/66053f34-6bb3-4397-b4da-407eda394ce3/2dc0792e-ed01-4084-88b6-f7ac3a44d433?org_if_sml=11361&amp;force_format=original"
-                     alt="Smile2888"
-                     class="screen8-smile" />
-                <div class="screen8-frame25">
-                    <img src="https://aheioqhobo.cloudimg.io/v7/_playground-bucket-v2.teleporthq.io_/66053f34-6bb3-4397-b4da-407eda394ce3/d6fdcdf0-25d0-4c49-ac99-30f68bb088a0?org_if_sml=1856&amp;force_format=original"
-                         alt="Rectangle22890"
-                         class="screen8-rectangle2" />
-                    <div class="screen8-frame23">
-                        <span class="screen8-text12">
-                            <span>
-                                <input placeholder="Type your message here" id="messageInput" />
-                            </span>
+
+            <div>
+                <div>
+                    <span>
+                        <span>
+                            <input placeholder="Type your message here" id="messageInput" />
                         </span>
-                        <div class="screen8-group21" id="sendButton">
-                            <button>
-                                <img src="public/external/send2895-qt9u.svg"
-                                     alt="Send2895"
-                                     class="screen8-send" />
-                            </button>
-                            
-                        </div>
+                    </span>
+                    <div id="sendButton">
+                        <button>
+                            <img src="public/external/send2895-qt9u.svg"
+                                 alt="Send2895" />
+                        </button>
                     </div>
                 </div>
             </div>
 
             <ul id="messages">
                 <li>
-                    <div class="screen8-group3">
+                    <div>
                         <span class="screen8-text14"><span>Hi</span></span>
                     </div>
                 </li>
             </ul>
-
         </div>
-        <div class="chat-box-container hidden">
+
+        <div class="default-chat-box-container hidden">
             <img alt="robot12744"
-                 src="public/external/robot12744-v1y-200h.png"
-                 class="screen7-robot1" />
-            <span class="screen7-text10">
-                <span class="screen7-text11">Welcome,</span>
-                <span class="screen7-text12">
+                 src="public/external/robot12744-v1y-200h.png" />
+            <span>
+                <span>Welcome,</span>
+                <span>
                     <span>Richa_denials!</span>
                     <br />
                     <span></span>
@@ -680,7 +197,7 @@
                 li.id = chatBox.Id;
                 // Append the list item to the chat box list
                 chatBoxList.appendChild(li);
-                
+
             });
         }
 
