@@ -38,12 +38,12 @@ app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => {
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
     endpoints.MapHub<ChatHub>("/chat");
+  
 });
-
-// Add pages to the web app.
-app.MapRazorPages();
 
 app.Run();
 
