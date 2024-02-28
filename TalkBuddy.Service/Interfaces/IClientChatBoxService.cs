@@ -6,5 +6,6 @@ namespace TalkBuddy.Service.Interfaces
     {
         Task<IList<ClientChatBox>> GetClientChatBoxes();
         Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId);
+        Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId);
     }
 }

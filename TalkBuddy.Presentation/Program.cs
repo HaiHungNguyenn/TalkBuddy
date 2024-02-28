@@ -4,7 +4,7 @@ using TalkBuddy.DAL.Implementations;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Presentation.Extensions;
 using TalkBuddy.Presentation.Middleware;
-using TalkBuddy.Service.SignalRHub;
+using TalkBuddy.Presentation.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 

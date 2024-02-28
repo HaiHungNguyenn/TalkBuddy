@@ -7,6 +7,7 @@ public partial class ChatBox : BaseEntity<Guid>
 {
     public string ChatBoxName { get; set; } = null!;
     public DateTime CreatedDate { get; set; }
+    public string? ChatBoxAvatar { get; set; }
     public ChatBoxType Type { get; set; }
 
     
