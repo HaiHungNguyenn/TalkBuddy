@@ -12,8 +12,8 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    [Migration("20240223064636_updateFriendshipProperties")]
-    partial class updateFriendshipProperties
+    [Migration("20240228103947_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -30,6 +30,9 @@ namespace TalkBuddy.DAL.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ChatBoxAvatar")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ChatBoxName")
                         .IsRequired()
@@ -233,6 +236,9 @@ namespace TalkBuddy.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("SentDate")
                         .HasColumnType("datetime2");
 
@@ -243,6 +249,8 @@ namespace TalkBuddy.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatBoxId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
@@ -368,7 +376,15 @@ namespace TalkBuddy.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Sender")
+                        .WithMany("Messages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("ChatBox");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Report", b =>
@@ -408,6 +424,8 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("InChatboxes");
 
                     b.Navigation("InformantClients");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("ReportedClients");
                 });

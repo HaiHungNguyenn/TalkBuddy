@@ -18,5 +18,6 @@ public partial class Client: BaseEntity<Guid>
     public ICollection<ClientChatBox>? InChatboxes { get; set; }
     public ICollection<ChatBox>? CreatedChatBoxes { get; set; }
     public ICollection<ClientMessage>? ClientMessages { get; set; }
+    public ICollection<Message>? Messages { get; set; }
 
 }
