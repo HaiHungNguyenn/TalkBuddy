@@ -14,14 +14,14 @@
     }
 }
 
-<section class="h-100 w-100 d-flex justify-content-center align-items-center p-5">
-    <div class="d-flex flex-column gap-4 justify-content-center align-items-start bg-white p-2 rounded-2 w-50">
-        <h2 class="text-center w-100">Friends list:</h2>
+<section class="h-100 w-100 p-5 d-flex justify-content-center align-items-start" style="background-color: #e4e7f5;">
+    <div class="d-flex flex-column justify-content-center align-items-center h-100" style="width: 30%">
+        <h2 class="text-center">Friends list:</h2>
 
-        <ul class="navbar-nav flex-grow-1 flex-column w-100">
+        <ul class="navbar-nav flex-grow-1 flex-column w-100" style="max-height: 650px; overflow: hidden;">
             @foreach (var friend in friendsList)
             {
-                <li class="nav-item p-2 d-flex justify-content-between align-items-center">
+                <li class="nav-item p-2 d-flex justify-content-between align-items-center" style="cursor: pointer; transition: background-color 0.3s ease-out;">
                     <span>@friend.Name</span>
                     <div class="d-flex justify-content-between gap-2">
                         <form method="post" asp-page-handler="RemoveFriend" asp-route-friendId="@friend.Id">
@@ -36,7 +36,14 @@
                 </li>
             }
         </ul>
-    </div>
+    </div>    
+
+
+    @{
+
+    //<div class="d-flex flex-column gap-4 justify-content-center align-items-start p-2 rounded-2 w-50">
+    //</div>
+    }
 </section>
 
 <div id="popup-container" style="display: none">
