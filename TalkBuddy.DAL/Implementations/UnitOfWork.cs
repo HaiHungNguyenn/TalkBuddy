@@ -12,9 +12,9 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         _dbContext = dbContext;
     }
 
-    public IMessageRepository MessageRepository { get; set; }
+    public IMessageRepository MessageRepository => new MessageRepository(_dbContext);
 
-    public IChatBoxRepository ChatBoxRepository { get; set; }
+    public IChatBoxRepository ChatBoxRepository => new ChatBoxRepository(_dbContext);
 
     public IClientChatBoxRepository ClientChatBoxRepository => new ClientChatBoxRepository(_dbContext);
 

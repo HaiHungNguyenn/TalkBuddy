@@ -225,11 +225,11 @@
             </div>
             <div class="chat-window">
                 <div class="chat-header">
-                    <div class="avatar-of-chat">
+                    
                         <img src="https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp" class="avatar"
                                 alt="Vector2858" />
-                    </div>
-                    <span class="fw-semibold" style="font-size: 2rem;">avi_chovatiya67</span>
+                  
+                    <span class="fw-semibold"  id="sender" style="font-size: 2rem;">avi_chovatiya67</span>
                 </div>
 
                 <ul id="messages">
@@ -269,8 +269,10 @@
 
     connection.on("ReceiveMessage", function (user, message) {
         var li = document.createElement("li");
-        li.textContent = message;
-        
+        console.log(message);
+        console.log(user);
+        li.textContent = user.name + message;
+       
         document.getElementById("messages").appendChild(li);
     });
 
@@ -281,7 +283,7 @@
     });
 
     document.getElementById("sendButton").addEventListener("click", function (event) {
-        var chatBoxId = "2060ffc4-4b04-4015-bc94-1e3599dd675b"; // replace by chat box Id
+        var chatBoxId = "63F8A13A-BBBB-451B-9AAF-21F83C9216D6"; // replace by chat box Id
         var message = document.getElementById("messageInput").value;
         connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
             return console.error(err.toString());

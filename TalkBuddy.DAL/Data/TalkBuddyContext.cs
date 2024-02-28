@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System.Security.Principal;
 using Microsoft.Extensions.Configuration;
-using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Entities.BaseEntities;
 
@@ -34,14 +32,24 @@ public partial class TalkBuddyContext : DbContext
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        
-
+    {        
         modelBuilder.Entity<Friendship>()
             .HasOne(f => f.Sender)
             .WithMany(u => u.Friends)
             .HasForeignKey(f => f.SenderID)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(m=>m.Sender)
+            .WithMany(s=>s.Messages)
+            .HasForeignKey(f => f.SenderId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Client>()
+           .HasMany(c=>c.Messages)
+           .WithOne(m => m.Sender)
+           .HasForeignKey(m=>m.SenderId)
+           .OnDelete(DeleteBehavior.NoAction);
 
 
         modelBuilder.Entity<Friendship>()

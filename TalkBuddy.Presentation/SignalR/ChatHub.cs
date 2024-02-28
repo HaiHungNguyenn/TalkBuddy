@@ -14,14 +14,17 @@ namespace TalkBuddy.Presentation.SignalR
         private readonly IChatBoxService _chatBoxService;
         private readonly IMessageService _messageService;
         private readonly IClientChatBoxService _clientChatBoxService;
+        private readonly IClientService _clientService;
 
         public ChatHub(IChatBoxService chatBoxService,
             IMessageService messageService,
-            IClientChatBoxService clientChatBoxService)
+            IClientChatBoxService clientChatBoxService,
+            IClientService clientService)
         {
             _chatBoxService = chatBoxService;
             _messageService = messageService;
             _clientChatBoxService = clientChatBoxService;
+            _clientService = clientService;
         }
 
         public override async Task OnConnectedAsync()
@@ -120,18 +123,20 @@ namespace TalkBuddy.Presentation.SignalR
             return messages;
         }
 
-        public async Task SendMessage(string message, string chatBoxId)
+        public async Task SendMessage(string chatBoxId, string message)
         {
             var httpContext = Context.GetHttpContext();
-            var fromUser = httpContext.Session.GetString(SessionConstants.USER_ID);
-
+            var fromUserId = httpContext.Session.GetString(SessionConstants.USER_ID);
+            var sender = _clientService.GetClientById(new Guid(fromUserId));
             Message messageObject = new Message
             {
                 Content = message,
                 SentDate = DateTime.Now,
-                ChatBoxId = new Guid(chatBoxId)
+                ChatBoxId = new Guid(chatBoxId),
+                SenderId = new Guid(fromUserId)
+                
             };
-            var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
+            //var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
             //if chua co tin nhan load lai chatbox
             //two user have not text each other before, need to load chatbox again
             //if (chatBox != null) 
@@ -149,7 +154,7 @@ namespace TalkBuddy.Presentation.SignalR
             //}
             await _messageService.AddMessage(messageObject);
          
-            await Clients.Group(chatBoxId).SendAsync("NewMessage", message);
+            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender, message);
            
         }       
 
