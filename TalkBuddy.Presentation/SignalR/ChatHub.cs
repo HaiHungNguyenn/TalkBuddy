@@ -3,7 +3,6 @@ using TalkBuddy.Domain.Entities;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
 using TalkBuddy.Domain.Dtos;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TalkBuddy.Presentation.SignalR
 {
@@ -11,7 +10,7 @@ namespace TalkBuddy.Presentation.SignalR
     {
         public readonly static List<UserConnection> _ConnectionRooms = new List<UserConnection>();
         private readonly static List<string> _ConnectionPresences = new List<string>();
-
+         
         private readonly IChatBoxService _chatBoxService;
         private readonly IMessageService _messageService;
         private readonly IClientChatBoxService _clientChatBoxService;
@@ -30,11 +29,33 @@ namespace TalkBuddy.Presentation.SignalR
           
                 var httpContext = Context.GetHttpContext();
                 var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-              
+                List<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
                 if (!string.IsNullOrEmpty(userId))
                 {
                     var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
-                    await Clients.Caller.SendAsync("InitializeChat", clientChatBoxes);
+                    foreach(var x in clientChatBoxes)
+                    {
+                    //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
+                    string chatBoxName;
+                    if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
+                    {
+                        chatBoxName = x.ChatBox.ChatBoxName;
+                    }
+                    else
+                    {
+                        var clientListInChatBox = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
+                        
+                        chatBoxName = string.Join(",", clientListInChatBox.Select(c => c.Client.Name).ToList());
+                    }
+                    var chatBox = new ClientChatBoxDto
+                    {
+                        ChatBoxId = x.ChatBoxId,
+                        ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
+                        ChatBoxName = chatBoxName
+                    };
+                    returnList.Add(chatBox);
+                    }
+                    await Clients.Caller.SendAsync("InitializeChat", returnList);
                 if (!_ConnectionPresences.Contains(userId))
                 {
                     _ConnectionPresences.Add(userId);
@@ -80,7 +101,10 @@ namespace TalkBuddy.Presentation.SignalR
             await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
             if (_ConnectionPresences.Contains(userId))
             {
-                if (_ConnectionRooms.Where(x => x.UserId.Equals(userId)&&!x.ChatBoxId.Equals(chatBoxId)&&x.ConnectionId.Equals(httpContext.Connection.Id)).Any())
+                if (_ConnectionRooms.Where(x => x.UserId.Equals(userId)
+                                                &&!x.ChatBoxId.Equals(chatBoxId)
+                                                &&x.ConnectionId.Equals(httpContext.Connection.Id))
+                                                .Any())
                 {                    foreach(var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId) && !x.ChatBoxId.Equals(chatBoxId) && x.ConnectionId.Equals(httpContext.Connection.Id)))
                     {
                         _ConnectionRooms.Remove(room);
@@ -105,7 +129,7 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 Content = message,
                 SentDate = DateTime.Now,
-
+                ChatBoxId = new Guid(chatBoxId)
             };
             var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
             //if chua co tin nhan load lai chatbox

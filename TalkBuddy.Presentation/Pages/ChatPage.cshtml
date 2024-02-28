@@ -218,22 +218,8 @@
                 </form>
                 <div class="w-100">
                     <ul id="chatBoxtList">
-                        <li>
-                            <a>
-                                <img alt="Vector2670" class="avatar"
-                                     src="https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp" />
-                            </a>
-                            <span class="fs-5 fw-semibold">avi_chovatiya</span>
-                        </li>
-
-                        <li>
-                            <div>
-                                <img alt="Vector2670" class="avatar"
-                                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIiXek5XSm6IQi4L6SQVvFZg6K3RzFRLCWNg" />
-                            </div>
-
-                            <span class="fs-5 fw-semibold">kishu_patel68</span>
-                        </li>
+                   
+                       
                     </ul>
                 </div>
             </div>
@@ -277,14 +263,14 @@
         </div>*@
     </div>
 </section>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.0/signalr.min.js"></script>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
 
     connection.on("ReceiveMessage", function (user, message) {
         var li = document.createElement("li");
         li.textContent = message;
-        li.classList.add("screen8-group3");
+        
         document.getElementById("messages").appendChild(li);
     });
 
@@ -295,7 +281,7 @@
     });
 
     document.getElementById("sendButton").addEventListener("click", function (event) {
-        var chatBoxId = "User"; // replace by chat box Id
+        var chatBoxId = "2060ffc4-4b04-4015-bc94-1e3599dd675b"; // replace by chat box Id
         var message = document.getElementById("messageInput").value;
         connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
             return console.error(err.toString());
@@ -308,81 +294,29 @@
         console.log(chatBoxes)
         chatBoxes.forEach(function (chatBox) {
             var li = document.createElement("li");
-            console.log(chatBox)
-            console.log("hi")
-            // Create the outer div with class 'screen7-frame14' or 'screen7-frame10' based on some condition
-            var divOuter = document.createElement("div");
-            divOuter.className = "screen7-frame14"
-
-            // Create the inner div with class 'screen7-avatar' or 'screen7-frame16' based on some condition
-            var divInner = document.createElement("div");
-            divInner.className = "screen7-avatar"
-
+                     
+            console.log(chatBox.ChatBoxName)
             // Create the image element
-            var img = document.createElement("img");
-            img.alt = "Vector2670";
-            img.src = chatBox.imageUrl;
-            img.className = "screen7-vector20";
+            var img = document.createElement("img");            
+            img.src = chatBox.chatBoxAvatar;
+            img.className = "avatar";
 
             // Create the span element for the text
             var span = document.createElement("span");
-            span.className = "screen7-text"
-            span.innerHTML = "<span>" + chatBox.ChatBoxName + "</span>";
+            span.className = "fs-5 fw-semibold"
+            span.innerHTML = chatBox.chatBoxName ;
 
             // Append the elements to construct the HTML structure
-            divOuter.appendChild(divInner);
-            divInner.appendChild(img);
-            li.appendChild(divOuter);
+          
+            li.appendChild(img);           
             li.appendChild(span);
-            li.onclick = GetMessageFromChatBox()
-            li.id = chatBox.Id;
+           @* li.onclick = GetMessageFromChatBox()*@
+           @*li.id = chatBox.ChatBoxId;*@
             // Append the list item to the chat box list
-            chatBoxList.appendChild(li);
+            document.getElementById("chatBoxtList").appendChild(li);
         });
     });
-
-    // Function to display messages on the UI
-    function displayChatBoxs(chatBoxes) {
-        var chatBoxList = document.getElementById("chatBoxList");
-        chatBoxList.innerHTML = ""; // Clear previous chat boxes
-        console.log(chatBoxes)
-        chatBoxes.forEach(c => console.log(c));
-
-        chatBoxes.forEach(function (chatBox) {
-            var li = document.createElement("li");
-            console.log(chatBox)
-            console.log("hi")
-            // Create the outer div with class 'screen7-frame14' or 'screen7-frame10' based on some condition
-            var divOuter = document.createElement("div");
-            divOuter.className = "screen7-frame14"
-
-            // Create the inner div with class 'screen7-avatar' or 'screen7-frame16' based on some condition
-            var divInner = document.createElement("div");
-            divInner.className = "screen7-avatar"
-
-            // Create the image element
-            var img = document.createElement("img");
-            img.alt = "Vector2670";
-            img.src = chatBox.imageUrl;
-            img.className = "screen7-vector20";
-
-            // Create the span element for the text
-            var span = document.createElement("span");
-            span.className = "screen7-text"
-            span.innerHTML = "<span>" + chatBox.ChatBoxName + "</span>";
-
-            // Append the elements to construct the HTML structure
-            divOuter.appendChild(divInner);
-            divInner.appendChild(img);
-            li.appendChild(divOuter);
-            li.appendChild(span);
-            li.onclick = GetMessageFromChatBox()
-            li.id = chatBox.Id;
-            // Append the list item to the chat box list
-            chatBoxList.appendChild(li);
-
-        });
-    }
+       
 
     function requestMessagesForChatBox(chatBoxId) {
         connection.invoke("GetMessages", chatBoxId).then(function (messages) {
