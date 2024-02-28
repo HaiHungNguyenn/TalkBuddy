@@ -16,7 +16,11 @@ namespace TalkBuddy.Presentation.Pages.OAuth
             _facebookOAuthService = facebookOAuthService;
         }
 
-        public async Task<IActionResult> OnGet()
+        public void OnGet()
+        {
+        }
+
+        public async Task<IActionResult> OnGetFaceBookLogin()
         {
             Request.Query.TryGetValue(FacebookOAuthConstants.ACCESS_TOKEN, out var accessToken);
             Request.Query.TryGetValue(FacebookOAuthConstants.DATA_ACCESS_EXPIRATION_TIME, out var dataAccessExpirationTimeAsString);
