@@ -16,7 +16,11 @@ namespace TalkBuddy.Presentation.Pages.OAuth
             _facebookOAuthService = facebookOAuthService;
         }
 
-        public async Task<IActionResult> OnGet()
+        public void OnGet()
+        {
+        }
+
+        public async Task<IActionResult> OnGetFaceBookLogin()
         {
             Request.Query.TryGetValue(FacebookOAuthConstants.ACCESS_TOKEN, out var accessToken);
             Request.Query.TryGetValue(FacebookOAuthConstants.DATA_ACCESS_EXPIRATION_TIME, out var dataAccessExpirationTimeAsString);
@@ -37,7 +41,7 @@ namespace TalkBuddy.Presentation.Pages.OAuth
                 HttpContext.Session.SetString(SessionConstants.USER_ID, user.Id.ToString());
                 HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
 
-                return RedirectToPage($"/{nameof(Index)}");
+                return RedirectToPage($"/{nameof(ChatPage)}");
             }
             catch (Exception ex)
             {

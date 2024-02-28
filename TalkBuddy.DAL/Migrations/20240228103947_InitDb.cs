@@ -37,6 +37,7 @@ namespace TalkBuddy.DAL.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChatBoxName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ChatBoxAvatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
                     GroupCreatorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
@@ -57,9 +58,9 @@ namespace TalkBuddy.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Client1Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Client2Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Status = table.Column<bool>(type: "bit", nullable: false),
+                    SenderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ReceiverId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
                     RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AcceptDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
@@ -68,16 +69,16 @@ namespace TalkBuddy.DAL.Migrations
                 {
                     table.PrimaryKey("PK_Friendships", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Friendships_Clients_Client1Id",
-                        column: x => x.Client1Id,
-                        principalTable: "Clients",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Friendships_Clients_Client2Id",
-                        column: x => x.Client2Id,
+                        name: "FK_Friendships_Clients_ReceiverId",
+                        column: x => x.ReceiverId,
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Friendships_Clients_SenderID",
+                        column: x => x.SenderID,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -145,6 +146,7 @@ namespace TalkBuddy.DAL.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     SentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ChatBoxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -156,6 +158,11 @@ namespace TalkBuddy.DAL.Migrations
                         principalTable: "ChatBoxes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Messages_Clients_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -231,14 +238,14 @@ namespace TalkBuddy.DAL.Migrations
                 column: "MessageId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Friendships_Client1Id",
+                name: "IX_Friendships_ReceiverId",
                 table: "Friendships",
-                column: "Client1Id");
+                column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Friendships_Client2Id",
+                name: "IX_Friendships_SenderID",
                 table: "Friendships",
-                column: "Client2Id");
+                column: "SenderID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Medias_MessageId",
@@ -249,6 +256,11 @@ namespace TalkBuddy.DAL.Migrations
                 name: "IX_Messages_ChatBoxId",
                 table: "Messages",
                 column: "ChatBoxId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_SenderId",
+                table: "Messages",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reports_InformantClientId",

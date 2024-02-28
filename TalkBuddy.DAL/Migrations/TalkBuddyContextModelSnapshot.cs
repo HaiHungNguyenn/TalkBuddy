@@ -28,6 +28,9 @@ namespace TalkBuddy.DAL.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ChatBoxAvatar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("ChatBoxName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -230,6 +233,9 @@ namespace TalkBuddy.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTime>("SentDate")
                         .HasColumnType("datetime2");
 
@@ -240,6 +246,8 @@ namespace TalkBuddy.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ChatBoxId");
+
+                    b.HasIndex("SenderId");
 
                     b.ToTable("Messages");
                 });
@@ -365,7 +373,15 @@ namespace TalkBuddy.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Sender")
+                        .WithMany("Messages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("ChatBox");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Report", b =>
@@ -405,6 +421,8 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("InChatboxes");
 
                     b.Navigation("InformantClients");
+
+                    b.Navigation("Messages");
 
                     b.Navigation("ReportedClients");
                 });
