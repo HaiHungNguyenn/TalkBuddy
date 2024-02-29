@@ -192,6 +192,9 @@
         z-index: -1;
     }
 
+    .hidden {
+        display: none;
+    }
 </style>
 
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
@@ -223,17 +226,13 @@
                     </ul>
                 </div>
             </div>
-            <div class="chat-window">
-                <div class="chat-header">
-                    
-                        <img src="https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp" class="avatar"
-                                alt="Vector2858" />
-                  
-                    <span class="fw-semibold"  id="sender" style="font-size: 2rem;">avi_chovatiya67</span>
+            <div class="chat-window" >
+                <div class="chat-header" id="chat-title">
+                                         
                 </div>
 
                 <ul id="messages">
-                    <li>Hi</li>
+                    
                 </ul>
                 <div class="chat-footer">
                     <input placeholder="Type your message here" id="messageInput" />
@@ -245,22 +244,12 @@
                 </div>
 
             </div>
+
+         
         </div>
 
 
-       @* <div class="default-chat-box-container hidden">
-            <img alt="robot12744"
-                    src="public/external/robot12744-v1y-200h.png" />
-            <span>
-                <span>Welcome,</span>
-                <span>
-                    <span>Richa_denials!</span>
-                    <br />
-                    <span></span>
-                </span>
-                <span>please select a chat to start messaging.</span>
-            </span>
-        </div>*@
+    
     </div>
 </section>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -271,7 +260,7 @@
         var li = document.createElement("li");
         console.log(message);
         console.log(user);
-        li.textContent = user.name + message;
+        li.textContent = user + ": " + message;
        
         document.getElementById("messages").appendChild(li);
     });
@@ -282,22 +271,13 @@
         return console.error(err.toString());
     });
 
-    document.getElementById("sendButton").addEventListener("click", function (event) {
-        var chatBoxId = "63F8A13A-BBBB-451B-9AAF-21F83C9216D6"; // replace by chat box Id
-        var message = document.getElementById("messageInput").value;
-        connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
-            return console.error(err.toString());
-        });
-        event.preventDefault();
-    });
-
     connection.on("InitializeChat", function (chatBoxes) {
         // Handle received messages
-        console.log(chatBoxes)
+        console.log(chatBoxes);
         chatBoxes.forEach(function (chatBox) {
             var li = document.createElement("li");
                      
-            console.log(chatBox.ChatBoxName)
+            console.log(chatBox.ChatBoxName);
             // Create the image element
             var img = document.createElement("img");            
             img.src = chatBox.chatBoxAvatar;
@@ -305,68 +285,73 @@
 
             // Create the span element for the text
             var span = document.createElement("span");
-            span.className = "fs-5 fw-semibold"
+            span.className = "fs-5 fw-semibold";
             span.innerHTML = chatBox.chatBoxName ;
 
             // Append the elements to construct the HTML structure
           
             li.appendChild(img);           
             li.appendChild(span);
-           @* li.onclick = GetMessageFromChatBox()*@
-           @*li.id = chatBox.ChatBoxId;*@
+            li.addEventListener("click", function () {
+                requestMessagesForChatBox(chatBox);
+            });
+
             // Append the list item to the chat box list
             document.getElementById("chatBoxtList").appendChild(li);
         });
     });
        
 
-    function requestMessagesForChatBox(chatBoxId) {
-        connection.invoke("GetMessages", chatBoxId).then(function (messages) {
+    function sendButtonClickHandler(event) {
+        var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
+        var message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    }
+
+    function requestMessagesForChatBox(chatBox) {
+   
+        var chatHeader = document.getElementById("chat-title");
+        chatHeader.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = chatBox.chatBoxAvatar;
+        img.className = "avatar";
+        // Create the span element for the text
+        var span = document.createElement("span");
+        span.className = "fs-5 fw-semibold";
+        span.innerHTML = chatBox.chatBoxName;
+
+        // Append the elements to construct the HTML structure
+        chatHeader.appendChild(img);
+        chatHeader.appendChild(span);
+        connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
             // Handle received messages
             displayMessages(messages);
         }).catch(function (err) {
             return console.error(err.toString());
         });
+        // Remove the existing click event listener for the send button
+        document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
+
+        // Add a new click event listener for the send button
+        document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
+
+        // Set the chatBoxId as a data attribute on the sendButton element
+        document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
     }
-
-    // Function to handle click event on a chat box item
-    function handleChatBoxClick(event) {
-        // Extract chatBoxId from the clicked element
-        var chatBoxId = event.currentTarget.dataset.chatBox.Id;
-
-        // Request messages for the clicked chat box
-        requestMessagesForChatBox(chatBoxId);
-    }
-
-    // Example usage: Attach click event handler to each chat box item
-    var chatBoxItems = document.querySelectorAll("#chatBoxtList > li");
-    chatBoxItems.forEach(function (item) {
-        item.addEventListener("click", handleChatBoxClick);
-    });
 
     // Function to display messages on the UI
     function displayMessages(messages) {
         var messagesList = document.getElementById("messages");
         messagesList.innerHTML = ""; // Clear previous messages
 
-        messages.forEach(function (messageText) {
+        messages.forEach(function (message) {
             // Create a new list item for each message
             var li = document.createElement("li");
 
-            // Create a div for the message content
-            var div = document.createElement("div");
-            div.className = "screen8-group3";
-
-            // Create a span for the message text
-            var span = document.createElement("span");
-            span.className = "screen8-text14";
-            span.textContent = messageText;
-
-            // Append the span to the div
-            div.appendChild(span);
-
-            // Append the div to the list item
-            li.appendChild(div);
+            li.textContent = message.senderName + ": " + message.content;
 
             // Append the list item to the messages list
             messagesList.appendChild(li);

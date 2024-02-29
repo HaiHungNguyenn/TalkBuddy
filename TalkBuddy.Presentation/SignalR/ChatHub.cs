@@ -10,12 +10,11 @@ namespace TalkBuddy.Presentation.SignalR
     {
         public readonly static List<UserConnection> _ConnectionRooms = new List<UserConnection>();
         private readonly static List<string> _ConnectionPresences = new List<string>();
-         
-        private readonly IChatBoxService _chatBoxService;
+
         private readonly IMessageService _messageService;
         private readonly IClientChatBoxService _clientChatBoxService;
         private readonly IClientService _clientService;
-
+        private readonly IChatBoxService _chatBoxService;
         public ChatHub(IChatBoxService chatBoxService,
             IMessageService messageService,
             IClientChatBoxService clientChatBoxService,
@@ -29,49 +28,25 @@ namespace TalkBuddy.Presentation.SignalR
 
         public override async Task OnConnectedAsync()
         {
-          
-                var httpContext = Context.GetHttpContext();
-                var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-                List<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
-                    foreach(var x in clientChatBoxes)
-                    {
-                    //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
-                    string chatBoxName;
-                    if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
-                    {
-                        chatBoxName = x.ChatBox.ChatBoxName;
-                    }
-                    else
-                    {
-                        var clientListInChatBox = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
-                        
-                        chatBoxName = string.Join(",", clientListInChatBox.Select(c => c.Client.Name).ToList());
-                    }
-                    var chatBox = new ClientChatBoxDto
-                    {
-                        ChatBoxId = x.ChatBoxId,
-                        ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
-                        ChatBoxName = chatBoxName
-                    };
-                    returnList.Add(chatBox);
-                    }
-                    await Clients.Caller.SendAsync("InitializeChat", returnList);
+
+            var httpContext = Context.GetHttpContext();
+            var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+            List<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                //replace clientChatBoxes by clientChatBoxesContainMessages if want to load only chatBox which already have conversation - means messages != null
+                // var clientChatBoxesContainMessages = await _clientChatBoxService.GetClientChatBoxesIncludeNotEmptyMessages(new Guid(userId));
+               
+                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId));
                 if (!_ConnectionPresences.Contains(userId))
                 {
                     _ConnectionPresences.Add(userId);
                 }
             }
-                else
-                {
-                    // Handle the case where the user ID is null or empty
-                }
-            
           
             base.OnConnectedAsync();
         }
+
 
 
         public override Task OnDisconnectedAsync(Exception ex)
@@ -79,11 +54,11 @@ namespace TalkBuddy.Presentation.SignalR
             try
             {
                 var httpContext = Context.GetHttpContext();
-              
+
                 var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-               var user = _ConnectionPresences.Where(u => u.Equals(userId)).First();
+                var user = _ConnectionPresences.Where(u => u.Equals(userId)).First();
                 _ConnectionPresences.Remove(user);
-                foreach (var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId)&&x.ConnectionId.Equals(httpContext.Connection.Id)))
+                foreach (var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId) && x.ConnectionId.Equals(httpContext.Connection.Id)))
                 {
                     _ConnectionRooms.Remove(room);
                 }
@@ -97,67 +72,110 @@ namespace TalkBuddy.Presentation.SignalR
             return base.OnDisconnectedAsync(ex);
         }
 
-        public async Task<IList<Message>> GetMessages(Guid chatBoxId)
+        public async Task<IList<MessageDto>> GetMessages(Guid chatBoxId)
         {
-            var httpContext = Context.GetHttpContext();         
+            var httpContext = Context.GetHttpContext();
             var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-            await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+            
+            var messageReturns = new List<MessageDto>();
             if (_ConnectionPresences.Contains(userId))
             {
-                if (_ConnectionRooms.Where(x => x.UserId.Equals(userId)
-                                                &&!x.ChatBoxId.Equals(chatBoxId)
-                                                &&x.ConnectionId.Equals(httpContext.Connection.Id))
-                                                .Any())
-                {                    foreach(var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId) && !x.ChatBoxId.Equals(chatBoxId) && x.ConnectionId.Equals(httpContext.Connection.Id)))
+                List<UserConnection> userInChatList = _ConnectionRooms.Where(x => x.UserId.Equals(userId)
+                                                && !x.ChatBoxId.Equals(chatBoxId)
+                                                && x.ConnectionId.Equals(Context.ConnectionId)).ToList();
+                if (userInChatList!=null && userInChatList.Any())
+                {
+                    foreach (var room in userInChatList)
                     {
                         _ConnectionRooms.Remove(room);
-                    }
-                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatBoxId.ToString());
-                    await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+                        await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.ChatBoxId);
+                    }                    
 
                 }
+                _ConnectionRooms.Add(new UserConnection
+                {
+                    UserId = userId,
+                    ChatBoxId = chatBoxId.ToString(),
+                    ConnectionId = Context.ConnectionId
+                });
+                await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
+                //}
+                // Retrieve messages from a data source (e.g., database)
+                var messages = await _messageService.GetMessages(chatBoxId);
                 
+                foreach (var message in messages)
+                {
+                    var mess = new MessageDto
+                    {
+                        Medias = message.Medias,
+                        SenderName = message.Sender.Name,
+                        SenderAvatar = message.Sender.ProfilePicture,
+                        Content = message.Content,
+                        SenderId = message.SenderId,
+                        ChatBoxId = chatBoxId,
+                        SentDate = message.SentDate,
+
+                    };
+                    messageReturns.Add(mess);
+                }
+                //return messageReturns;
             }
-            // Retrieve messages from a data source (e.g., database)
-            var messages = await _messageService.GetMessages(chatBoxId);
-            return messages;
+            return messageReturns;
         }
 
         public async Task SendMessage(string chatBoxId, string message)
         {
             var httpContext = Context.GetHttpContext();
             var fromUserId = httpContext.Session.GetString(SessionConstants.USER_ID);
-            var sender = _clientService.GetClientById(new Guid(fromUserId));
+            var sender = await _clientService.GetClientById(new Guid(fromUserId));
             Message messageObject = new Message
             {
                 Content = message,
                 SentDate = DateTime.Now,
                 ChatBoxId = new Guid(chatBoxId),
                 SenderId = new Guid(fromUserId)
-                
-            };
-            //var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
-            //if chua co tin nhan load lai chatbox
-            //two user have not text each other before, need to load chatbox again
-            //if (chatBox != null) 
-            //{
-            //    if (!chatBox.Messages.Any())
-            //    {
-            //        var clientChatBoxes = _clientChatBoxService.GetClientChatBoxes(new Guid(receiverId)).Result;
-            //        if(_ConnectionPresences.Contains(receiverId))
-            //        {
-            //            var receiver=_ConnectionRooms.Where(x => x.ChatBoxId.EndsWith(chatBoxId)&&x.UserId).FirstOrDefault();
-            //            await Clients.Clients().SendAsync("InitializeChat", clientChatBoxes);
-            //        }
-                    
-            //    }
-            //}
-            await _messageService.AddMessage(messageObject);
-         
-            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender, message);
-           
-        }       
 
-           
+            };
+            //uncomment this if want to implement rule: if have no messages before do not present chatbox
+            //var IsChatBoxContainMessages = _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId)).Result.Messages.Any();
+            await _messageService.AddMessage(messageObject);
+            //if (!IsChatBoxContainMessages)
+            //{
+            //    await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(fromUserId));
+            //}
+
+            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender.Name, message);
+
+        }
+
+        private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId)
+        {
+            var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+            IList<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
+            foreach (var x in clientChatBoxes)
+            {
+                //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
+                string chatBoxName;
+                if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
+                {
+                    chatBoxName = x.ChatBox.ChatBoxName;
+                }
+                else
+                {
+                    var clientListInChatBox = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
+
+                    chatBoxName = string.Join(",", clientListInChatBox.Select(c => c.Client.Name).ToList());
+                }
+                var chatBox = new ClientChatBoxDto
+                {
+                    ChatBoxId = x.ChatBoxId,
+                    ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
+                    ChatBoxName = chatBoxName
+                };
+                returnList.Add(chatBox);
+            }
+            return returnList;
+        }
     }
+        
 }

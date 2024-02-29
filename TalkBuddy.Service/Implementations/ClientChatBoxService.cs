@@ -18,9 +18,14 @@ namespace TalkBuddy.Service.Implementations
             return await _unitOfWork.ClientChatBoxRepository.GetAll().ToListAsync();
         }
 
+        public async Task<IList<ClientChatBox>> GetClientChatBoxesIncludeNotEmptyMessages(Guid clientId)
+        {
+            return await _unitOfWork.ClientChatBoxRepository.Find(x=>x.ClientId.Equals(clientId)).Include(x=>x.ChatBox).ThenInclude(x=>x.Messages).Where(b=>b.ChatBox.Messages.Any()).Include(x=>x.Client).ToListAsync();
+        }
+
         public async Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x=>x.ClientId.Equals(clientId)).Include(x=>x.ChatBox).Include(x=>x.Client).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(clientId)).Include(x => x.ChatBox).Include(x => x.Client).ToListAsync();
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)

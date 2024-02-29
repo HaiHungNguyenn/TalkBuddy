@@ -22,7 +22,7 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<Message>> GetMessages(Guid chatBoxId)
         {
-            return await _unitOfWork.MessageRepository.Find(x=>x.ChatBoxId.Equals(chatBoxId)).ToListAsync();
+            return await _unitOfWork.MessageRepository.Find(x=>x.ChatBoxId.Equals(chatBoxId)).OrderBy(x=>x.SentDate).Include(x=>x.Sender).ToListAsync();
         }
     }
 }
