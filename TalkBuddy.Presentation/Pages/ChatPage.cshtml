@@ -192,6 +192,9 @@
         z-index: -1;
     }
 
+    .hidden {
+        display: none;
+    }
 </style>
 
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
@@ -223,13 +226,13 @@
                     </ul>
                 </div>
             </div>
-            <div class="chat-window">
+            <div class="chat-window" >
                 <div class="chat-header" id="chat-title">
                                          
                 </div>
 
                 <ul id="messages">
-                    <li>Hi</li>
+                    
                 </ul>
                 <div class="chat-footer">
                     <input placeholder="Type your message here" id="messageInput" />
@@ -241,22 +244,12 @@
                 </div>
 
             </div>
+
+         
         </div>
 
 
-       @* <div class="default-chat-box-container hidden">
-            <img alt="robot12744"
-                    src="public/external/robot12744-v1y-200h.png" />
-            <span>
-                <span>Welcome,</span>
-                <span>
-                    <span>Richa_denials!</span>
-                    <br />
-                    <span></span>
-                </span>
-                <span>please select a chat to start messaging.</span>
-            </span>
-        </div>*@
+    
     </div>
 </section>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -319,6 +312,7 @@
     }
 
     function requestMessagesForChatBox(chatBox) {
+   
         var chatHeader = document.getElementById("chat-title");
         chatHeader.innerHTML = "";
         var img = document.createElement("img");
