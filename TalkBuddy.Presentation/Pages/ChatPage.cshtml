@@ -1,0 +1,362 @@
+﻿@page
+@model TalkBuddy.Presentation.Pages.ChatPage
+@{
+
+}
+
+<style>
+    .search-icon {
+        border: none;
+    }
+
+    .search-btn {
+        border: none;
+        background: none;
+    }
+
+    .search-form {
+        background-color: #25386d;
+        padding: 0.5rem;
+        border-radius: 1.25rem;
+    }
+
+    .search-form > input {
+        border: none;
+        background-color: transparent;
+        color: whitesmoke;
+        text-indent: 0.5rem;
+        outline: none;
+    }
+
+    .fa-bell {
+        font-size: 1.5rem;
+    }
+
+    .chat-container {
+        background-color: #e4e7f5;
+        padding: 2rem 1rem;
+    }
+
+    .chat-layout {
+        height: 100%;
+        display: grid;
+        grid-template-columns: 2fr 8fr;
+        gap: 1rem;
+    }
+
+    .left-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        align-items: center;
+        padding: 1rem 0.5rem;
+        gap: 2rem;
+        border-radius: 0.25rem;
+        background-color: white;
+    }
+
+    .search-chatbox-form {
+        background-color: white;
+        padding: 0.75rem;
+        border-radius: 0.25rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        border: solid 2px grey;
+    }
+
+    .search-chatbox-form > input {
+        border: none;
+        background-color: transparent;
+        color: black;
+        text-indent: 0.5rem;
+        outline: none;
+        width: 100%;
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 0.5rem;
+    }
+
+    ul, li {
+        list-style: none;
+    }
+
+    #chatBoxtList {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        padding-left: 0!important;
+    }
+
+    #chatBoxtList > li {
+        width: 100%;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem;
+        cursor: pointer;
+    }
+
+    #chatBoxtList > li:hover {
+        background-color: #7f5ee5;
+        border-radius: 0.5rem;
+        transition: background-color 0.5s ease-out;
+    }
+
+    .chat-window {
+        border-radius: 0.25rem;
+        background-color: white;
+        padding: 1rem;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 1rem;
+    }
+
+    .chat-header {
+        width: 100%;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .chat-header .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+    }
+
+    .chat-footer {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: solid 1px #80808080;
+        border-radius: 0.25rem;
+        height: 4rem;
+    }
+
+    .chat-footer button {
+        border: none;
+        width: 4rem;
+        height: 4rem;
+        font-size: 1.5rem;
+        border-left: solid 1px #80808080;
+        background: transparent;
+    }
+
+    #messageInput {
+        outline: none;
+        border: none;
+        width: 100%;
+        text-indent: 1rem;
+    }
+
+    #messages {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: 500px;
+        overflow-y: scroll;
+    }
+
+    #messages > li {
+        background-color: #00e4e3;
+        color: white;
+        width: fit-content;
+        padding: 0.15rem 0.25rem;
+        border-radius: 0.2rem;
+        font-weight: 500;
+        opacity: 0.9;
+        position: relative;
+    }
+
+    #messages > li:before {
+        content: "";
+        width: 0px;
+        height: 0px;
+        position: absolute;
+        border-right: 10px solid #00e4e3;
+        border-left: 10px solid transparent;
+        border-bottom: 10px solid #00e4e3;
+        border-top: 10px solid transparent;
+        left: -7px;
+        bottom: 0;
+        z-index: -1;
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+<section class="h-100 d-flex flex-column justify-content-start align-items-center">
+    <div class="w-100 d-flex justify-content-between align-items-center py-3 px-5" style="background-color: #5e73e2;">
+        <form method="post" class="search-form">
+            <input type="text" placeholder="Type to search..." />
+            <button type="submit" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            </button>
+        </form>
+        <div class="d-flex justify-content-between align-items-center gap-4">
+            <i class="fa-solid fa-bell add-icon text-white"></i>
+            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="~/default-avatar.png" />
+        </div>
+    </div>
+    <div class="w-100 h-100 chat-container">
+        <div class="chat-layout">
+            <div class="left-container">
+                <form method="post" class="search-chatbox-form">
+                    <input class="rounded-3" type="text" placeholder="Search for conversation..." />
+                    <button type="submit" class="search-btn">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </button>
+                </form>
+                <div class="w-100">
+                    <ul id="chatBoxtList">
+                   
+                       
+                    </ul>
+                </div>
+            </div>
+            <div class="chat-window" >
+                <div class="chat-header" id="chat-title">
+                                         
+                </div>
+
+                <ul id="messages">
+                    
+                </ul>
+                <div class="chat-footer">
+                    <input placeholder="Type your message here" id="messageInput" />
+                    <div id="sendButton">
+                        <button>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+         
+        </div>
+
+
+    
+    </div>
+</section>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+
+    connection.on("ReceiveMessage", function (user, message) {
+        var li = document.createElement("li");
+        console.log(message);
+        console.log(user);
+        li.textContent = user + ": " + message;
+       
+        document.getElementById("messages").appendChild(li);
+    });
+
+    connection.start().then(function () {
+        console.log("SignalR Connected");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    connection.on("InitializeChat", function (chatBoxes) {
+        // Handle received messages
+        console.log(chatBoxes);
+        chatBoxes.forEach(function (chatBox) {
+            var li = document.createElement("li");
+                     
+            console.log(chatBox.ChatBoxName);
+            // Create the image element
+            var img = document.createElement("img");            
+            img.src = chatBox.chatBoxAvatar;
+            img.className = "avatar";
+
+            // Create the span element for the text
+            var span = document.createElement("span");
+            span.className = "fs-5 fw-semibold";
+            span.innerHTML = chatBox.chatBoxName ;
+
+            // Append the elements to construct the HTML structure
+          
+            li.appendChild(img);           
+            li.appendChild(span);
+            li.addEventListener("click", function () {
+                requestMessagesForChatBox(chatBox);
+            });
+
+            // Append the list item to the chat box list
+            document.getElementById("chatBoxtList").appendChild(li);
+        });
+    });
+       
+
+    function sendButtonClickHandler(event) {
+        var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
+        var message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+        event.preventDefault();
+    }
+
+    function requestMessagesForChatBox(chatBox) {
+   
+        var chatHeader = document.getElementById("chat-title");
+        chatHeader.innerHTML = "";
+        var img = document.createElement("img");
+        img.src = chatBox.chatBoxAvatar;
+        img.className = "avatar";
+        // Create the span element for the text
+        var span = document.createElement("span");
+        span.className = "fs-5 fw-semibold";
+        span.innerHTML = chatBox.chatBoxName;
+
+        // Append the elements to construct the HTML structure
+        chatHeader.appendChild(img);
+        chatHeader.appendChild(span);
+        connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
+            // Handle received messages
+            displayMessages(messages);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
+        // Remove the existing click event listener for the send button
+        document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
+
+        // Add a new click event listener for the send button
+        document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
+
+        // Set the chatBoxId as a data attribute on the sendButton element
+        document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
+    }
+
+    // Function to display messages on the UI
+    function displayMessages(messages) {
+        var messagesList = document.getElementById("messages");
+        messagesList.innerHTML = ""; // Clear previous messages
+
+        messages.forEach(function (message) {
+            // Create a new list item for each message
+            var li = document.createElement("li");
+
+            li.textContent = message.senderName + ": " + message.content;
+
+            // Append the list item to the messages list
+            messagesList.appendChild(li);
+        });
+    }
+
+</script>
+

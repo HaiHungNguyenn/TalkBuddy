@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using TalkBuddy.Common.Constants;
+using TalkBuddy.Presentation.Pages;
 
 namespace TalkBuddy.Presentation.Middleware
 {
@@ -19,7 +20,7 @@ namespace TalkBuddy.Presentation.Middleware
 			{
 				if (isLoggedIn == SessionConstants.LOGGED_IN)
 				{
-					context.Response.Redirect("/");
+					context.Response.Redirect($"/{nameof(ChatPage)}");
 					return Task.CompletedTask;
 				}
 
@@ -31,7 +32,7 @@ namespace TalkBuddy.Presentation.Middleware
 				return _next(context);
 			}
 
-			context.Response.Redirect("/Login");
+			context.Response.Redirect($"/{nameof(Login)}");
 			return Task.CompletedTask;
 		}
 

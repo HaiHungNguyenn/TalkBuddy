@@ -33,7 +33,7 @@ namespace TalkBuddy.Service.Implementations
             var content = new FormUrlEncodedContent(requestParams);
             var response = await httpClient.PostAsync(FacebookOAuthConstants.FACEBOOK_GRAPH_API_URL, content);
             if (!response.IsSuccessStatusCode)
-                throw new Exception("Token is invalid");
+                throw new Exception(response.ReasonPhrase);
 
             var authResponse = JsonConvert.DeserializeObject<FacebookAuthResponse>(await response.Content.ReadAsStringAsync());
             if (authResponse?.Email == null)

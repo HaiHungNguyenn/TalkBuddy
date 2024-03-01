@@ -3,15 +3,15 @@
 @model Profile
 
 <link rel="stylesheet" href="~/Profile.cshtml.css" />
-<div class="">
-    <div class="row image-row mt-5">
+<div class="profile-container p-4">
+    <div class="row image-row">
         <img src="@Model.ProfilePicture" class="profile-picture rounded-circle" alt="Profile Picture"/>
         <button class="switch-input-btn">
             <img class="switch-svg" src="img/chevron-down.svg"/>
         </button>
     </div>
-    <div class="row edit-profile-row form-bg-color h-50vh justify-content-center">
-        <div id="form-card" class="card-body">
+    <div class="row edit-profile-row form-bg-color h-50vh justify-content-center rounded-3">
+        <div id="form-card" class="card-body rounded-3" style="background-color: #00e4e3;">
             <h5 class="card-title">Profile</h5>
             <form method="post">
                 <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />

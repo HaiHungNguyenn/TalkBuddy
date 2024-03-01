@@ -3,5 +3,6 @@
 public enum ChatBoxType
 {
     Public,
-    Group
+    Group, 
+    TwoPerson
 }

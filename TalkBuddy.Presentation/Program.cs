@@ -4,13 +4,14 @@ using TalkBuddy.DAL.Implementations;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Presentation.Extensions;
 using TalkBuddy.Presentation.Middleware;
-using TalkBuddy.Service.SignalRHub;
+using TalkBuddy.Presentation.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR();
+
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.RegisterServices();
@@ -38,11 +39,12 @@ app.UseMiddleware<AuthMiddleware>();
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => {
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapRazorPages();
     endpoints.MapHub<ChatHub>("/chat");
+  
 });
-
-app.MapRazorPages();
 
 app.Run();
 
