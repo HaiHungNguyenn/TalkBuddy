@@ -13,6 +13,7 @@
     background-size: 100% 200%;
     background-position: 100% 100%;
     transition: background 1s;
+    border-radius: 2%/6%;
 }
 
 .image-row{
@@ -44,7 +45,7 @@
     top: 90%;
     z-index: 5;
     background: #41404F;
-    transition: top 1s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transition: top 1s;
 }
 
 #form-card{
@@ -57,10 +58,10 @@
 }
 
 .btn-go-down{
-    top: 458%;
+    top: 404%;
 }
 
-.switch-input-btn svg{
+.switch-svg{
     width: 100%;
     height: 100%;
 }
