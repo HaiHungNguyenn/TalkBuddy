@@ -41,6 +41,6 @@ public class Profile : PageModel
         System.Console.WriteLine(CurrentUser.Id);
         await _clientRepo.UpdateAsync(CurrentUser);
         await _unitOfWork.CommitAsync();
-        return RedirectToPage("/Index");
+        return RedirectToPage("./Profile");
     }
 }

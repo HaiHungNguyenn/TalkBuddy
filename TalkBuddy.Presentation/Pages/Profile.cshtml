@@ -7,13 +7,13 @@
     <div class="row image-row">
         <img src="@Model.ProfilePicture" class="profile-picture rounded-circle" alt="Profile Picture"/>
         <button class="switch-input-btn">
-            <svg fill="#ffffff" height="200px" width="200px" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 330 330" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g id="XMLID_88_"> <path id="XMLID_89_" d="M304.394,139.394l-139.39,139.393L25.607,139.393c-5.857-5.857-15.355-5.858-21.213,0.001 c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393s7.794-1.581,10.606-4.394l149.996-150 c5.858-5.858,5.858-15.355,0-21.213C319.749,133.536,310.251,133.535,304.394,139.394z"></path> <path id="XMLID_90_" d="M154.398,190.607c2.813,2.813,6.628,4.393,10.606,4.393s7.794-1.581,10.606-4.394l149.996-150 c5.858-5.858,5.858-15.355,0-21.213c-5.857-5.858-15.355-5.858-21.213,0l-139.39,139.393L25.607,19.393 c-5.857-5.858-15.355-5.858-21.213,0c-5.858,5.858-5.858,15.355,0,21.213L154.398,190.607z"></path> </g> </g></svg>
+            <img class="switch-svg" src="img/chevron-down.svg"/>
         </button>
     </div>
     <div class="row edit-profile-row form-bg-color h-50vh justify-content-center rounded-3">
         <div id="form-card" class="card-body rounded-3" style="background-color: #00e4e3;">
             <h5 class="card-title">Profile</h5>
-            <form method="post">
+            <form id="profile-form" method="post">
                 <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />
                 <input type="hidden" name="CurrentUser.ProfilePicture" value="@Model.CurrentUser.ProfilePicture" />
                 <input type="hidden" name="CurrentUser.Password" value="@Model.CurrentUser.Password" />
@@ -45,9 +45,7 @@
                         value="@Model.CurrentUser.Gender">
                     <span asp-validation-for="@Model.CurrentUser.Gender" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary"/>
-                </div>
+                
 
                 @foreach (var modelState in ViewData.ModelState.Values)
                 {
@@ -70,19 +68,34 @@
     dateTime.value = outputStr;
 
     let switchModeBtn = document.getElementsByClassName("switch-input-btn")[0];
-    switchModeBtn.addEventListener("click", () => {
+       switchModeBtn.addEventListener("click", () => {
         let editProfileRow = document.getElementsByClassName("edit-profile-row")[0];
         let formCard = document.getElementById("form-card");
         let inputs = document.getElementsByClassName("input-round");
         let details = document.getElementsByClassName("input-after");
 
         formCard.classList.toggle("text-white");
-        editProfileRow.classList.toggle("background-go-down");
         switchModeBtn.classList.toggle("btn-go-down");
+        editProfileRow.classList.toggle("background-go-down");
         for(let i=0;i<inputs.length;i++){
             inputs[i].classList.toggle("disappear");
             details[i].classList.toggle("disappear");
         }
         
+        let switchSvg = document.getElementsByClassName("switch-svg")[0];
+        switchModeBtn.classList.toggle("save-btn");
+        if(switchModeBtn.classList.contains("save-btn")){
+            switchSvg.setAttribute("src", "img/save.svg");
+            const saveBtn = document.getElementsByClassName("save-btn")[0];
+            const form  = document.getElementById("profile-form");
+            saveBtn.addEventListener("click", () => {
+                form.submit();
+            })
+        }
+        else{
+            switchSvg.setAttribute("src", "img/chevron-down.svg");
+        }     
     });
+
+    
 </script>
