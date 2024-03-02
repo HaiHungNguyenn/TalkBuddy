@@ -47,9 +47,9 @@
     position: absolute;
     right: 0%;
     height: 50px;
-    top: 90%;
+    top: 101%;
     z-index: 5;
-    background: #41404F;
+    background: #00e4e3;
     transition: top 1s;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .btn-go-down{
-    top: 404%;
+    top: 386%;
 }
 
 .switch-svg{

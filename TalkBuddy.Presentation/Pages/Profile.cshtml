@@ -13,7 +13,7 @@
     <div class="row edit-profile-row form-bg-color h-50vh justify-content-center rounded-3">
         <div id="form-card" class="card-body rounded-3" style="background-color: #00e4e3;">
             <h5 class="card-title">Profile</h5>
-            <form method="post">
+            <form id="profile-form" method="post">
                 <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />
                 <input type="hidden" name="CurrentUser.ProfilePicture" value="@Model.CurrentUser.ProfilePicture" />
                 <input type="hidden" name="CurrentUser.Password" value="@Model.CurrentUser.Password" />
@@ -45,9 +45,7 @@
                         value="@Model.CurrentUser.Gender">
                     <span asp-validation-for="@Model.CurrentUser.Gender" class="text-danger"></span>
                 </div>
-                <div class="form-group">
-                    <input type="submit" class="btn btn-primary"/>
-                </div>
+                
 
                 @foreach (var modelState in ViewData.ModelState.Values)
                 {
@@ -88,9 +86,16 @@
         switchModeBtn.classList.toggle("save-btn");
         if(switchModeBtn.classList.contains("save-btn")){
             switchSvg.setAttribute("src", "img/save.svg");
+            const saveBtn = document.getElementsByClassName("save-btn")[0];
+            const form  = document.getElementById("profile-form");
+            saveBtn.addEventListener("click", () => {
+                form.submit();
+            })
         }
         else{
             switchSvg.setAttribute("src", "img/chevron-down.svg");
         }     
     });
+
+    
 </script>
