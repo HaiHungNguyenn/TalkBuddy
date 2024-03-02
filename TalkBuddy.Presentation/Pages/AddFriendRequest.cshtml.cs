@@ -19,7 +19,7 @@ public class AddFriendRequest : PageModel
 
     public async Task OnGet()
     {
-        var clientId = HttpContext.Session.GetString(SessionConstants.USER_ID);
+        var clientId = HttpContext.Session.GetString(SessionConstants.USER_ID)!;
         var invitationList =  (await _friendShipService.GetFriendInvitation(new Guid(clientId))).Include(c => c.Sender);
         TempData["invitationList"] = invitationList.AsEnumerable();
     }

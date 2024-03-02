@@ -13,7 +13,7 @@ public class AddFriendPage : PageModel
     private readonly IClientService _clientService;
     private readonly IFriendShipService _friendShipService;
 
-    private List<Client> clientList;
+    private List<Client> clientList = new List<Client>();
 
     public AddFriendPage( IClientService clientService, IFriendShipService friendShipService)
     {
@@ -26,7 +26,7 @@ public class AddFriendPage : PageModel
     }
     
     [BindProperty]
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     
     [BindProperty]
 
@@ -39,7 +39,7 @@ public class AddFriendPage : PageModel
     {
         var list = (await _clientService.FindClient(UserName)).ToList();
 
-        var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID!)!) ;
+        var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID)!) ;
         var dtoList =  list.Select( x => new DtoClientForFriend()
         {
             id = x.Id,
@@ -53,9 +53,16 @@ public class AddFriendPage : PageModel
 
     public async Task<IActionResult> OnPostHandleAddFriend()
     {
-        var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID!)!) ;
-        var x = FriendId;
-        await _friendShipService.CreateFriendShip(new Friendship() {SenderID = clientId,ReceiverId = FriendId, RequestDate = DateTime.Today});
+		try 
+		{
+			var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID)!) ;
+			await _friendShipService.CreateFriendship(clientId, FriendId);
+		}
+		catch (Exception e)
+		{
+			Console.WriteLine(e.Message);
+		}
+
 		return Page();
     }
 
@@ -66,5 +73,4 @@ public class AddFriendPage : PageModel
         await _friendShipService.CancelInvitation(clientId, x);
         return RedirectToPage("/AddFriendPage");
     }
-
 }

@@ -11,9 +11,12 @@ public class FriendShipService : IFriendShipService
 {
     private readonly IFriendShipRepository _friendShipRepository;
     private readonly IUnitOfWork _unitOfWork;
-    public FriendShipService(IFriendShipRepository friendShipRepository, IUnitOfWork unitOfWork)
+	private readonly IClientRepository _clientRepository;
+
+    public FriendShipService(IFriendShipRepository friendShipRepository, IUnitOfWork unitOfWork, IClientRepository clientRepository)
     {
         _friendShipRepository = friendShipRepository;
+		_clientRepository = clientRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -66,8 +69,10 @@ public class FriendShipService : IFriendShipService
     public async Task AcceptFriendInvitation(Guid friendShipId)
     {
         var friendship = await _friendShipRepository.GetAsync(x => x.Id == friendShipId) ?? throw new Exception("Not Found FriendInvitation");
-        friendship.Status = FriendShipRequestStatus.ACCEPTED;
-        await _friendShipRepository.UpdateAsync(friendship);
+		if (friendship.Status != FriendShipRequestStatus.WAITING) return;
+
+		friendship.Status = FriendShipRequestStatus.ACCEPTED;
+		await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
     }
     public async Task RejectFriendInvitation(Guid friendShipId)
@@ -113,5 +118,38 @@ public class FriendShipService : IFriendShipService
         x.Status = FriendShipRequestStatus.REJECTED;
         await _friendShipRepository.UpdateAsync(x);
         await _unitOfWork.CommitAsync();
+    }
+
+    public async Task CreateFriendship(Guid clientId, Guid friendId)
+    {
+		var sender = await _clientRepository.GetAsync(c => c.Id == clientId) ?? throw new Exception("Client not found");
+		var receiver = await _clientRepository.GetAsync(c => c.Id == friendId) ?? throw new Exception("Receiver not found");
+        var friendship = await _friendShipRepository.GetAsync(x =>
+               (x.SenderID == friendId && x.ReceiverId == clientId) ||
+               (x.SenderID == clientId && x.ReceiverId == friendId));
+
+		if (friendship == null)
+		{
+			friendship = new Friendship
+			{
+				SenderID = clientId,
+				ReceiverId = friendId,
+				Status = FriendShipRequestStatus.WAITING,
+				RequestDate = DateTime.Now
+			};
+
+			await _friendShipRepository.AddAsync(friendship);
+		}
+		else 
+		{
+			friendship.Status = FriendShipRequestStatus.WAITING;
+			friendship.RequestDate = DateTime.Now;
+			friendship.SenderID = clientId;
+			friendship.ReceiverId = friendId;
+
+			await _friendShipRepository.UpdateAsync(friendship);
+		}
+
+		await _unitOfWork.CommitAsync();
     }
 }
