@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using TalkBuddy.Common.Enums;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
+using TalkBuddy.Domain.Enums;
 using TalkBuddy.Service.Interfaces;
 
 namespace TalkBuddy.Service.Implementations;
@@ -12,12 +13,14 @@ public class FriendShipService : IFriendShipService
     private readonly IFriendShipRepository _friendShipRepository;
     private readonly IUnitOfWork _unitOfWork;
 	private readonly IClientRepository _clientRepository;
+	private readonly IChatBoxRepository _chatBoxRepository;
 
-    public FriendShipService(IFriendShipRepository friendShipRepository, IUnitOfWork unitOfWork, IClientRepository clientRepository)
+    public FriendShipService(IFriendShipRepository friendShipRepository, IUnitOfWork unitOfWork, IClientRepository clientRepository, IChatBoxRepository chatBoxRepository)
     {
         _friendShipRepository = friendShipRepository;
 		_clientRepository = clientRepository;
-        _unitOfWork = unitOfWork;
+		_chatBoxRepository = chatBoxRepository;
+		_unitOfWork = unitOfWork;
     }
 
     public async Task CreateFriendShip(Friendship friendShip)
@@ -85,8 +88,12 @@ public class FriendShipService : IFriendShipService
 
     public async Task CancelInvitation(Guid senderId, Guid receiverId)
     {
-        var friendship =
-        await _friendShipRepository.GetAsync(x => x.SenderID == senderId && x.ReceiverId == receiverId);
+        var friendship = await _friendShipRepository.GetAsync(x =>
+               (x.SenderID == senderId && x.ReceiverId == receiverId) ||
+               (x.SenderID == receiverId && x.ReceiverId == senderId));
+
+		if (friendship == null || friendship.Status != FriendShipRequestStatus.WAITING) return;
+
         friendship.Status = FriendShipRequestStatus.CANCEL;
         await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
@@ -95,18 +102,12 @@ public class FriendShipService : IFriendShipService
     public async Task<IEnumerable<Client>> GetClientFriends(Guid clientId)
     {
         var friendships = await (await _friendShipRepository.GetAllAsync())
-            .Where(fs => fs.Status == FriendShipRequestStatus.ACCEPTED)
+            .Where(fs => fs.Status == FriendShipRequestStatus.ACCEPTED && (fs.SenderID == clientId || fs.ReceiverId == clientId))
             .Include(fs => fs.Sender)
             .Include(fs => fs.Receiver)
             .ToListAsync();
 
-        return friendships.Select(fs =>
-        {
-            if (fs.SenderID == clientId)
-                return fs.Receiver;
-
-            return fs.Sender;
-        });
+        return friendships.Select(fs => fs.SenderID == clientId ? fs.Receiver : fs.Sender);
     }
 
     public async Task DeleteFriendShip(Guid friendId, Guid clientId)
@@ -137,9 +138,42 @@ public class FriendShipService : IFriendShipService
 				Status = FriendShipRequestStatus.WAITING,
 				RequestDate = DateTime.Now
 			};
+			
+			var chatbox = new ChatBox
+			{
+				ChatBoxName = $"{sender.Name} - {receiver.Name}",
+				CreatedDate = DateTime.Now,
+				Type = ChatBoxType.TwoPerson,
+				GroupCreatorId = clientId
+			};
 
+			chatbox.ClientChatBoxes.Add(new ClientChatBox
+			{
+				ClientId = clientId,
+				ChatBoxId = chatbox.Id,
+				IsBlocked = false,
+				IsLeft = false,
+				IsNotificationOn = true,
+				IsModerator = true,
+				NickName = sender.Name
+			});
+
+			chatbox.ClientChatBoxes.Add(new ClientChatBox
+			{
+				ClientId = friendId,
+				ChatBoxId = chatbox.Id,
+				IsBlocked = false,
+				IsLeft = false,
+				IsNotificationOn = true,
+				IsModerator = true,
+				NickName = receiver.Name
+			});
+
+			await _chatBoxRepository.AddAsync(chatbox);
 			await _friendShipRepository.AddAsync(friendship);
 		}
+		else if (friendship.Status == FriendShipRequestStatus.WAITING)
+			return;
 		else 
 		{
 			friendship.Status = FriendShipRequestStatus.WAITING;
