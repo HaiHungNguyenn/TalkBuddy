@@ -99,8 +99,7 @@ namespace TalkBuddy.Presentation.SignalR
                     ConnectionId = Context.ConnectionId
                 });
                 await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
-                //}
-                // Retrieve messages from a data source (e.g., database)
+             
                 var messages = await _messageService.GetMessages(chatBoxId);
                 
                 foreach (var message in messages)
@@ -118,7 +117,7 @@ namespace TalkBuddy.Presentation.SignalR
                     };
                     messageReturns.Add(mess);
                 }
-                //return messageReturns;
+           
             }
             return messageReturns;
         }
@@ -144,8 +143,20 @@ namespace TalkBuddy.Presentation.SignalR
             //    await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(fromUserId));
             //}
 
-            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender.Name, message);
+            //[Nhi]3/4/2024: fix message return type from string to object
+            var messageReturn = new MessageDto
+            {
+                Medias = messageObject.Medias,
+                SenderName = messageObject.Sender.Name,
+                SenderAvatar = messageObject.Sender.ProfilePicture,
+                Content = messageObject.Content,
+                SenderId = messageObject.SenderId,
+                SentDate = messageObject.SentDate,
 
+            };
+            
+            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messageReturn);
+            //[Nhi]3/4/2024: fix message return type from string to object
         }
 
         private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId)

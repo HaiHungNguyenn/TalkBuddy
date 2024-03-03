@@ -279,12 +279,9 @@
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
 
     connection.on("ReceiveMessage", function (user, message) {
-        var li = document.createElement("li");
-        console.log(message);
-        console.log(user);
-        li.textContent = user + ": " + message;
+      
 
-        document.getElementById("messages").appendChild(li);
+        document.getElementById("messages").appendChild(convertMessageToListItem(message));
     });
 
     connection.start().then(function () {
@@ -327,9 +324,14 @@
     function sendButtonClickHandler(event) {
         var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
         var message = document.getElementById("messageInput").value;
-        connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
-            return console.error(err.toString());
-        });
+       
+        if (message !== "") { // Check if message is not empty
+            connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        document.getElementById("messageInput").value = "";
         event.preventDefault();
     }
 
@@ -372,59 +374,24 @@
         // I created a function to render a single message instead of a list of messages
         // which may be easier to reuse
         messages.forEach(msg => messagesList.append(convertMessageToListItem(msg)));
-
-        // messages.forEach(function (message) {
-        //     // Create a new list item for each message
-        //     var li = document.createElement("li");
-        //
-        //     // check if the message belongs to the current client
-        //     const userId = document.cookie.split('=')[1]
-        //     const isSelfMsg = userId === message.senderId;
-        //     isSelfMsg && li.classList.add('self-msg');
-        //
-        //     // add avatar, the image is a placeholder, replace the image's source with client's avatar
-        //     const imgAvatar = document.createElement("img");
-        //     imgAvatar.src = "https://img.freepik.com/free-vector/cute-cat-gaming-cartoon_138676-2969.jpg";
-        //     imgAvatar.alt = "User avatar";
-        //     imgAvatar.height = 40;
-        //     imgAvatar.width = 40;
-        //     imgAvatar.classList.add("rounded-circle");
-        //
-        //     const spanMessageContent = document.createElement("span");
-        //     spanMessageContent.textContent = message.content;
-        //
-        //     if (isSelfMsg) {
-        //         // message to the left, avatar to the right
-        //         li.appendChild(spanMessageContent);
-        //         li.appendChild(imgAvatar);
-        //     } else {
-        //         // message to the right, avatar to the left
-        //         li.appendChild(imgAvatar);
-        //         li.appendChild(spanMessageContent);
-        //     }
-        //
-        //
-        //     // Append the list item to the messages list
-        //     li.classList.add("d-flex", isSelfMsg ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
-        //     messagesList.appendChild(li);
-        // });
+      
     }
     
     function convertMessageToListItem(message) {
         // Create a new list item for each message
         const li = document.createElement("li");
-        console.log(message)
-
+     
         // check if the message belongs to the current client (after logging in userId is stored in cookie)
         // this code is unsafe because it assumes there is only one cookie value which is the userId
         // in fact, it should check for all key and value pairs
         const userId = document.cookie.split('=')[1]
+   
         const isSelfMsg = userId === message.senderId;
         isSelfMsg && li.classList.add('self-msg');
         
         // add avatar, the image is a placeholder, replace the image's source with client's avatar
         const imgAvatar = document.createElement("img");
-        imgAvatar.src = "https://img.freepik.com/free-vector/cute-cat-gaming-cartoon_138676-2969.jpg";
+        imgAvatar.src = message.senderAvatar;
         imgAvatar.alt = "User avatar";
         imgAvatar.height = 40;
         imgAvatar.width = 40;
