@@ -23,6 +23,11 @@ namespace TalkBuddy.Presentation.Pages
             await LoadFriends();
         }
 
+		public IActionResult OnPostOpenChat(Guid friendId)
+		{
+			return RedirectToPage($"/{nameof(ChatPage)}");
+		}
+
         public async Task<IActionResult> OnPostRemoveFriend(Guid friendId)
         {
             try
