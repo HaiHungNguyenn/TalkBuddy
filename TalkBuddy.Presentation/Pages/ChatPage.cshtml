@@ -167,7 +167,36 @@
         overflow-y: scroll;
     }
 
-    #messages > li {
+    #messages > li > span {
+        background-color: #a160fe;
+        color: white;
+        width: fit-content;
+        padding: 0.15rem 0.25rem;
+        border-radius: 0.2rem;
+        font-weight: 500;
+        opacity: 0.9;
+        position: relative;
+    }
+
+    #messages > li > span:before {
+        content: "";
+        width: 0;
+        height: 0;
+        position: absolute;
+        border-right: 10px solid #a160fe;
+        border-left: 10px solid transparent;
+        border-bottom: 10px solid #a160fe;
+        border-top: 10px solid transparent;
+        left: -7px;
+        bottom: 0;
+        z-index: -1;
+    }
+ 
+    #messages > .self-msg > span {
+        background-color: red;
+    }
+    
+    #messages > .self-msg > span {
         background-color: #00e4e3;
         color: white;
         width: fit-content;
@@ -178,21 +207,28 @@
         position: relative;
     }
 
-    #messages > li:before {
+    #messages > .self-msg > span:after {
         content: "";
-        width: 0px;
-        height: 0px;
+        width: 0;
+        height: 0;
         position: absolute;
-        border-right: 10px solid #00e4e3;
-        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-left: 10px solid #00e4e3;
         border-bottom: 10px solid #00e4e3;
         border-top: 10px solid transparent;
-        left: -7px;
+        right: -7px;
         bottom: 0;
         z-index: -1;
     }
- 
-       
+    
+    #messages > .self-msg > span:before {
+        display: none;
+    }
+    
+    #messages li small {
+        font-size: 0.75rem;
+        font-weight: 300;
+    }
 
 </style>
 
@@ -206,7 +242,7 @@
         </form>
         <div class="d-flex justify-content-between align-items-center gap-4">
             <i class="fa-solid fa-bell add-icon text-white"></i>
-            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="~/default-avatar.png" />
+            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="~/default-avatar.png" alt="User avatar"/>
         </div>
     </div>
     <div class="w-100 h-100 chat-container">
@@ -219,36 +255,23 @@
                     </button>
                 </form>
                 <div class="w-100">
-                    <ul id="chatBoxtList">
-                   
-                       
-                    </ul>
+                    <ul id="chatBoxtList"></ul>
                 </div>
             </div>
-            <div class="chat-window" >
-                <div class="chat-header" id="chat-title">
-                                         
-                </div>
+            <div class="chat-window">
+                <div class="chat-header" id="chat-title"></div>
 
-                <ul id="messages">
-                   
-                </ul>
+                <ul id="messages"></ul>
                 <div class="chat-footer">
-                    <input placeholder="Type your message here" id="messageInput" />
+                    <input placeholder="Type your message here" id="messageInput"/>
                     <div id="sendButton">
                         <button>
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
                 </div>
-
             </div>
-
-         
         </div>
-
-
-    
     </div>
 </section>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -260,7 +283,7 @@
         console.log(message);
         console.log(user);
         li.textContent = user + ": " + message;
-       
+
         document.getElementById("messages").appendChild(li);
     });
 
@@ -346,15 +369,93 @@
         var messagesList = document.getElementById("messages");
         messagesList.innerHTML = ""; // Clear previous messages
 
-        messages.forEach(function (message) {
-            // Create a new list item for each message
-            var li = document.createElement("li");
+        // I created a function to render a single message instead of a list of messages
+        // which may be easier to reuse
+        messages.forEach(msg => messagesList.append(convertMessageToListItem(msg)));
 
-            li.textContent = message.senderName + ": " + message.content;
+        // messages.forEach(function (message) {
+        //     // Create a new list item for each message
+        //     var li = document.createElement("li");
+        //
+        //     // check if the message belongs to the current client
+        //     const userId = document.cookie.split('=')[1]
+        //     const isSelfMsg = userId === message.senderId;
+        //     isSelfMsg && li.classList.add('self-msg');
+        //
+        //     // add avatar, the image is a placeholder, replace the image's source with client's avatar
+        //     const imgAvatar = document.createElement("img");
+        //     imgAvatar.src = "https://img.freepik.com/free-vector/cute-cat-gaming-cartoon_138676-2969.jpg";
+        //     imgAvatar.alt = "User avatar";
+        //     imgAvatar.height = 40;
+        //     imgAvatar.width = 40;
+        //     imgAvatar.classList.add("rounded-circle");
+        //
+        //     const spanMessageContent = document.createElement("span");
+        //     spanMessageContent.textContent = message.content;
+        //
+        //     if (isSelfMsg) {
+        //         // message to the left, avatar to the right
+        //         li.appendChild(spanMessageContent);
+        //         li.appendChild(imgAvatar);
+        //     } else {
+        //         // message to the right, avatar to the left
+        //         li.appendChild(imgAvatar);
+        //         li.appendChild(spanMessageContent);
+        //     }
+        //
+        //
+        //     // Append the list item to the messages list
+        //     li.classList.add("d-flex", isSelfMsg ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+        //     messagesList.appendChild(li);
+        // });
+    }
+    
+    function convertMessageToListItem(message) {
+        // Create a new list item for each message
+        const li = document.createElement("li");
+        console.log(message)
 
-            // Append the list item to the messages list
-            messagesList.appendChild(li);
-        });
+        // check if the message belongs to the current client (after logging in userId is stored in cookie)
+        // this code is unsafe because it assumes there is only one cookie value which is the userId
+        // in fact, it should check for all key and value pairs
+        const userId = document.cookie.split('=')[1]
+        const isSelfMsg = userId === message.senderId;
+        isSelfMsg && li.classList.add('self-msg');
+        
+        // add avatar, the image is a placeholder, replace the image's source with client's avatar
+        const imgAvatar = document.createElement("img");
+        imgAvatar.src = "https://img.freepik.com/free-vector/cute-cat-gaming-cartoon_138676-2969.jpg";
+        imgAvatar.alt = "User avatar";
+        imgAvatar.height = 40;
+        imgAvatar.width = 40;
+        imgAvatar.classList.add("rounded-circle");
+        
+        const spanMessageContent = document.createElement("span");
+        spanMessageContent.textContent = message.content;
+        
+        const smallTime = document.createElement("small");
+        smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
+        smallTime.classList.add("align-self-end");
+        
+        // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
+        const spanContainer = document.createElement("span");
+        spanContainer.classList.add("d-flex", "flex-column");
+        spanContainer.appendChild(spanMessageContent);
+        spanContainer.appendChild(smallTime);
+        
+        if (isSelfMsg) {
+            // message to the left, avatar to the right
+            li.appendChild(spanContainer);
+            li.appendChild(imgAvatar);
+        } else {
+            // message to the right, avatar to the left
+            li.appendChild(imgAvatar);
+            li.appendChild(spanContainer);
+        }
+        
+        li.classList.add("d-flex", isSelfMsg ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+
+        return li;
     }
 
 </script>
