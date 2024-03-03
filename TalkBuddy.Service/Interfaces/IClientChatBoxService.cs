@@ -8,5 +8,7 @@ namespace TalkBuddy.Service.Interfaces
         Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId);
         Task<IList<ClientChatBox>> GetClientChatBoxesIncludeNotEmptyMessages(Guid clientId);
         Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId);
+        Task<IList<ClientChatBox>> GetClientOfChatBoxesOfAUserBySearchName(string searchName, Guid userId);
+        Task<string> GetChatBoxNameOfTwoPersonType(Guid chatBoxId, Guid userId);
     }
 }

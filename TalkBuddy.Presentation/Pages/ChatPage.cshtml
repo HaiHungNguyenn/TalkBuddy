@@ -249,8 +249,8 @@
         <div class="chat-layout">
             <div class="left-container">
                 <form method="post" class="search-chatbox-form">
-                    <input class="rounded-3" type="text" placeholder="Search for conversation..." />
-                    <button type="submit" class="search-btn">
+                    <input class="rounded-3" type="text" placeholder="Search for conversation..." id="searchChatInput"/>
+                    <button type="submit" class="search-btn" id="searchChatButon" onclick="searchChatButtonClickHandler">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     </button>
                 </form>
@@ -322,7 +322,7 @@
        
 
     function sendButtonClickHandler(event) {
-        var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
+      
         var message = document.getElementById("messageInput").value;
        
         if (message !== "") { // Check if message is not empty
@@ -332,6 +332,17 @@
         }
 
         document.getElementById("messageInput").value = "";
+        event.preventDefault();
+    }
+
+    //search for chatbox
+    function searchChatButtonClickHandler(event) {
+     
+        var searchString = document.getElementById("searchChatInput").value;
+        connection.invoke("SearchByChatBoxName", searchString).catch(function (err) {
+            return console.error(err.toString());
+        });
+         
         event.preventDefault();
     }
 
