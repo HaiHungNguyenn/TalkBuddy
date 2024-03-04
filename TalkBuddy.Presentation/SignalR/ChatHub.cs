@@ -144,7 +144,7 @@ namespace TalkBuddy.Presentation.SignalR
             //}
 
             //[Nhi]3/4/2024: fix message return type from string to object
-            var messageReturn = new MessageDto
+            var messageReturnForSender = new MessageDto
             {
                 Medias = messageObject.Medias,
                 SenderName = messageObject.Sender.Name,
@@ -152,10 +152,21 @@ namespace TalkBuddy.Presentation.SignalR
                 Content = messageObject.Content,
                 SenderId = messageObject.SenderId,
                 SentDate = messageObject.SentDate,
-                IsYourOwnMess = fromUserId.Equals(messageObject.SenderId.ToString())
+                IsYourOwnMess = true
             };
-            
-            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messageReturn);
+
+            var messReturnForOthers = new MessageDto
+            {
+                Medias = messageObject.Medias,
+                SenderName = messageObject.Sender.Name,
+                SenderAvatar = messageObject.Sender.ProfilePicture,
+                Content = messageObject.Content,
+                SenderId = messageObject.SenderId,
+                SentDate = messageObject.SentDate,
+                IsYourOwnMess = false
+            };
+            await Clients.Caller.SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
+            await Clients.OthersInGroup(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
             //[Nhi]3/4/2024: fix message return type from string to object
         }
 
