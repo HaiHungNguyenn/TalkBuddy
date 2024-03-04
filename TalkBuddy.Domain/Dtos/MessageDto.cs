@@ -12,6 +12,7 @@ namespace TalkBuddy.Domain.Dtos
 
         public string SenderName { get; set; }
         public string SenderAvatar { get; set; }
+        public bool IsYourOwnMess { get; set; }
         public virtual ICollection<Media> Medias { get; set; } = new List<Media>();
     }
 }
