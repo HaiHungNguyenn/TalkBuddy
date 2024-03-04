@@ -113,7 +113,7 @@ namespace TalkBuddy.Presentation.SignalR
                         SenderId = message.SenderId,
                         ChatBoxId = chatBoxId,
                         SentDate = message.SentDate,
-
+                        IsYourOwnMess = userId.Equals(message.SenderId.ToString())
                     };
                     messageReturns.Add(mess);
                 }
@@ -152,7 +152,7 @@ namespace TalkBuddy.Presentation.SignalR
                 Content = messageObject.Content,
                 SenderId = messageObject.SenderId,
                 SentDate = messageObject.SentDate,
-
+                IsYourOwnMess = fromUserId.Equals(messageObject.SenderId.ToString())
             };
             
             await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messageReturn);
