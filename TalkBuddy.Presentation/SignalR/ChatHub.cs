@@ -198,6 +198,14 @@ namespace TalkBuddy.Presentation.SignalR
             }
             return returnList;
         }
+
+        public async Task GetClientsOfChatBox(Guid chatBoxId)
+        {
+            var clientChatBoxes = await _clientChatBoxService.GetClientOfChatBoxes(chatBoxId);
+            var clients = clientChatBoxes.Select(c => c.Client);
+
+            await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients);
+        }
     }
         
 }

@@ -3,6 +3,7 @@
 @{
 
 }
+<link rel="stylesheet" href="/css/chatPage.css" />
 
 <style>
     .search-icon {
@@ -242,7 +243,7 @@
         </form>
         <div class="d-flex justify-content-between align-items-center gap-4">
             <i class="fa-solid fa-bell add-icon text-white"></i>
-            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="~/default-avatar.png" alt="User avatar"/>
+            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="/default-avatar.png" alt="User avatar"/>
         </div>
     </div>
     <div class="w-100 h-100 chat-container">
@@ -274,6 +275,27 @@
         </div>
     </div>
 </section>
+
+<dialog id="show-clients-dialog">
+    <div class="row dialog-header">
+        <div class="col-2"></div>
+        <h2 class="dialog-title col-8">Members</h2>
+        <button class="close-btn btn col-2" onclick="this.parentElement.parentElement.close()">&#10005;</button>
+    </div>
+    <div class="modal-body-dialog">
+        <div class="client-row row">
+            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png"/>
+            <span class="client-name-dialog col-7">Tri</span>
+        </div>
+        <div class="client-row row">
+            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png"/>
+            <span class="client-name-dialog col-7">Hai</span>
+        </div>
+    </div>
+    <form method="dialog">
+    </form>
+</dialog>
+
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
@@ -299,7 +321,7 @@
             console.log(chatBox.ChatBoxName);
             // Create the image element
             var img = document.createElement("img");            
-            img.src = chatBox.chatBoxAvatar;
+            img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
             img.className = "avatar";
 
             // Create the span element for the text
@@ -324,7 +346,7 @@
     function sendButtonClickHandler(event) {
         var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
         var message = document.getElementById("messageInput").value;
-       
+      
         if (message !== "") { // Check if message is not empty
             connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
                 return console.error(err.toString());
@@ -340,8 +362,8 @@
         var chatHeader = document.getElementById("chat-title");
         chatHeader.innerHTML = "";
         var img = document.createElement("img");
-        img.src = chatBox.chatBoxAvatar;
-        img.className = "avatar";
+        img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
+        img.className = "avatar show-clients";
         // Create the span element for the text
         var span = document.createElement("span");
         span.className = "fs-5 fw-semibold";
@@ -364,6 +386,16 @@
 
         // Set the chatBoxId as a data attribute on the sendButton element
         document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
+
+        //Add click event to show clients in chat box
+        const showClient = document.getElementsByClassName("show-clients")[0];
+        const clientsDialog = document.getElementById("show-clients-dialog");
+        showClient.addEventListener("click", () => {
+            clientsDialog.showModal();
+            connection.invoke("GetClientsOfChatBox", chatBox.chatBoxId).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
     }
 
     // Function to display messages on the UI
@@ -422,6 +454,26 @@
 
         return li;
     }
+    
+    connection.on("ShowClientsOfChatBox", (clients) => {
+        console.log(clients);
+        displayClients(clients)
+    })
+
+    function displayClients(clients){
+        const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
+        dialogBody.innerHTML = "";
+        clients.forEach((client) => {
+            dialogBody.innerHTML += `
+            <div class="client-row row">
+                <img class="client-avatar-dialog col-3 rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/>
+                <span class="client-name-dialog col-7">${client.name}</span>
+            </div>
+            `
+        })
+    }
 
 </script>
+
+<script src="/js/viewListClientsInChat.js"/>
 
