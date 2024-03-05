@@ -416,10 +416,8 @@
         // check if the message belongs to the current client (after logging in userId is stored in cookie)
         // this code is unsafe because it assumes there is only one cookie value which is the userId
         // in fact, it should check for all key and value pairs
-        const userId = document.cookie.split('=')[1]
-   
-        const isSelfMsg = userId === message.senderId;
-        isSelfMsg && li.classList.add('self-msg');
+       
+        message.isYourOwnMess && li.classList.add('self-msg');
         
         // add avatar, the image is a placeholder, replace the image's source with client's avatar
         const imgAvatar = document.createElement("img");
@@ -442,7 +440,7 @@
         spanContainer.appendChild(spanMessageContent);
         spanContainer.appendChild(smallTime);
         
-        if (isSelfMsg) {
+        if (message.isYourOwnMess) {
             // message to the left, avatar to the right
             li.appendChild(spanContainer);
             li.appendChild(imgAvatar);
@@ -452,7 +450,7 @@
             li.appendChild(spanContainer);
         }
         
-        li.classList.add("d-flex", isSelfMsg ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+        li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
 
         return li;
     }
