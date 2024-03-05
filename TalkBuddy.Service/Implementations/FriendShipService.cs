@@ -141,7 +141,7 @@ public class FriendShipService : IFriendShipService
 			
 			var chatbox = new ChatBox
 			{
-				ChatBoxName = $"{sender.Name} - {receiver.Name}",
+				//ChatBoxName = $"{sender.Name} - {receiver.Name}",
 				CreatedDate = DateTime.Now,
 				Type = ChatBoxType.TwoPerson,
 				GroupCreatorId = clientId

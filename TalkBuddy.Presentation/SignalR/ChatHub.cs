@@ -36,8 +36,8 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 //replace clientChatBoxes by clientChatBoxesContainMessages if want to load only chatBox which already have conversation - means messages != null
                 // var clientChatBoxesContainMessages = await _clientChatBoxService.GetClientChatBoxesIncludeNotEmptyMessages(new Guid(userId));
-               
-                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId));
+                var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId, clientChatBoxes));
                 if (!_ConnectionPresences.Contains(userId))
                 {
                     _ConnectionPresences.Add(userId);
@@ -114,12 +114,35 @@ namespace TalkBuddy.Presentation.SignalR
                         ChatBoxId = chatBoxId,
                         SentDate = message.SentDate,
                         IsYourOwnMess = userId.Equals(message.SenderId.ToString())
+
                     };
                     messageReturns.Add(mess);
                 }
            
             }
             return messageReturns;
+        }
+
+        public async Task SearchByChatBoxName(string searchString)
+        {
+            var userId = Context.GetHttpContext().Session.GetString(SessionConstants.USER_ID);
+            if (string.IsNullOrEmpty(searchString))
+            {
+                var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId, clientChatBoxes));
+                return;
+            }
+            var chatBox = await _clientChatBoxService
+                .GetClientOfChatBoxesOfAUserBySearchName(searchString, new Guid(userId));
+            if (chatBox != null)
+            {
+                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId, chatBox));
+            }
+            else
+            {
+                //await Clients.Caller.SendAsync("ChatBoxNotExist");
+            }
+               
         }
 
         public async Task SendMessage(string chatBoxId, string message)
@@ -153,6 +176,7 @@ namespace TalkBuddy.Presentation.SignalR
                 SenderId = messageObject.SenderId,
                 SentDate = messageObject.SentDate,
                 IsYourOwnMess = true
+
             };
 
             var messReturnForOthers = new MessageDto
@@ -170,15 +194,20 @@ namespace TalkBuddy.Presentation.SignalR
             //[Nhi]3/4/2024: fix message return type from string to object
         }
 
-        private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId)
+        private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId, IList<ClientChatBox> clientChatBoxes)
         {
-            var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+            
             IList<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
             foreach (var x in clientChatBoxes)
             {
                 //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
                 string chatBoxName;
-                if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
+                if(x.ChatBox.Type == Domain.Enums.ChatBoxType.TwoPerson)
+                {
+                    chatBoxName = await _clientChatBoxService
+                        .GetChatBoxNameOfTwoPersonType(x.ChatBoxId, new Guid(userId));
+                }
+                else if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
                 {
                     chatBoxName = x.ChatBox.ChatBoxName;
                 }

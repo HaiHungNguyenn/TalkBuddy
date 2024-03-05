@@ -250,8 +250,8 @@
         <div class="chat-layout">
             <div class="left-container">
                 <form method="post" class="search-chatbox-form">
-                    <input class="rounded-3" type="text" placeholder="Search for conversation..." />
-                    <button type="submit" class="search-btn">
+                    <input class="rounded-3" type="text" placeholder="Search for conversation..." id="searchChatInput"/>
+                    <button type="submit" class="search-btn" id="searchChatButon" onclick="searchChatButtonClickHandler(event)">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     </button>
                 </form>
@@ -301,8 +301,6 @@
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
 
     connection.on("ReceiveMessage", function (user, message) {
-      
-
         document.getElementById("messages").appendChild(convertMessageToListItem(message));
     });
 
@@ -313,8 +311,8 @@
     });
 
     connection.on("InitializeChat", function (chatBoxes) {
-        // Handle received messages
-        console.log(chatBoxes);
+        
+        document.getElementById("chatBoxtList").innerHTML = "";
         chatBoxes.forEach(function (chatBox) {
             var li = document.createElement("li");
                      
@@ -338,6 +336,7 @@
             });
 
             // Append the list item to the chat box list
+            
             document.getElementById("chatBoxtList").appendChild(li);
         });
     });
@@ -354,6 +353,17 @@
         }
 
         document.getElementById("messageInput").value = "";
+        event.preventDefault();
+    }
+
+    //search for chatbox
+    function searchChatButtonClickHandler(event) {
+     
+        var searchString = document.getElementById("searchChatInput").value;
+        connection.invoke("SearchByChatBoxName", searchString).catch(function (err) {
+            return console.error(err.toString());
+        });
+        document.getElementById("searchChatInput").value = "";
         event.preventDefault();
     }
 
