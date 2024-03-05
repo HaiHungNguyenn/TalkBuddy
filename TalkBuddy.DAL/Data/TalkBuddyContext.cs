@@ -16,6 +16,7 @@ public partial class TalkBuddyContext : DbContext
     public DbSet<Media> Medias { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Report> Reports { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
     public TalkBuddyContext()
     {
     }
@@ -92,8 +93,13 @@ public partial class TalkBuddyContext : DbContext
                 .WithMany(x => x.ClientMessages)
                 .HasForeignKey(x => x.ClientId)
                 .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<Notification>()
+            .ToTable("Notification")
+            .HasOne(x => x.Client)
+            .WithMany(x => x.Notifications)
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.NoAction);
 
-     
     }
 
     public async Task SaveChangesAsync()
