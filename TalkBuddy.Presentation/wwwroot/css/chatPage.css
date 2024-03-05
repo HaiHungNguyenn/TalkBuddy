@@ -1,0 +1,34 @@
+.show-clients{
+    cursor: pointer;
+}
+
+#show-clients-dialog{
+    border-radius: 10px;
+    border: 1px;
+    width: 57%;
+}
+
+#show-clients-dialog::backdrop{
+    background: rgb(0, 0, 0, 0.5);
+}
+
+.dialog-header{
+    border-bottom: 1px solid #CED0D4;
+}
+
+.client-name-dialog{
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: large;
+    font-weight: 500;
+}
+
+.client-avatar-dialog{
+    width: 100px;
+}
+
+.dialog-title{
+    text-align: center;
+}

@@ -25,18 +25,22 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(clientId)).Include(x => x.ChatBox).Include(x => x.Client).ToListAsync();
+            
+            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ClientId.Equals(clientId));
+            return res.Include(x => x.ChatBox).Include(x => x.Client).ToList();
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId)).Include(x => x.Client).ToListAsync();
+            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId));
+            return res.Include(x => x.Client).ToList();
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxesOfAUserBySearchName(string searchName, Guid userId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(userId)).
-                Include(x => x.ChatBox).Include(x => x.Client)
+            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(userId))
+                .Include(x => x.Client)
+                .Include(x => x.ChatBox).ThenInclude(c=>c.ClientChatBoxes)
                 .Where(c => c.ChatBox.ChatBoxName
                 .Contains(searchName) ||
                 c.ChatBox.ClientChatBoxes
