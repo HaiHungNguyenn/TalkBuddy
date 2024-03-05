@@ -5,6 +5,7 @@
 #show-clients-dialog{
     border-radius: 10px;
     border: 1px;
+    width: 57%;
 }
 
 #show-clients-dialog::backdrop{
@@ -25,7 +26,7 @@
 }
 
 .client-avatar-dialog{
-    width: 14%;
+    width: 100px;
 }
 
 .dialog-title{
