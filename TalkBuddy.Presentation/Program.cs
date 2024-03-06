@@ -46,7 +46,8 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
     endpoints.MapHub<ChatHub>("/chat");
-  
+    endpoints.MapHub<NotificationHub>("/notification");
+
 });
 
 app.Run();
