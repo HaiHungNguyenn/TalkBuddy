@@ -302,6 +302,7 @@
 
     connection.on("ReceiveMessage", function (user, message) {
         document.getElementById("messages").appendChild(convertMessageToListItem(message));
+        scrollMessagesToBottom();
     });
 
     connection.start().then(function () {
@@ -416,7 +417,7 @@
         // I created a function to render a single message instead of a list of messages
         // which may be easier to reuse
         messages.forEach(msg => messagesList.append(convertMessageToListItem(msg)));
-      
+        scrollMessagesToBottom();
     }
     
     function convertMessageToListItem(message) {
@@ -481,6 +482,11 @@
             </div>
             `
         })
+    }
+    
+    const scrollMessagesToBottom = () => {
+        const ulMessages = document.getElementById("messages");
+        ulMessages.scrollTop = ulMessages.scrollHeight;
     }
 
 </script>
