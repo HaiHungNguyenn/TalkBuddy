@@ -1,4 +1,5 @@
 ﻿@page
+@using TalkBuddy.Common.Constants
 @model TalkBuddy.Presentation.Pages.ChatPage
 @{
 
@@ -230,6 +231,23 @@
         font-size: 0.75rem;
         font-weight: 300;
     }
+    
+    .logout-container {
+        min-width: 200px;
+        margin-top: 75%;
+        background-color: #C4CCF3;
+        border-radius: 0.75rem;
+        right: 0;
+        display: none;
+        z-index: 10;
+        box-shadow: 10px 15px 5px -5px rgba(0,0,0,0.1);
+    }
+    
+    .logout-container > p {
+        color:  #272931;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
 
 </style>
 
@@ -243,7 +261,15 @@
         </form>
         <div class="d-flex justify-content-between align-items-center gap-4">
             <i class="fa-solid fa-bell add-icon text-white"></i>
-            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="/default-avatar.png" alt="User avatar"/>
+            <div class="position-relative">
+                <img class="rounded-circle" id="user-avatar" style="cursor: pointer;" width="40" height="40" src="/default-avatar.png" alt="User avatar"/>
+                <div class="position-absolute p-3 logout-container" id="logout-container">
+                    <p>@HttpContext.Session.GetString(SessionConstants.USER_NAME)</p>
+                    <form method="post" asp-page-handler="LogOut" class="w-100 text-center fw-bold">
+                        <button type="submit" class="btn btn-primary text-center">Log out</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
     <div class="w-100 h-100 chat-container">
@@ -489,6 +515,15 @@
         ulMessages.scrollTop = ulMessages.scrollHeight;
     }
 
+</script>
+
+<script>
+    document.getElementById('user-avatar').addEventListener('click', (event) => {
+        const logoutContainer = document.getElementById('logout-container');
+        logoutContainer.style.display === 'block'
+            ? logoutContainer.style.display = 'none' 
+            : logoutContainer.style.display = 'block';
+    });
 </script>
 
 <script src="/js/viewListClientsInChat.js"/>
