@@ -26,14 +26,30 @@ public class AddFriendRequest : PageModel
 
     public async Task<RedirectToPageResult> OnPostHandleAccept()
     {
-        await _friendShipService.AcceptFriendInvitation(FriendShipId);
+        try
+        {
+            await _friendShipService.AcceptFriendInvitation(FriendShipId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+        
         return RedirectToPage("/AddFriendRequest");
     } 
     public async Task<RedirectToPageResult> OnPostHandleReject()
     {
-        await _friendShipService.RejectFriendInvitation(FriendShipId);
+        try
+        {
+            await _friendShipService.RejectFriendInvitation(FriendShipId);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        } 
+        
         return RedirectToPage("/AddFriendRequest");
     }
-
- 
 }
