@@ -428,10 +428,17 @@
         const showClient = document.getElementsByClassName("show-clients")[0];
         const clientsDialog = document.getElementById("show-clients-dialog");
         showClient.addEventListener("click", () => {
-            clientsDialog.showModal();
-            connection.invoke("GetClientsOfChatBox", chatBox.chatBoxId).catch(function (err) {
-                return console.error(err.toString());
-            });
+            //check type of chat box
+            console.log(chatBox);
+            if(chatBox.chatBoxType == "TwoPerson"){
+                window.location.href = `/Profile?id=${chatBox.clientId}`
+            }
+            else {
+                clientsDialog.showModal();
+                connection.invoke("GetClientsOfChatBox", chatBox.chatBoxId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
         });
     }
 
@@ -492,6 +499,7 @@
         return li;
     }
     
+    //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
         console.log(clients);
         displayClients(clients)

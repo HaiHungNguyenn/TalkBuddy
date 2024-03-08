@@ -202,10 +202,14 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
                 string chatBoxName;
+                Guid otherClientId = Guid.Empty;
                 if(x.ChatBox.Type == Domain.Enums.ChatBoxType.TwoPerson)
                 {
                     chatBoxName = await _clientChatBoxService
                         .GetChatBoxNameOfTwoPersonType(x.ChatBoxId, new Guid(userId));
+                    var clientList = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
+                    var otherClient = clientList.Select(c => c.Client).Where(c => c.Id.ToString() != userId.ToString()).FirstOrDefault();
+                    if(otherClient != null) otherClientId = otherClient.Id;
                 }
                 else if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
                 {
@@ -221,7 +225,9 @@ namespace TalkBuddy.Presentation.SignalR
                 {
                     ChatBoxId = x.ChatBoxId,
                     ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
-                    ChatBoxName = chatBoxName
+                    ChatBoxName = chatBoxName,
+                    ChatBoxType = x.ChatBox.Type.ToString(),
+                    ClientId = otherClientId,
                 };
                 returnList.Add(chatBox);
             }
