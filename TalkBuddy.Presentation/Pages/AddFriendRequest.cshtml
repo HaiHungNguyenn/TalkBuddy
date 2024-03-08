@@ -1,5 +1,6 @@
 ﻿@page
 @using TalkBuddy.Domain.Entities
+@using TalkBuddy.Presentation.Components
 @model TalkBuddy.Presentation.Pages.AddFriendRequest
 
 <style></style>
@@ -7,14 +8,19 @@
 @{
     var invitationList = TempData["invitationList"] as IEnumerable<Friendship> ?? new List<Friendship>();
 }
-<div class="container">
-    <div class="row justify-content-center mt-5">
+
+<link rel="stylesheet" href="~/css/header.css">
+
+<section style="background-color: #e4e7f5; height: 100%">
+    <component type="typeof(Header)" render-mode="Static"/>
+    <div class="d-flex justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card form-bg-color border h-50vh">
                 <div class="card-body ">
-                    <h5 class="card-title">List Friend Invitation</h5>
-                    @if(invitationList.Count() == 0){
-                        <P>There is no invitation</P>
+                    <h5 class="card-title">Friend Invitations</h5>
+                    @if (!invitationList.Any())
+                    {
+                        <p>There is no invitations</p>
                     }
                     <ul class="w-100 p-0" id="friendList">
                         @foreach (var x in invitationList)
@@ -23,15 +29,15 @@
                                 <div class="d-flex gap-1 justify-content-center align-items-center">
                                     @if (string.IsNullOrEmpty(x.Sender.ProfilePicture))
                                     {
-                                        <img width="34" height="34" src="~/default-avatar.png" />
+                                        <img width="34" height="34" src="~/default-avatar.png" alt="Default avatar"/>
                                     }
                                     else
                                     {
-                                        <img src="@x.Sender.ProfilePicture" />
+                                        <img width="34" height="34" src="@x.Sender.ProfilePicture" alt="Sender avatar"/>
                                     }
                                     <div class="d-flex flex-column justify-content-center align-items-start">
                                         <p class="m-0">@x.Sender.Name</p>
-                                        <small style="font-size: 0.7rem">From @x.RequestDate</small> 
+                                        <small style="font-size: 0.7rem">From @x.RequestDate</small>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-center align-items-center gap-2">
@@ -55,4 +61,4 @@
             </div>
         </div>
     </div>
-</div>
+</section>

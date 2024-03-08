@@ -1,46 +1,26 @@
 ﻿@page
-@using TalkBuddy.Domain.Entities
 @using TalkBuddy.Domain.Dtos
-@using System.Collections
 @using TalkBuddy.Common.Enums
+@using TalkBuddy.Presentation.Components
 
 @model AddFriendPage
 @{
     var friendList =  TempData["friendList"] as IEnumerable<DtoClientForFriend> ?? new List<DtoClientForFriend>();
-
-//<link rel="stylesheet" href="css/addfriendpage.css" asp-append-version="true"/>
 }
 
-<style>
-    .page-container {
-        background-color: #e4e7f5;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-        padding: 2rem 1rem;
-    }
+<link rel="stylesheet" href="~/css/header.css"/>
+<link rel="stylesheet" href="~/css/addfriendpage.css"/>
 
-    .friend-hover:hover {
-        background-color: #7f5ee5;
-        transition: background-color 0.25s ease-in;
-        cursor: pointer;
-    }
-
-    .friend-hover:hover button {
-        background-color: white;
-        color: #00e4e3;
-    }
-</style>
-
-<div class="page-container">
+<section class="page-container">
+    <component type="typeof(Header)" render-mode="Static"/>
     <div class="row justify-content-center">
         <div class="col-md-6" style="background-color: inherit;">
             <div class="card border-0 h-50vh" style="background-color: inherit;">
                 <div class="card-body ">
                     <h5 class="card-title">Search Friend</h5>
-                    <form method="post" >
+                    <form method="post">
                         <div class="input-group">
-                            <input type="text"  asp-for="UserName" class="form-control" placeholder="Enter your friend" />
+                            <input type="text" asp-for="UserName" class="form-control" placeholder="Enter your friend"/>
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-search"></i>
@@ -48,50 +28,49 @@
                             </div>
                         </div>
                     </form>
-                    @if(friendList.Count() > 0){
-                        <ul class="w-100 p-0 friend-list d-flex flex-column justify-content-center align-items-center my-4" id="friendList" style="list-style: none;">
-                            @foreach(var client in friendList)
+                    <ul class="w-100 p-0 friend-list d-flex flex-column justify-content-center align-items-center my-4" id="friendList" style="list-style: none;">
+                        @foreach (var client in friendList)
+                        {
+                            @if (!client.RelationStatus.Equals(FriendShipRequestStatus.YOURSELF))
                             {
-                                @if (!client.RelationStatus.Equals(FriendShipRequestStatus.YOURSELF))
-                                {
-                                    <li class="w-100 friend-list-item d-flex justify-content-between align-items-center friend-hover p-2 rounded-3">
-                                        <div class="friend-avatar d-flex justify-content-between align-items-center gap-3">
-                                            <img class="rounded-circle" width="40" height="40" src="https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp" />
-                                            <p class="friend-name m-0 fw-semibold">@client.Name</p>
-                                        </div>
-                                        @if(client.RelationStatus.Equals(FriendShipRequestStatus.REJECTED) || 
-                                            client.RelationStatus == null ||
-                                            client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL) ){
-                                            <form method="post" asp-page-handler="HandleAddFriend">
-                                                <input type="hidden" asp-for="FriendId" value="@client.id"/>
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="fa-solid fa-user-plus add-icon"></i>                      
-                                                </button>
-                                            </form>
-                                        }
-                                        else if(client.RelationStatus.Equals(FriendShipRequestStatus.ACCEPTED))
-                                        {
+                                <li class="w-100 friend-list-item d-flex justify-content-between align-items-center friend-hover p-2 rounded-3">
+                                    <div class="friend-avatar d-flex justify-content-between align-items-center gap-3">
+                                        <img class="rounded-circle" width="40" height="40" src="https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp" alt="Friend avatar"/>
+                                        <p class="friend-name m-0 fw-semibold">@client.Name</p>
+                                    </div>
+                                    @if (client.RelationStatus.Equals(FriendShipRequestStatus.REJECTED) ||
+                                         client.RelationStatus == null ||
+                                         client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL))
+                                    {
+                                        <form method="post" asp-page-handler="HandleAddFriend">
+                                            <input type="hidden" asp-for="FriendId" value="@client.id"/>
                                             <button type="submit" class="btn btn-primary">
-                                                <i class="fa-solid fa-message add-icon"></i> 
+                                                <i class="fa-solid fa-user-plus add-icon"></i>
                                             </button>
-                                        }
-                                        else if(client.RelationStatus.Equals(FriendShipRequestStatus.WAITING))
-                                        {
-											<form method="post" asp-page-handler="HandleCancelInvitation">
-												<input type="hidden" asp-for="FriendId" value="@client.id"/>
-												<button type="submit" class="btn btn-primary">
-													<i class="fa-solid fa-xmark"></i>
-    											</button>
-											</form>
-                                        }
-                                    </li>
-                                }
+                                        </form>
+                                    }
+                                    else if (client.RelationStatus.Equals(FriendShipRequestStatus.ACCEPTED))
+                                    {
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fa-solid fa-message add-icon"></i>
+                                        </button>
+                                    }
+                                    else if (client.RelationStatus.Equals(FriendShipRequestStatus.WAITING))
+                                    {
+                                        <form method="post" asp-page-handler="HandleCancelInvitation">
+                                            <input type="hidden" asp-for="FriendId" value="@client.id"/>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                </li>
                             }
-                        </ul>
-                    }
+                        }
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
         

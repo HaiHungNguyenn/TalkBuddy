@@ -84,7 +84,7 @@ ul, li {
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    padding-left: 0 !important;
+    padding-left: 0!important;
 }
 
 #chatBoxtList > li {
@@ -160,7 +160,36 @@ ul, li {
     overflow-y: scroll;
 }
 
-#messages > li {
+#messages > li > span {
+    background-color: #a160fe;
+    color: white;
+    width: fit-content;
+    padding: 0.15rem 0.25rem;
+    border-radius: 0.2rem;
+    font-weight: 500;
+    opacity: 0.9;
+    position: relative;
+}
+
+#messages > li > span:before {
+    content: "";
+    width: 0;
+    height: 0;
+    position: absolute;
+    border-right: 10px solid #a160fe;
+    border-left: 10px solid transparent;
+    border-bottom: 10px solid #a160fe;
+    border-top: 10px solid transparent;
+    left: -7px;
+    bottom: 0;
+    z-index: -1;
+}
+
+#messages > .self-msg > span {
+    background-color: red;
+}
+
+#messages > .self-msg > span {
     background-color: #00e4e3;
     color: white;
     width: fit-content;
@@ -171,16 +200,42 @@ ul, li {
     position: relative;
 }
 
-#messages > li:before {
+#messages > .self-msg > span:after {
     content: "";
-    width: 0px;
-    height: 0px;
+    width: 0;
+    height: 0;
     position: absolute;
-    border-right: 10px solid #00e4e3;
-    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-left: 10px solid #00e4e3;
     border-bottom: 10px solid #00e4e3;
     border-top: 10px solid transparent;
-    left: -7px;
+    right: -7px;
     bottom: 0;
     z-index: -1;
+}
+
+#messages > .self-msg > span:before {
+    display: none;
+}
+
+#messages li small {
+    font-size: 0.75rem;
+    font-weight: 300;
+}
+
+.logout-container {
+    min-width: 200px;
+    margin-top: 75%;
+    background-color: #C4CCF3;
+    border-radius: 0.75rem;
+    right: 0;
+    display: none;
+    z-index: 10;
+    box-shadow: 10px 15px 5px -5px rgba(0,0,0,0.1);
+}
+
+.logout-container > p {
+    color:  #272931;
+    font-weight: bold;
+    font-size: 1.1rem;
 }
