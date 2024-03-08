@@ -16,8 +16,8 @@ public class AddFriendRequest : PageModel
     private readonly INotificationService _notificationService;
     private readonly IClientService _clientService;
 
-    public AddFriendRequest(IFriendShipService friendShipService, IHubContext<NotificationHub> hubContext,
-        INotificationService notificationService, IClientService clientService)
+
+    public AddFriendRequest(IFriendShipService friendShipService, IHubContext<NotificationHub> hubContext,INotificationService notificationService,IClientService clientService)
     {
         _friendShipService = friendShipService;
         _hubContext = hubContext;
@@ -25,9 +25,15 @@ public class AddFriendRequest : PageModel
         _clientService = clientService;
     }
 
-    [BindProperty] public Guid FriendShipId { get; set; }
-    [BindProperty] public Guid SenderId { get; set; }
-    [BindProperty] public Guid ReceiverId { get; set; }
+
+    [BindProperty]
+    public Guid FriendShipId { get; set; }
+    [BindProperty]
+
+    public Guid SenderId { get; set; }
+    [BindProperty]
+    public Guid ReceiverId { get; set; }
+
 
     public async Task OnGet()
     {
@@ -35,5 +41,4 @@ public class AddFriendRequest : PageModel
         var invitationList = (await _friendShipService.GetFriendInvitation(new Guid(clientId))).Include(c => c.Sender);
         TempData["invitationList"] = invitationList.AsEnumerable();
     }
-
 }

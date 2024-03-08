@@ -118,7 +118,6 @@ namespace TalkBuddy.Presentation.SignalR
                 SendAt = x.SendAt,
                 ClientAvatar = receiver.ProfilePicture
             }));
-            
             await SendNotification(senderId.ToString(), dtoNotifications.OrderByDescending(x => x.SendAt).ToList());
         }
         
