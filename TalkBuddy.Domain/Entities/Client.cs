@@ -1,4 +1,5 @@
-﻿using TalkBuddy.Domain.Entities.BaseEntities;
+﻿using System.Collections;
+using TalkBuddy.Domain.Entities.BaseEntities;
 
 namespace TalkBuddy.Domain.Entities;
 
@@ -19,6 +20,8 @@ public partial class Client: BaseEntity<Guid>
     public ICollection<ClientChatBox>? InChatboxes { get; set; }
     public ICollection<ChatBox>? CreatedChatBoxes { get; set; }
     public ICollection<ClientMessage>? ClientMessages { get; set; }
-    public ICollection<Message>? Messages { get; set; }
+    public ICollection<Message>? Messages { get; set; }    
+    public ICollection<Notification>? Notifications { get; set; }
     public ICollection<OtpCode> Codes { get; set; } = new List<OtpCode>();
+
 }

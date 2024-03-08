@@ -214,6 +214,7 @@ ul, li {
     z-index: -1;
 }
 
+
 #messages > .self-msg > span:before {
     display: none;
 }
@@ -239,3 +240,5 @@ ul, li {
     font-weight: bold;
     font-size: 1.1rem;
 }
+
+

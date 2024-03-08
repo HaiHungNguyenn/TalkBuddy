@@ -42,9 +42,9 @@
                                          client.RelationStatus == null ||
                                          client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL))
                                     {
-                                        <form method="post" asp-page-handler="HandleAddFriend">
-                                            <input type="hidden" asp-for="FriendId" value="@client.id"/>
-                                            <button type="submit" class="btn btn-primary">
+                                        <form>
+                                            <input type="hidden" id="FriendId" value="@client.id"/>
+                                            <button class="btn btn-primary" onclick="requestInvitation()">
                                                 <i class="fa-solid fa-user-plus add-icon"></i>
                                             </button>
                                         </form>
@@ -73,4 +73,3 @@
         </div>
     </div>
 </section>
-        
