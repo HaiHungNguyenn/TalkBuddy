@@ -30,6 +30,7 @@ public static class ServiceCollectionExtension
         services.AddSingleton(mapper);
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
+        services.AddScoped<IBlobService,BlobService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);
