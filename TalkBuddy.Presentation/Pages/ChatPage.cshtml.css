@@ -184,3 +184,53 @@ ul, li {
     bottom: 0;
     z-index: -1;
 }
+.bell-icon{
+    margin-right: 20px;
+}
+.notification-container {
+    position: relative;
+    display: inline-block; /* Ensures the container takes only the space needed */
+}
+
+.bell-icon {
+    font-size: 24px; /* Adjust the size as needed */
+    cursor: pointer;
+}
+
+.notification-box {
+    position: absolute;
+    top: calc(100% + 10px); /* Adjust the distance between the bell icon and the notification box */
+    right: 50%;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    width: 500px;
+    z-index: 999; /* Ensure the box appears above other content */
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+}
+
+.notification-box.active {
+    display: block;
+}
+.notification-item {
+    display: flex; /* Use flexbox to align items horizontally */
+    align-items: center; /* Align items vertically in the center */
+}
+
+.avatar {
+    margin-right: 10px; /* Add spacing between the avatar and the content */
+    border-radius: 50px;
+}
+
+.description,
+.time {
+    margin: 0; /* Remove default margins */
+}
+.notification-content .description {
+    flex-grow: 1; /* Allow the description to grow to fill available space */
+    margin-left: 30px;
+}

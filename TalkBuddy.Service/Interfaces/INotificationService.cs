@@ -6,4 +6,6 @@ public interface INotificationService
 {
     Task CreateNotification(Notification notification);
     Task<IQueryable<Notification>> GetNotificationByClient(Guid clientId);
+
+    Task UpdateNotificationStatus(IQueryable<Notification> notifications);
 }
