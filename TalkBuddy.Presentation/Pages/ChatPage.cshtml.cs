@@ -20,5 +20,13 @@ namespace TalkBuddy.Presentation.Pages
     //        var userId = HttpContext.Session.GetString(SessionConstants.USER_ID);
     //        ClientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
     //    }
+        public IActionResult OnPostLogOut()
+        {
+            HttpContext.Session.Remove(SessionConstants.IS_LOGGED_IN);
+            HttpContext.Session.Remove(SessionConstants.USER_ID);
+            HttpContext.Session.Remove(SessionConstants.USER_NAME);
+
+            return RedirectToRoute("");
+        }
     }
 }

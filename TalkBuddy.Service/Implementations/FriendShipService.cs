@@ -71,9 +71,43 @@ public class FriendShipService : IFriendShipService
     
     public async Task AcceptFriendInvitation(Guid friendShipId)
     {
-        var friendship = await _friendShipRepository.GetAsync(x => x.Id == friendShipId) ?? throw new Exception("Not Found FriendInvitation");
+        var friendship = await (await _friendShipRepository.FindAsync(x => x.Id == friendShipId))
+	        .Include(fs => fs.Sender)
+	        .Include(fs => fs.Receiver)
+	        .FirstOrDefaultAsync() ?? throw new Exception("Not Found FriendInvitation");
 		if (friendship.Status != FriendShipRequestStatus.WAITING) return;
+			
+		var chatbox = new ChatBox
+		{
+			ChatBoxName = $"{friendship.Sender.Name} - {friendship.Receiver.Name}",
+			CreatedDate = DateTime.Now,
+			Type = ChatBoxType.TwoPerson,
+			GroupCreatorId = friendship.SenderID
+		};
 
+		chatbox.ClientChatBoxes.Add(new ClientChatBox
+		{
+			ClientId = friendship.SenderID,
+			ChatBox = chatbox,
+			IsBlocked = false,
+			IsLeft = false,
+			IsNotificationOn = true,
+			IsModerator = true,
+			NickName = friendship.Sender.Name
+		});
+
+		chatbox.ClientChatBoxes.Add(new ClientChatBox
+		{
+			ClientId = friendship.ReceiverId,
+			ChatBox = chatbox,
+			IsBlocked = false,
+			IsLeft = false,
+			IsNotificationOn = true,
+			IsModerator = true,
+			NickName = friendship.Receiver.Name
+		});
+
+		await _chatBoxRepository.AddAsync(chatbox);
 		friendship.Status = FriendShipRequestStatus.ACCEPTED;
 		await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
@@ -138,38 +172,7 @@ public class FriendShipService : IFriendShipService
 				Status = FriendShipRequestStatus.WAITING,
 				RequestDate = DateTime.Now
 			};
-			
-			var chatbox = new ChatBox
-			{
-				//ChatBoxName = $"{sender.Name} - {receiver.Name}",
-				CreatedDate = DateTime.Now,
-				Type = ChatBoxType.TwoPerson,
-				GroupCreatorId = clientId
-			};
-
-			chatbox.ClientChatBoxes.Add(new ClientChatBox
-			{
-				ClientId = clientId,
-				ChatBoxId = chatbox.Id,
-				IsBlocked = false,
-				IsLeft = false,
-				IsNotificationOn = true,
-				IsModerator = true,
-				NickName = sender.Name
-			});
-
-			chatbox.ClientChatBoxes.Add(new ClientChatBox
-			{
-				ClientId = friendId,
-				ChatBoxId = chatbox.Id,
-				IsBlocked = false,
-				IsLeft = false,
-				IsNotificationOn = true,
-				IsModerator = true,
-				NickName = receiver.Name
-			});
-
-			await _chatBoxRepository.AddAsync(chatbox);
+            
 			await _friendShipRepository.AddAsync(friendship);
 		}
 		else if (friendship.Status == FriendShipRequestStatus.WAITING)
