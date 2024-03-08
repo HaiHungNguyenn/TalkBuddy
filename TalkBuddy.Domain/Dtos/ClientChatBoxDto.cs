@@ -12,5 +12,6 @@ namespace TalkBuddy.Domain.Dtos
         public Guid ChatBoxId { get; set; }
         public string ChatBoxName { get; set; }
         public string ChatBoxAvatar { get; set; }
+        public string ChatBoxType { get; set; }
     }
 }
