@@ -28,6 +28,11 @@ public static class ServiceCollectionExtension
         var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         var mapper = config.CreateMapper();
         services.AddSingleton(mapper);
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
+        //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
+        //var mapper = config.CreateMapper();
+        //services.AddSingleton(mapper);
         return services;
     }
 }

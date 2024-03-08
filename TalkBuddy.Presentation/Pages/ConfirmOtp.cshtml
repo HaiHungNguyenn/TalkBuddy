@@ -1,0 +1,105 @@
+﻿@page
+@model TalkBuddy.Presentation.Pages.ConfirmOtp
+
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirm Otp Code</title>
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/Login.cshtml.css" />
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			background-color: #141325;
+			color: #FBFDF5;
+			height: 100dvh;
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		.container .card {
+			background-color: #0A0A14;
+		}
+
+		.form-input {
+			width: 28rem;
+		}
+
+		.h-60 {
+			height: 60%;
+		}
+
+		.btn-auth {
+			width: 20rem;
+		}
+
+		.btn-gg {
+			background-color: white !important;
+		}
+
+			.btn-gg:hover {
+				background-color: antiquewhite !important;
+			}
+
+		.btn-fb {
+			background-color: #0c84fc;
+		}
+
+			.btn-fb:hover {
+				background-color: blue !important;
+			}
+
+		.toast {
+			right: 1rem;
+			top: 1rem;
+		}
+	</style>
+</head>
+<body>
+	<div class="container h-100">
+		<div class="d-flex justify-content-center align-items-center h-100">
+			<div class="card h-60 d-flex flex-column justify-content-between py-5 px-4">
+				<div class="card-header">
+					<h3 class="text-center">Enter otp code from your email:</h3>
+				</div>
+				<div class="card-body">
+					<form class="d-flex flex-column justify-content-around align-items-center h-100" method="post" asp-page-handler="Confirm">
+						<div class="d-flex flex-column gap-4 w-100">
+							<div class="input-group form-group d-flex flex-column align-items-start gap-2">
+								<input name="code" type="text" class="form-control w-100" placeholder="Enter your code here" required>
+							</div>
+						</div>
+						<input type="submit" value="Confirm" class="btn btn-primary w-100 mt-2">
+					</form>
+				</div>
+			</div>
+		</div>
+
+		@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+		{
+			<div class="toast show position-fixed" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header">
+					<img src="..." class="rounded me-2" alt="...">
+					<strong class="me-auto">Error</strong>
+					<small>11 mins ago</small>
+					<form method="post" asp-page-handler="ClearMessage">
+						<button type="submit" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+					</form>
+				</div>
+				<div class="toast-body text-black">@Model.ErrorMessage</div>
+			</div>
+		}
+	</div>
+</body>
+</html>

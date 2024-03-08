@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalkBuddy.DAL.Data;
 
@@ -11,9 +12,11 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    partial class TalkBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20240308135505_AddOtpCode")]
+    partial class AddOtpCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +74,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsVerified")
-                        .HasColumnType("bit");
 
                     b.Property<DateTime>("LastLoginDate")
                         .HasColumnType("datetime2");
@@ -258,11 +258,7 @@ namespace TalkBuddy.DAL.Migrations
                     b.ToTable("Messages");
                 });
 
-
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.Notification", b =>
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.OtpCode", b =>
-
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -270,31 +266,25 @@ namespace TalkBuddy.DAL.Migrations
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
-                        
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-                        
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-                        
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-                        
+
                     b.Property<bool>("Used")
                         .HasColumnType("bit");
-                        
+
                     b.Property<int>("Version")
                         .IsConcurrencyToken()
                         .HasColumnType("int");
-                        
+
                     b.HasKey("Id");
-                    
+
                     b.HasIndex("ClientId");
-                    
-                    b.ToTable("Notification", (string)null);
-                    
+
                     b.ToTable("OtpCodes");
                 });
 
@@ -430,20 +420,12 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.Notification", b =>
-                {
-                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Client")
-                        .WithMany("Notifications")
-                        .HasForeignKey("ClientId")
-                        .OnDelete(DeleteBehavior.NoAction)
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.OtpCode", b =>
                 {
                     b.HasOne("TalkBuddy.Domain.Entities.Client", "Client")
                         .WithMany("Codes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
-
                         .IsRequired();
 
                     b.Navigation("Client");
@@ -490,8 +472,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("InformantClients");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("Notifications");
 
                     b.Navigation("ReportedClients");
                 });

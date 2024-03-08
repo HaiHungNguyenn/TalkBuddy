@@ -23,4 +23,10 @@
       <ProjectReference Include="..\TalkBuddy.Service\TalkBuddy.Service.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Update="wwwroot\template\otp-email.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

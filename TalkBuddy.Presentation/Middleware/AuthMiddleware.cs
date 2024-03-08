@@ -37,10 +37,11 @@ namespace TalkBuddy.Presentation.Middleware
 		}
 
 		private bool IsAuthenticationPath(string path)
-		{ 
-			return path.StartsWith("/Login", StringComparison.OrdinalIgnoreCase) 
-				|| path.StartsWith("/OAuth", StringComparison.OrdinalIgnoreCase)
-				|| path.StartsWith("/Register", StringComparison.OrdinalIgnoreCase);
+		{
+			return path.StartsWith("/Login", StringComparison.OrdinalIgnoreCase)
+			       || path.StartsWith("/OAuth", StringComparison.OrdinalIgnoreCase)
+			       || path.StartsWith("/Register", StringComparison.OrdinalIgnoreCase)
+			       || path.StartsWith("/ConfirmOtp", StringComparison.OrdinalIgnoreCase);
 		}
 	}
 }

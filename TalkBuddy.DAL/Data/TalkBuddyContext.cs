@@ -17,6 +17,8 @@ public partial class TalkBuddyContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Report> Reports { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<OtpCode> OtpCodes { get; set; }
+
     public TalkBuddyContext()
     {
     }
@@ -99,6 +101,11 @@ public partial class TalkBuddyContext : DbContext
             .WithMany(x => x.Notifications)
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.NoAction);
+        modelBuilder.Entity<OtpCode>()
+            .HasOne(x => x.Client)
+            .WithMany(x => x.Codes)
+            .HasForeignKey(x => x.ClientId)
+            .OnDelete(DeleteBehavior.Cascade);
 
     }
 
