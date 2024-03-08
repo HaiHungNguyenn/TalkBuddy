@@ -51,20 +51,20 @@ public class AddFriendPage : PageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostHandleAddFriend()
-    {
-		try 
-		{
-			var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID)!) ;
-			await _friendShipService.CreateFriendship(clientId, FriendId);
-		}
-		catch (Exception e)
-		{
-			Console.WriteLine(e.Message);
-		}
-
-		return Page();
-    }
+  //   public async Task<IActionResult> OnPostHandleAddFriend()
+  //   {
+		// try 
+		// {
+		// 	var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID)!) ;
+		// 	await _friendShipService.CreateFriendship(clientId, FriendId);
+		// }
+		// catch (Exception e)
+		// {
+		// 	Console.WriteLine(e.Message);
+		// }
+  //
+		// return Page();
+  //   }
 
     public async Task<RedirectToPageResult> OnPostHandleCancelInvitation()
     {

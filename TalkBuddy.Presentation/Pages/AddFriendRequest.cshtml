@@ -65,55 +65,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
+
 
 </section>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script>
-var connection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
-    connection.start().then(function () {
-        console.log("Connection started");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
-=======
-</div>
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script>
-var connection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
-    connection.start().then(function () {
-        console.log("Connection started");
-    }).catch(function (err) {
-        return console.error(err.toString());
-    });
-
->>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
-    connection.on("ReceiveNotification", (notifications, connectionId) => {
-        console.log("Received notification: ", notifications);
-        console.log("connection id",connectionId);
-    });
-<<<<<<< HEAD
-=======
-
->>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
-   
-    
-    function acceptInvitation(){
-        var friendshipId = document.getElementById("FriendShipId").value;
-        var senderId = document.getElementById("SenderId").value;
-        var receiverId = document.getElementById("ReceiverId").value;
-        console.log("hit accept button");
-        connection.invoke("HandleAccept",friendshipId,senderId,receiverId).then(()=>{
-            location.href = "/AddFriendPage"
-        }).catch(error => console.log(error.toString()))
-       
-    }
-    function rejectInvitation(){
-        var friendshipId = document.getElementById("FriendShipId").value;
-        var senderId = document.getElementById("SenderId").value;
-        var receiverId = document.getElementById("ReceiverId").value;
-        connection.invoke("HandleReject",friendshipId,senderId,receiverId)
-        location.href="/AddFriendPage"
-    }
-    
-</script>

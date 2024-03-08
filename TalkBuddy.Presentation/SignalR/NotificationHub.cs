@@ -56,7 +56,7 @@ namespace TalkBuddy.Presentation.SignalR
                     SendAt = x.SendAt,
                     ClientAvatar = x.Client.ProfilePicture
                 }));
-            await SendNotification(userId, dtoNotifications.ToList());
+            await SendNotification(userId, dtoNotifications.OrderByDescending(x => x.SendAt).ToList());
             await base.OnConnectedAsync();
         }
 
@@ -91,7 +91,7 @@ namespace TalkBuddy.Presentation.SignalR
                     SendAt = x.SendAt,
                     ClientAvatar = receiver.ProfilePicture
                 }));
-            await SendNotification(senderId.ToString(), dtoNotifications.ToList());
+            await SendNotification(senderId.ToString(), dtoNotifications.OrderByDescending(x => x.SendAt).ToList());
         }
         public async Task HandleReject(Guid friendshipId,Guid senderId, Guid receiverId)
         {
@@ -119,7 +119,7 @@ namespace TalkBuddy.Presentation.SignalR
                 ClientAvatar = receiver.ProfilePicture
             }));
             
-            await SendNotification(senderId.ToString(), dtoNotifications.ToList());
+            await SendNotification(senderId.ToString(), dtoNotifications.OrderByDescending(x => x.SendAt).ToList());
         }
         
 
@@ -133,10 +133,32 @@ namespace TalkBuddy.Presentation.SignalR
         public async Task UpdateNotificationStatus()
         {
             var httpContext = Context.GetHttpContext();
-            var userId = httpContext.Session.GetString(SessionConstants.USER_ID) ?? throw new Exception("Not found user");
+            var userId = httpContext!.Session.GetString(SessionConstants.USER_ID) ?? throw new Exception("Not found user");
             var notifications = await _notificationService.GetNotificationByClient(new Guid(userId));
             await _notificationService.UpdateNotificationStatus(notifications);
-
+        }
+        public async Task HandleAddFriend(string friendId)
+        {
+            var httpContext = Context.GetHttpContext();
+            var userId = httpContext!.Session.GetString(SessionConstants.USER_ID) ?? throw new Exception("Not found user");
+            await _friendShipService.CreateFriendship(new Guid(userId), new Guid(friendId));
+            await _notificationService.CreateNotification(new Notification()
+            {
+                Message = $"{httpContext!.Session.GetString(SessionConstants.USER_NAME)} has just sent you an invitation",
+                ClientId = new Guid(friendId),
+                SendAt = DateTime.Now
+            });
+            var notifications = (await _notificationService.GetNotificationByClient(new Guid(friendId))).Include(x => x.Client);
+            var dtoNotifications = 
+                notifications.Select(x => (new DtoNotification()
+                {
+                    Message = x.Message,
+                    ClientId = x.ClientId,
+                    IsRead = x.IsRead,
+                    SendAt = x.SendAt,
+                    ClientAvatar = x.Client.ProfilePicture
+                }));
+            await SendNotification(friendId, dtoNotifications.OrderByDescending(x => x.SendAt).ToList());
         }
     }
 }
