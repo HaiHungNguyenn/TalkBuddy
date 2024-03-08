@@ -1,67 +1,71 @@
 @page
-@using TalkBuddy.Domain.Entities
+@using TalkBuddy.Presentation.Components
 @model EditProfile
 
 <link rel="stylesheet" href="~/Edit-Profile.cshtml.css" />
-<div class="profile-container p-4">
-    <div class="row image-row">
-        <img src="@Model.ProfilePicture" class="profile-picture rounded-circle" alt="Profile Picture"/>
-        <button class="switch-input-btn">
-            <img class="switch-svg" src="img/chevron-down.svg"/>
+<link rel="stylesheet" href="~/css/header.css">
+<section class="h-100 w-100 d-flex flex-column">
+    <component type="typeof(Header)" render-mode="Static"/>
+    <div class="profile-container p-4">
+        <div class="row image-row">
+            <img src="@Model.ProfilePicture" class="profile-picture rounded-circle" alt="Profile Picture"/>
+            <button class="switch-input-btn">
+                <img class="switch-svg" src="img/chevron-down.svg" alt="User avatar"/>
+            </button>
+        </div>
+        <div class="row edit-profile-row form-bg-color h-50vh justify-content-center rounded-3">
+                                                                                                   <div id="form-card" class="card-body rounded-3" style="background-color: #00e4e3;">
+                                                                                                   <h5 class="card-title">Profile</h5>
+                                                                                                   <form id="profile-form" method="post">
+                                                                                                   <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />
+                                                                                                   <input type="hidden" name="CurrentUser.ProfilePicture" value="@Model.CurrentUser.ProfilePicture" />
+                                                                                                   <input type="hidden" name="CurrentUser.Password" value="@Model.CurrentUser.Password" />
+                                                                                                   <div class="form-group mb-3">
+                                                                                                   <label for="floatingInput">Name</label>
+                                                                                                   <p class="input-after">@Model.CurrentUser.Name</p>
+                                                                                                   <input name="CurrentUser.Name" type="text" class="form-control input-round disappear" id="floatingInput" placeholder="Name" 
+                                                                                                   value="@Model.CurrentUser.Name"> 
+                                                                                                   <span asp-validation-for="@Model.CurrentUser.Name" class="text-danger"></span>
+                                                                                                   </div>
+                                                                                                   <div class="form-group mb-3">
+                                                                                                   <label for="floatingInput">Email address</label>
+                                                                                                   <p class="input-after">@Model.CurrentUser.Email</p>
+                                                                                                   <input name="CurrentUser.Email" type="email" class="form-control input-round disappear" id="floatingInput" placeholder="name@example.com"
+                                                                                                   value="@Model.CurrentUser.Email">
+                                                                                                   <span asp-validation-for="@Model.CurrentUser.Email" class="text-danger"></span>
+                                                                                                   </div>
+                                                                                                   
+                                                                                                   <div class="form-group mb-3">
+                                                                                                   <label for="floatingPassword">Date of birth</label>
+                                                                                                   <p class="input-after">@Model.CurrentUser.DateOfBirth</p>
+                                                                                                   <input name="CurrentUser.DateOfBirth" type="datetime-local" class="form-control input-round disappear" id="floatingPassword" value="@Model.CurrentUser.DateOfBirth">
+                                                                                                   <span asp-validation-for="@Model.CurrentUser.DateOfBirth" class="text-danger"></span>
+                                                                                                   </div>
+                                                                                                   <div class="form-group mb-3">
+                                                                                                   <label for="floatingPassword">Gender</label>
+                                                                                                   <p class="input-after">@Model.CurrentUser.Gender</p>
+                                                                                                   <input name="CurrentUser.Gender" type="text" class="form-control input-round disappear" id="floatingPassword" placeholder="Gender"
+                                                                                                   value="@Model.CurrentUser.Gender">
+                                                                                                   <span asp-validation-for="@Model.CurrentUser.Gender" class="text-danger"></span>
+                                                                                                   </div>
+                                                                                                   
+                                                                                                   
+                                                                                                   @foreach (var modelState in ViewData.ModelState.Values)
+                                                                                                   {
+                                                                                                   foreach (var error in modelState.Errors)
+                                                                                                   {
+                                                                                                   <div>@error.ErrorMessage</div>
+                                                                                                   }
+                                                                                                   }
+                                                                                                   
+                                                                                                   </form>
+                                                                                                   </div>
+                                                                                                   </div>
+        <button class="save-btn">
+            <img class="switch-svg" src="img/save.svg" alt="Save button"/>
         </button>
     </div>
-    <div class="row edit-profile-row form-bg-color h-50vh justify-content-center rounded-3">
-        <div id="form-card" class="card-body rounded-3" style="background-color: #00e4e3;">
-            <h5 class="card-title">Profile</h5>
-            <form id="profile-form" method="post">
-                <input type="hidden" name="CurrentUser.Id" value="@Model.CurrentUser.Id" />
-                <input type="hidden" name="CurrentUser.ProfilePicture" value="@Model.CurrentUser.ProfilePicture" />
-                <input type="hidden" name="CurrentUser.Password" value="@Model.CurrentUser.Password" />
-                <div class="form-group mb-3">
-                    <label for="floatingInput">Name</label>
-                    <p class="input-after">@Model.CurrentUser.Name</p>
-                    <input name="CurrentUser.Name" type="text" class="form-control input-round disappear" id="floatingInput" placeholder="Name" 
-                        value="@Model.CurrentUser.Name"> 
-                    <span asp-validation-for="@Model.CurrentUser.Name" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="floatingInput">Email address</label>
-                    <p class="input-after">@Model.CurrentUser.Email</p>
-                    <input name="CurrentUser.Email" type="email" class="form-control input-round disappear" id="floatingInput" placeholder="name@example.com"
-                        value="@Model.CurrentUser.Email">
-                    <span asp-validation-for="@Model.CurrentUser.Email" class="text-danger"></span>
-                </div>
-                
-                <div class="form-group mb-3">
-                    <label for="floatingPassword">Date of birth</label>
-                    <p class="input-after">@Model.CurrentUser.DateOfBirth</p>
-                    <input name="CurrentUser.DateOfBirth" type="datetime-local" class="form-control input-round disappear" id="floatingPassword" value="@Model.CurrentUser.DateOfBirth">
-                    <span asp-validation-for="@Model.CurrentUser.DateOfBirth" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label for="floatingPassword">Gender</label>
-                    <p class="input-after">@Model.CurrentUser.Gender</p>
-                    <input name="CurrentUser.Gender" type="text" class="form-control input-round disappear" id="floatingPassword" placeholder="Gender"
-                        value="@Model.CurrentUser.Gender">
-                    <span asp-validation-for="@Model.CurrentUser.Gender" class="text-danger"></span>
-                </div>
-                
-
-                @foreach (var modelState in ViewData.ModelState.Values)
-                {
-                foreach (var error in modelState.Errors)
-                {
-                <div>@error.ErrorMessage</div>
-                }
-                }
-
-            </form>
-        </div>
-    </div>
-    <button class="save-btn">
-        <img class="switch-svg" src="img/save.svg"/>
-    </button>
-</div>
+</section>
 
 <script>
     //set date input
