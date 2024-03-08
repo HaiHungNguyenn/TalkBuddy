@@ -476,7 +476,7 @@
         clients.forEach((client) => {
             dialogBody.innerHTML += `
             <div class="client-row row">
-                <img class="client-avatar-dialog col-3 rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/>
+                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
                 <span class="client-name-dialog col-7">${client.name}</span>
             </div>
             `

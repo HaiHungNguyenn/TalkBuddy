@@ -7,23 +7,21 @@ using TalkBuddy.Service.Interfaces;
 
 namespace TalkBuddy.Presentation.Pages;
 
-public class Profile : PageModel
+public class EditProfile : PageModel
 {
     private readonly IGenericRepository<Client> _clientRepo;
     private readonly IUnitOfWork _unitOfWork;
 
-    public Profile(IClientService clientService, IGenericRepository<Client> clientRepo, IUnitOfWork unit)
+    public EditProfile(IClientService clientService, IGenericRepository<Client> clientRepo, IUnitOfWork unit)
     {
         _clientRepo = clientRepo;
         _unitOfWork = unit;
     }
-    public async Task<IActionResult> OnGet(string id)
+    public async Task<IActionResult> OnGet()
     {
-        //check is user logged in
         var userId = HttpContext.Session.GetString(SessionConstants.USER_ID);
         if(userId == null) return RedirectToPage("/Login");
-        //check user in db
-        var user = await _clientRepo.GetAsync(u => u.Id.ToString().Equals(id));
+        var user = await _clientRepo.GetAsync(u => u.Id.ToString().Equals(userId));
         if(user == null) return RedirectToPage("/Login");
         CurrentUser = user;
         if(CurrentUser.ProfilePicture != null) ProfilePicture = CurrentUser.ProfilePicture;
@@ -32,4 +30,17 @@ public class Profile : PageModel
     [BindProperty]
     public Client CurrentUser { get; set; }
     public string ProfilePicture {get;set;} = "/default-avatar.png";
+
+    public async Task<IActionResult> OnPost()
+    {
+        if(!ModelState.IsValid)
+        {
+            return Page();
+        }
+
+        System.Console.WriteLine(CurrentUser.Id);
+        await _clientRepo.UpdateAsync(CurrentUser);
+        await _unitOfWork.CommitAsync();
+        return RedirectToPage("./Edit-Profile");
+    }
 }
