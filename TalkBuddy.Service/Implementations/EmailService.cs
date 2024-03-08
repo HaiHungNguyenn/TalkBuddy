@@ -19,7 +19,7 @@ public class EmailService : IEmailService
                          throw new Exception("Missing email settings");
     }
     
-    public async Task SendOptEmailAsync(OptEmail optEmail)
+    public async Task SendOptEmailAsync(OtpEmail optEmail)
     {
         var email = new MimeMessage();
         email.From.Add(MailboxAddress.Parse("TalkBuddy"));

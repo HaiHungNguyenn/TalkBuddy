@@ -4,5 +4,5 @@ namespace TalkBuddy.Service.Interfaces;
 
 public interface IEmailService
 {
-    Task SendOptEmailAsync(OptEmail email);
+    Task SendOptEmailAsync(OtpEmail email);
 }

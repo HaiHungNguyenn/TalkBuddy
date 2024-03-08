@@ -46,13 +46,9 @@ namespace TalkBuddy.Presentation.Pages
 				if (!string.Equals(Password, ConfirmPassword))
 					throw new Exception("Password does not match");
 
-				var user = await _clientService.RegisterAsync(Username, Password);
+				await _clientService.RegisterAsync(Username, Password);
 
-				HttpContext.Session.SetString(SessionConstants.USER_NAME, user.Name);
-				HttpContext.Session.SetString(SessionConstants.USER_ID, user.Id.ToString());
-				HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
-
-				return RedirectToPage(nameof(Index));
+				return RedirectToPage(nameof(ConfirmOtp));				
 			}
 			catch (Exception ex)
 			{
