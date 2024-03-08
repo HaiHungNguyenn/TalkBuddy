@@ -5,7 +5,29 @@
 <link rel="stylesheet" href="~/css/header.css"/>
 
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
+<<<<<<< HEAD
     <component type="typeof(Header)" render-mode="Static"/>
+=======
+    <div class="w-100 d-flex justify-content-between align-items-center py-3 px-5" style="background-color: #5e73e2;">
+        <form method="post" class="search-form">
+            <input type="text" placeholder="Type to search..." />
+            <button type="submit" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            </button>
+        </form>
+         <div class="d-flex justify-content-between align-items-center gap-4">
+            <div class="notification-container">
+                <i onclick="showNotification()" class="fa-solid fa-bell add-icon text-white bell-icon"></i>
+                <div id="notification" class="notification-box">
+                    
+                </div>
+                <span id="unreadCount" class="badge bg-danger" style="transform: translateX(-31px) translateY(9px);
+                                                                          border-radius: 25px;"></span>
+            </div>
+            <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="default-avatar.png" alt="User avatar"/>
+        </div>
+    </div>
+>>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
     <div class="w-100 h-100 chat-container">
         <div class="chat-layout">
             <div class="left-container">
@@ -57,13 +79,22 @@
 </dialog>
 
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
+
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+    var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
 
     connection.on("ReceiveMessage", function (user, message) {
         document.getElementById("messages").appendChild(convertMessageToListItem(message));
         scrollMessagesToBottom();
     });
+    
+    
+    notiConnection.start().then(() => {
+        console.log("Notification server connected.")
+    }).catch(function (error){
+        console.error(error);
+    })
 
     connection.start().then(function () {
         console.log("SignalR Connected");
@@ -233,6 +264,7 @@
         return li;
     }
     
+<<<<<<< HEAD
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
         console.log(clients);
@@ -255,6 +287,72 @@
     const scrollMessagesToBottom = () => {
         const ulMessages = document.getElementById("messages");
         ulMessages.scrollTop = ulMessages.scrollHeight;
+=======
+     notiConnection.on("ReceiveNotification", (notifications, connectionId) => {
+            console.log("Received notification: ", notifications);
+            console.log("connection id",connectionId);
+            countUnreadNotifications(notifications);
+            renderNotifications(notifications);
+    });
+    
+    
+    
+    function renderNotifications(notifications) {
+        var notificationBox = document.getElementById("notification");
+        notificationBox.innerHTML = ""; // Clear existing notifications
+        notifications.forEach(function(notification) {
+            // Create notification item
+            var notificationItem = document.createElement("div");
+            notificationItem.style.marginBottom = "20px";
+            notificationItem.classList.add("notification-item","d-flex","align-item-center");
+          
+    
+            // Create avatar
+            var avatar = document.createElement("img");
+            avatar.classList.add("avatar","rounded-circle");
+            avatar.src = notification.clientAvatar; // Avatar URL from the JSON
+            avatar.alt = "Notification Avatar";
+    
+            // Create notification content
+            var notificationContent = document.createElement("div");
+            notificationContent.classList.add("notification-content","d-flex","flex-column","align-items-center");
+            notificationContent.style.marginLeft = "30px";
+            var description = document.createElement("h6");
+            description.classList.add("description");
+            description.textContent = notification.message;
+    
+            var time = document.createElement("p");
+            time.classList.add("time");
+            time.textContent = notification.sentAt; // Assuming the time is received from the server
+            // Append elements
+            notificationContent.appendChild(description);
+            notificationContent.appendChild(time);
+    
+            notificationItem.appendChild(avatar);
+            notificationItem.appendChild(notificationContent);
+    
+            notificationBox.appendChild(notificationItem);
+        });
+    }
+
+    function showNotification(){
+        var notificationBox  = document.getElementById("notification");
+        var unreadCount = document.getElementById("unreadCount");
+        unreadCount.style.visibility = "hidden";
+        if (notificationBox.style.display === "none" || notificationBox.style.display === "") {
+            notificationBox.style.display = "block";
+        } else { 
+            notificationBox.style.display = "none";
+        }
+        notiConnection.send("UpdateNotificationStatus").then(()=>{console.log("Read Noti")}).catch(function (error) {
+                console.error(Error)
+        });
+    }
+    function countUnreadNotifications(notifications) {
+        var unreadCount = document.getElementById("unreadCount");
+        var x = notifications.reduce((count, notification) => !notification.isRead ? count + 1 : count, 0);
+        unreadCount.innerHTML = x !== 0 ? x : '';
+>>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
     }
 
 </script>

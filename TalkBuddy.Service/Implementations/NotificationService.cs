@@ -27,4 +27,15 @@ public class NotificationService : INotificationService
         var notifications =  await _notificationRepository.FindAsync(x => x.ClientId == clientId);
         return notifications;
     }
+
+    public async Task UpdateNotificationStatus(IQueryable<Notification> notifications)
+    {
+        foreach (var notification in notifications)
+        {
+            notification.IsRead = true;
+        }
+
+        await _notificationRepository.UpdateManyAsync(notifications);
+        await _unitOfWork.CommitAsync();
+    }
 }

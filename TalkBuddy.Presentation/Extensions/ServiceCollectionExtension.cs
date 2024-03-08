@@ -25,9 +25,9 @@ public static class ServiceCollectionExtension
         services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();
         services.AddScoped<INotificationRepository,NotificationRepository>();
         services.AddScoped<INotificationService,NotificationService>();
-        //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
-        //var mapper = config.CreateMapper();
-        //services.AddSingleton(mapper);
+        var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
+        var mapper = config.CreateMapper();
+        services.AddSingleton(mapper);
         return services;
     }
 }

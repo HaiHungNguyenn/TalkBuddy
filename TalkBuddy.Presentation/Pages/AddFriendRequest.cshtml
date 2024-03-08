@@ -53,7 +53,7 @@
                                         <input type="hidden" id="FriendShipId" value="@x.Id"/>
                                         <input type="hidden" id="SenderId" value="@x.SenderID"/>
                                         <input type="hidden" id="ReceiverId" value="@x.ReceiverId"/>
-                                        <button type="button" onclick="rejecrInvitation()" class="btn btn-primary">
+                                        <button type="button" onclick="rejectInvitation()" class="btn btn-primary">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
                                     </form>
@@ -65,6 +65,7 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
 
 </section>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
@@ -75,10 +76,26 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/notification").bui
     }).catch(function (err) {
         return console.error(err.toString());
     });
+=======
+</div>
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script>
+var connection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
+    connection.start().then(function () {
+        console.log("Connection started");
+    }).catch(function (err) {
+        return console.error(err.toString());
+    });
+
+>>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
     connection.on("ReceiveNotification", (notifications, connectionId) => {
         console.log("Received notification: ", notifications);
         console.log("connection id",connectionId);
     });
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8a3e987 ([Notification][Hai] update handle show notifications and read notifications)
    
     
     function acceptInvitation(){
