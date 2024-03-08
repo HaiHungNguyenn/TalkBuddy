@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+	  <link rel="preconnect" href="https://fonts.googleapis.com">
+	  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+	  <title>Welcome to TalkBuddy</title>
+	  <style>
+		* {
+			padding: 0;
+			margin: 0;
+			box-sizing: border-box;
+			font-family: "Playfair Display", serif;
+			font-optical-sizing: auto;
+			font-weight: 300;
+			font-style: normal;
+		}
+
+		.layout {
+			width: 100dvw;
+			height: 100dvh;
+			display: flex;
+			justify-content: center;
+			align-items: start;
+			padding: 2rem 0;
+			box-shadow: 10px 14px 24px 6px rgba(0,0,0,0.1);;
+		}
+		
+		.content {
+			height: 100%;
+			width: 40%;
+			background-color: #a160fe;
+			border-radius: 0.75rem;
+			padding: 1rem;
+			display: grid;
+			grid-template-rows: auto 1fr;
+			gap: 1rem;
+		}
+
+		.center {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.title-container {
+			height: 150px;
+		}
+
+		.title {
+			font-size: 2.75rem;
+			font-weight: 700;
+			text-align: center;
+			color: black;
+			text-shadow: 4px 7px 9px wheat;
+		}
+
+		.indent {
+			text-indent: 1rem;
+		}
+
+		.code-container {
+			margin: 1rem 0;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			gap: 0.5rem;
+		}
+
+		.code {
+			font-size: 1.5rem;
+		}
+
+		.features {
+			list-style: none;
+			padding: 0 2rem;
+		}
+
+		.feature {
+			font-style: italic;
+			font-weight: bold;
+		}
+	  </style>
+  </head>
+  <body>
+	<section class="layout">
+		<div class="content">
+			<div class="title-container center">
+				<h1 class="title">Welcome to TalkBuddy</h1>
+			</div>
+			<div class="center">
+				<div>
+					<p class="indent">Dear {username},</p>
+					<br>
+					<p class="indent">Welcome to <strong>TalkBuddy</strong>! We're thrilled to have you on board and excited for you to start exploring all the features and benefits our platform has to offer.</p>
+					<div class="code-container">
+						<p>Here's your verification code:</p>
+						<strong class="code">{otp}</strong>
+					</div>
+					<p class="indent">By activating your account, you'll gain access to our application's functionalities, including:</p>
+					<br>
+					<ul class="features">
+						<li class="feature">Chat with friends</li>
+						<li class="feature">Chat in groups</li>
+						<li class="feature">That's pretty much it!!!</li>
+					</ul>
+					<br>
+					<p class="indent">If you have any questions or need assistance at any point, please don't hesitate to contact our support team at <i>talkbuddy@gmail.com</i>. We're here to help!</p>
+					<br>
+					<p class="indent">Best regards,</p>
+					<br>
+					<p class="indent">TalkBuddy team.</p>
+				</div>
+			</div>
+		</div>
+	</section>
+  </body>
+</html>

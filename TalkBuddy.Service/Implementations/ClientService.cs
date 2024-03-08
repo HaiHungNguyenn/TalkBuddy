@@ -9,12 +9,14 @@ namespace TalkBuddy.Service.Implementations;
 public class ClientService : IClientService
 {
     private readonly IClientRepository _clientRepository;
+    private readonly IEmailService _emailService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ClientService(IClientRepository clientRepo, IUnitOfWork unitOfWork) 
+    public ClientService(IClientRepository clientRepo, IUnitOfWork unitOfWork, IEmailService emailService) 
     {
         _clientRepository = clientRepo;
         _unitOfWork = unitOfWork;
+        _emailService = emailService;
     }
 
 
