@@ -11,6 +11,7 @@ public partial class Client: BaseEntity<Guid>
     public string Gender { get; set; } = null!;
     public DateTime LastLoginDate { get; set; }
     public string? ProfilePicture { get; set; }
+    public bool IsVerified { get; set; }
 
     public ICollection<Friendship> Friends { get; set; } = new List<Friendship>();
     public ICollection<Report>? ReportedClients { get; set; }
@@ -19,5 +20,5 @@ public partial class Client: BaseEntity<Guid>
     public ICollection<ChatBox>? CreatedChatBoxes { get; set; }
     public ICollection<ClientMessage>? ClientMessages { get; set; }
     public ICollection<Message>? Messages { get; set; }
-
+    public ICollection<OtpCode> Codes { get; set; } = new List<OtpCode>();
 }
