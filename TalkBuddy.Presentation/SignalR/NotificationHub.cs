@@ -69,7 +69,7 @@ namespace TalkBuddy.Presentation.SignalR
         }
 
         public async Task HandleAccept(Guid friendshipId,Guid senderId, Guid receiverId)
-        {
+            {
             await _friendShipService.AcceptFriendInvitation(friendshipId);
             var sender = await _clientService.GetClientById(senderId) ?? throw new Exception("Not found user");
             var receiver = await _clientService.GetClientById(receiverId)?? throw new Exception("Not found user");
@@ -140,10 +140,11 @@ namespace TalkBuddy.Presentation.SignalR
         {
             var httpContext = Context.GetHttpContext();
             var userId = httpContext!.Session.GetString(SessionConstants.USER_ID) ?? throw new Exception("Not found user");
+            var user = await _clientService.GetClientById(new Guid(userId));
             await _friendShipService.CreateFriendship(new Guid(userId), new Guid(friendId));
             await _notificationService.CreateNotification(new Notification()
             {
-                Message = $"{httpContext!.Session.GetString(SessionConstants.USER_NAME)} has just sent you an invitation",
+                Message = $"{user.Name} has just sent you an invitation",
                 ClientId = new Guid(friendId),
                 SendAt = DateTime.Now
             });
