@@ -42,9 +42,12 @@
                                     <i class="fa-solid fa-message"></i>
                                 </button>
                             </form>
-                            <button type="submit" class="btn btn-primary" onclick="openPopup()">
+                            <form method="post" asp-page-handler="RemoveFriend" asp-route-friendId="@friend.Id">
+                                <button type="submit" class="btn btn-primary" onclick="openPopup()">
                                 <i class="fa-solid fa-xmark"></i>
-                            </button>
+                                </button>
+                            </form>
+                            
                         </div>
                     </li>
                 }

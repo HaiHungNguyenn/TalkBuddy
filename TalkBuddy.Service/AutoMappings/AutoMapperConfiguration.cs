@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using TalkBuddy.Common.Interfaces;
+using TalkBuddy.Domain.Dtos;
+using TalkBuddy.Domain.Entities;
 
 namespace TalkBuddy.Service.AutoMappings;
 
@@ -7,18 +9,15 @@ public static class AutoMapperConfiguration
 {
     public static void RegisterMaps(IMapperConfigurationExpression mapper)
     {
-		var configurers = AppDomain.CurrentDomain.GetAssemblies()
-			.SelectMany(a => a.GetTypes())
-			.Where(t => t.IsClass && !t.IsAbstract && t.GetInterfaces().Any(i => i == typeof(IAutomapperConfigurer)));
-
-		foreach (var configurer in configurers)
-		{
-			var instance = Activator.CreateInstance(configurer) as IAutomapperConfigurer;
-			instance?.Configure(mapper);
-		}
+        CreateNotificationMaps(mapper);
     }
 
+    private static void CreateNotificationMaps(IMapperConfigurationExpression mapper)
+    {
+        mapper.CreateMap<Notification, DtoNotification>();
+    }
     private static void CreateClientMaps(IMapperConfigurationExpression mapper)
     {
+        mapper.CreateMap<Client, DtoClient>();
     }
 }

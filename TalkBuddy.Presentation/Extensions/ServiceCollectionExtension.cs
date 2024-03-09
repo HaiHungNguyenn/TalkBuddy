@@ -23,6 +23,14 @@ public static class ServiceCollectionExtension
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGoogleOAuthService, GoogleOAuthService>();
         services.AddScoped<IFacebookOAuthService, FacebookOAuthService>();
+        services.AddScoped<INotificationRepository,NotificationRepository>();
+        services.AddScoped<INotificationService,NotificationService>();
+        var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
+        var mapper = config.CreateMapper();
+        services.AddSingleton(mapper);
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
+        services.AddScoped<IBlobService,BlobService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);
