@@ -36,3 +36,21 @@
 .client-row{
     margin-top: 15px;   
 }
+
+.chat-client-avatar {
+    cursor: pointer;
+}
+
+.chat-client-name {
+    background-color: #5e73e2;
+    color: #5f5f61;
+    top: -100%;
+    padding: 0 0.5rem;
+    border-radius: 0.2rem;
+    font-weight: 500;
+    box-shadow: 3px 3px 8px 0 grey;
+    left: 0;
+    text-wrap: nowrap;
+    z-index: 10;
+    visibility: hidden;
+}
