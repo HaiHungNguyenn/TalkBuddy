@@ -10,13 +10,11 @@ namespace TalkBuddy.Service.Implementations;
 public class BlobService : IBlobService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly IConfiguration _configuration;
     private readonly AzureSettings _azureSettings;
 
-    public BlobService(BlobServiceClient blobServiceClient, IConfiguration configuration, AzureSettings azureSettings)
+    public BlobService(IConfiguration configuration)
     {
-        _configuration = configuration;
-        _azureSettings = _configuration.GetSection(nameof(AzureSettings)).Get<AzureSettings>() ?? throw new Exception("invalid azure settings configuration.");
+        _azureSettings = configuration.GetSection(nameof(AzureSettings)).Get<AzureSettings>() ?? throw new Exception("invalid azure settings configuration.");
         _blobServiceClient = new BlobServiceClient(_azureSettings.AzureBlobStorage);
     }
     
