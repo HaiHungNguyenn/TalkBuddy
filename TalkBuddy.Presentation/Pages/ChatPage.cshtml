@@ -61,7 +61,6 @@
 
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
-    var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
 
     connection.on("ReceiveMessage", function (user, message) {
         console.log('username is', user);
@@ -194,11 +193,7 @@
     function convertMessageToListItem(message) {
         // Create a new list item for each message
         const li = document.createElement("li");
-     
-        // check if the message belongs to the current client (after logging in userId is stored in cookie)
-        // this code is unsafe because it assumes there is only one cookie value which is the userId
-        // in fact, it should check for all key and value pairs
-       
+
         message.isYourOwnMess && li.classList.add('self-msg');
         
         // add avatar, the image is a placeholder, replace the image's source with client's avatar

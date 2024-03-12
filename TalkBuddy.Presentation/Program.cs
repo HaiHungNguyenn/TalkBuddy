@@ -18,6 +18,7 @@ builder.Services.AddSignalR()
 builder.Services.AddDbContext<TalkBuddyContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.RegisterServices();
+builder.Services.AddSingleton<PresenceTracker>(); 
 
 builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(30));
 builder.Services.AddHttpContextAccessor();
@@ -46,6 +47,7 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapRazorPages();
     endpoints.MapHub<ChatHub>("/chat");
+    endpoints.MapHub<PresenceHub>("/presence");
     endpoints.MapHub<NotificationHub>("/notification");
 
 });
