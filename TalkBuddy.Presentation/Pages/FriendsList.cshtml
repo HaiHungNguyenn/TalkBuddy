@@ -32,9 +32,10 @@
                 {
                     <li class="nav-item p-2" style="cursor: pointer; transition: background-color 0.3s ease-out; display: grid; grid-template-columns: repeat(3, 1fr)">
                         <span>@friend.Name</span>
-                        <div class="d-flex justify-content-start align-items-center gap-1">
-                            <div class="online-status"></div>
-                            <span>online</span>
+                        <div class="d-flex justify-content-start align-items-center gap-1" data-friend-id="@friend.Id">
+
+                            <div class="offline-status"></div>
+                            <span class="online-status-text">offline</span>
                         </div>
                         <div class="d-flex justify-content-end align-items-center gap-2">
                             <form method="post" asp-route-friendId="@friend.Id">
@@ -76,4 +77,44 @@
             document.getElementById("submit-button").click();
         }
     </script>
+    <script>
+        presenceConnection.on("GetOnlineFriends", function (friendIdList) {
+            console.log(friendIdList);
+            if (friendIdList.length > 0) {
+                friendIdList.forEach(function (friendId) {
+                    var onlineStatusElement = document.querySelector(`[data-friend-id="${friendId}"] .offline-status`);
+                    if (onlineStatusElement) {
+                        onlineStatusElement.classList.remove("offline-status");
+                        onlineStatusElement.classList.add("online-status");
+                    }
+                    var onlineStatusText = document.querySelector(`[data-friend-id="${friendId}"] .online-status-text`);
+                    if (onlineStatusText) {
+                        onlineStatusText.textContent = "online";
+                    }
+                });
+            }
+        });
+
+      
+        presenceConnection.on("UpdateOnlineStatus", function (userId, isOnline) {
+            console.log(userId, isOnline);
+            var onlineStatusElement = document.querySelector(`[data-friend-id="${userId}"] .offline-status`);
+            if (onlineStatusElement) {
+                if(isOnline){
+                    onlineStatusElement.classList.remove("offline-status");
+                    onlineStatusElement.classList.add("online-status");
+                } else {
+                    onlineStatusElement.classList.remove("online-status");
+                    onlineStatusElement.classList.add("offline-status");
+                }                
+            }
+            var onlineStatusText = document.querySelector(`[data-friend-id="${userId}"] .online-status-text`);
+            if (onlineStatusText) {
+                onlineStatusText.textContent = isOnline ? "online" : "offline";
+            }
+        });
+
+    </script>
 }
+
+
