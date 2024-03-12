@@ -15,7 +15,7 @@ namespace TalkBuddy.Service.Implementations
         }
         public async Task<IList<ClientChatBox>> GetClientChatBoxes()
         {
-            return await _unitOfWork.ClientChatBoxRepository.GetAll().ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.GetAll().Include(clb=>clb.ChatBox).OrderByDescending(clb=>clb.ChatBox.CreatedDate).ToListAsync();
         }
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxesIncludeNotEmptyMessages(Guid clientId)
@@ -27,7 +27,7 @@ namespace TalkBuddy.Service.Implementations
         {
             
             var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ClientId.Equals(clientId));
-            return res.Include(x => x.ChatBox).Include(x => x.Client).ToList();
+            return res.Include(x => x.ChatBox).OrderByDescending(clb => clb.ChatBox.CreatedDate).Include(x => x.Client).ToList();
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)

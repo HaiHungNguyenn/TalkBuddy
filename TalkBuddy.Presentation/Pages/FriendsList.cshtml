@@ -79,7 +79,7 @@
     </script>
     <script>
         presenceConnection.on("GetOnlineFriends", function (friendIdList) {
-            console.log(friendIdList);
+            
             if (friendIdList.length > 0) {
                 friendIdList.forEach(function (friendId) {
                     var onlineStatusElement = document.querySelector(`[data-friend-id="${friendId}"] .offline-status`);
@@ -98,7 +98,12 @@
       
         presenceConnection.on("UpdateOnlineStatus", function (userId, isOnline) {
             console.log(userId, isOnline);
-            var onlineStatusElement = document.querySelector(`[data-friend-id="${userId}"] .offline-status`);
+            if(isOnline){
+                var onlineStatusElement = document.querySelector(`[data-friend-id="${userId}"] .offline-status`);
+            }else{
+                var onlineStatusElement = document.querySelector(`[data-friend-id="${userId}"] .online-status`);
+            }
+            
             if (onlineStatusElement) {
                 if(isOnline){
                     onlineStatusElement.classList.remove("offline-status");
