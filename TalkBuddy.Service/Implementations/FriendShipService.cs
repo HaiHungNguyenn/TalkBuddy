@@ -189,4 +189,14 @@ public class FriendShipService : IFriendShipService
 
 		await _unitOfWork.CommitAsync();
     }
+
+    public async Task<IEnumerable<Client>> GetClientFriendsSearchByName(Guid clientId, string search)
+    {
+        var clientFriends = await GetClientFriends(clientId);
+
+        // Filter the client friends based on the search string
+        var filteredFriends = clientFriends.Where(client => client.Name.Contains(search));
+
+        return filteredFriends;
+    }
 }
