@@ -10,17 +10,22 @@ notiConnection.start().then(function () {
 
 
 notiConnection.on("ReceiveNotification", (notifications, connectionId) => {
-    console.log("Received notification: ", notifications);
+    // console.log("Received notification: ", notifications);
     console.log("connection id",connectionId);
     countUnreadNotifications(notifications);
     renderNotifications(notifications);
 });
 
+notiConnection.on("TestHub", (message) => {
+    // console.log("Received notification: ", notifications);
+    console.log("TEst message");
+});
 
-function requestInvitation(){
-    var friendId = document.getElementById("FriendId").value;
+
+function requestInvitation(friendId){
+    console.log("FRIENDID ",friendId)
     notiConnection.invoke("HandleAddFriend",friendId).then(()=>{
-        location.href = "/AddFriendPage"
+        location.href= "/AddFriendPage"
     }).catch(error => console.log(error.toString()))
 }
 
@@ -29,9 +34,8 @@ function acceptInvitation(){
     var senderId = document.getElementById("SenderId").value;
     var receiverId = document.getElementById("ReceiverId").value;
     notiConnection.invoke("HandleAccept",friendshipId,senderId,receiverId).then(()=>{
-        location.href = "/AddFriendPage"
+        console.log("acp request")
     }).catch(error => console.log(error.toString()))
-
 }
 function rejectInvitation(){
     var friendshipId = document.getElementById("FriendShipId").value;
