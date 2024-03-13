@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using Newtonsoft.Json;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Enums;
@@ -12,7 +12,9 @@ namespace TalkBuddy.Presentation.Pages
     {
         [BindProperty]
         public IEnumerable<Client> FriendsList { get; set; } = new List<Client>();
-        public List<string> SelectedValues { get; set; } = new List<string>();
+        public List<string> SelectedValuesString { get; set; } = new List<string>();
+        [BindProperty]
+        public IEnumerable<Client> SelectedValues { get; set; } = new List<Client>();
         private readonly IFriendShipService _friendShipService;
         private readonly IChatBoxService _chatBoxService;
         private readonly IClientService _clientService;
@@ -23,7 +25,7 @@ namespace TalkBuddy.Presentation.Pages
             _chatBoxService = chatBoxService;
             _clientService = clientService;
         }
-        public async Task<IActionResult> OnGetAsync(string search = "")
+        public async Task<IActionResult> OnGetAsync(string search = "", string selectedFriendsHidden = "")
         {
             var userId = HttpContext.Session.GetString(SessionConstants.USER_ID);
 
@@ -35,15 +37,38 @@ namespace TalkBuddy.Presentation.Pages
             {
                 FriendsList = await _friendShipService.GetClientFriendsSearchByName(new Guid(userId), search);
             }
-            //SelectedValues = TempData["SelectedValues"] as List<string>;
-            //TempData.Keep("SelectedValues");
-            // Return the same page with the updated FriendsList
+            if (!string.IsNullOrEmpty(selectedFriendsHidden))
+            {
+                SelectedValuesString = JsonConvert.DeserializeObject<List<string>>(selectedFriendsHidden);
+                foreach(var friendId in SelectedValuesString)
+                {
+                    if(!string.IsNullOrEmpty(friendId))
+                    {
+                        
+                        var friend = await _clientService.GetClientById(new Guid(friendId));
+                      
+                        SelectedValues = SelectedValues.Append(friend);
+                    }
+                   
+                }
+            }
             return Page();
         }
-        public async Task<IActionResult> OnPostAsync(string groupName)
+        public async Task<IActionResult> OnPostAsync(string groupName, string selectedFriendsHidden = "")
         {
-            var selectedValues = Request.Form["selectedFriends"].ToList();
-            TempData["SelectedValues"] = selectedValues;
+            if (!string.IsNullOrEmpty(selectedFriendsHidden))
+            {
+                SelectedValuesString = JsonConvert.DeserializeObject<List<string>>(selectedFriendsHidden);
+                foreach (var friendId in SelectedValuesString)
+                {
+                    if (!string.IsNullOrEmpty(friendId))
+                    {
+                        var friend = await _clientService.GetClientById(new Guid(friendId));
+                        SelectedValues = SelectedValues.Append(friend);
+                    }
+
+                }
+            }
             var userId = HttpContext.Session.GetString(SessionConstants.USER_ID);
             var client = await _clientService.GetClientById(Guid.Parse(userId));
             var chatbox = new ChatBox
@@ -64,12 +89,12 @@ namespace TalkBuddy.Presentation.Pages
                 IsModerator = true,
                 NickName = client.Name
             });
-            foreach (var friendId in selectedValues)
+            foreach (var friend in SelectedValues)
             {
-                var friend = await _clientService.GetClientById(new Guid(friendId));
+                
                 chatbox.ClientChatBoxes.Add(new ClientChatBox
                 {
-                    ClientId = new Guid(friendId),
+                    ClientId = friend.Id,
                     ChatBox = chatbox,
                     IsBlocked = false,
                     IsLeft = false,

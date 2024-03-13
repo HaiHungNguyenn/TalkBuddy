@@ -31,7 +31,7 @@
 
 
     .friend-list {
-        max-height: 280px;
+        max-height: 250px;
         overflow-y: auto;
         padding: 10px;
         border: 1px solid #ced4da;
@@ -41,7 +41,7 @@
 
 
     .chosenList {
-        max-height: 280px;
+        max-height: 250px;
         overflow-y: auto;
         padding: 10px;
         border: 1px solid #ced4da;
@@ -72,48 +72,57 @@
             <h4 class="text-center">Create group chat:</h4>
 
             <div class="form-group">
-                <div class="row">
-                    <label for="groupName">Group name:</label>
-                    <input type="text" class="form-control" id="groupName" name="groupName">
-                </div>
-                <form method="get">
+               
+                <form method="get" onsubmit="saveSelectedFriends()">
                     <div class="row">
-                        <input name="search" class="form-control col-11" type="text" placeholder="type name to search" id="search-friend" />
+                        <input name="search" class="form-control" type="text" placeholder="type name to search friend" id="search-friend" />
+                        <input type="hidden" class="selectedFriendsHidden" name="selectedFriendsHidden" />
 
-                        <button type="submit" class="btn btn-primary col-1 mt-3 align-content-center align-items-center" style="margin: 15px 30px;">Search</button>
+                        <button type="submit" class="btn btn-primary mt-3" style="width:auto; margin: 15px 15px">Search</button>
 
                     </div>
                 </form>
                 
-                <form method="post">
+                <form method="post" onsubmit="saveSelectedFriends()">
+                    <div class="row" style="margin-block-end: 10px">
+                        <label for="groupName">Group name:</label>
+                        <input type="text" class="form-control" id="groupName" name="groupName">
+                    </div>
                     <div class="row">
-                        <div class="col-6">
-                            <div class="friend-list" style="height: calc(100vh - 200px);">
+                        <div class="col-6 friend-list" style="height: calc(100vh - 220px);">
+                           
                                 <h7 class="text-center">Friends:</h7>
                                 <div class="friend-scroll">
                                     @foreach (var friend in Model.FriendsList)
                                     {
                                         <div class="list-item">
-                                            <input type="checkbox" id="friend-@friend.Id" class="checkbox" name="selectedFriends" value="@friend.Id" onchange="updateChosenList(this)">
+                                            <input type="checkbox" id="friend-@friend.Id" class="checkbox" name="selectedFriends" value="@friend.Id" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Contains(friend.Id.ToString()) ? "checked" : "") onchange="updateChosenList(this)">
                                             <label for="friend-@friend.Id">@friend.Name</label>
                                         </div>
                                     }
+
                                 </div>
-                    
-                            </div>
+
+                           
                         </div>
 
-                        <div class="col-6 chosenList" style="height: calc(100vh - 200px);">
-                            <h7 class="text-center">Chosen:</h7>
+                        <div class="col-6 chosenList" style="height: calc(100vh - 220px);">
+                            <h7 class="text-center">Chosen <span style="font-size:small">(at least 2 friends)</span>:</h7>
                             <div class="chosen-scroll">
-                                <!-- This div will be populated with selected friends -->
-                             
+                                @if (Model.SelectedValues != null && Model.SelectedValues.Any())
+                                {
+                                    foreach (var selectedFriend in Model.SelectedValues)
+                                    {
+                                        <div id="chosen|@selectedFriend.Id">@selectedFriend.Name</div>
+                                    }
+                                }                                
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3 float-end" id="createGroupChatBtn" disabled>Create group chat</button>
+                    <input type="hidden" class="selectedFriendsHidden" name="selectedFriendsHidden" />
+                    <button type="submit" class="btn btn-primary mt-3 float-end" id="createGroupChatBtn" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Count()<2 ? "disabled" : "")>Create group chat</button>
                 </form>
-              
+
             </div>
 
 
@@ -129,26 +138,42 @@
         console.log("updatelist: " + chosenList);
         if (checkbox.checked) {
             // Add the selected friend to the chosen list
-            chosenList.innerHTML += `<div id="chosen-${friendId}">${friendName}</div>`;
+            chosenList.innerHTML += `<div id="chosen|${friendId}">${friendName}</div>`;
             console.log("check: " + friendName);
+            
         } else {
             // Remove the unselected friend from the chosen list
-            var friendToRemove = chosenList.querySelector(`#chosen-${friendId}`);
+            var friendToRemove = chosenList.querySelector(`#chosen\\|${friendId}`);
             if (friendToRemove) {
                 friendToRemove.remove();
+               
             }
             console.log("uncheck: " + friendName);
         }
 
         // Enable or disable the Create group chat button based on the number of selected friends
-        var selectedFriendsCount = document.querySelectorAll('input[name="selectedFriends"]:checked').length;
-  
+
+
+        var selectedFriendsCount = Array.from(chosenList.querySelectorAll('div')).map(div => div.id.split('|')[1]).filter(id => id != null).length;
         var createGroupChatBtn = document.getElementById('createGroupChatBtn');
         if (selectedFriendsCount >= 2) {
             createGroupChatBtn.disabled = false;
         } else {
             createGroupChatBtn.disabled = true;
         }
+    }
+    function saveSelectedFriends() {
+
+        var chosenListDiv = document.querySelector('.chosenList');
+        var selectedFriendIds = Array.from(chosenListDiv.querySelectorAll('div')).map(div => div.id.split('|')[1]).filter(id=>id!=null)  
+       
+        var hiddenInputs = document.querySelectorAll('.selectedFriendsHidden');
+
+        // Loop through each element and set its value to the JSON string of selected friend IDs
+        hiddenInputs.forEach(function (hiddenInput) {
+            hiddenInput.value = JSON.stringify(selectedFriendIds);
+        });
+        
     }
 </script>
 
