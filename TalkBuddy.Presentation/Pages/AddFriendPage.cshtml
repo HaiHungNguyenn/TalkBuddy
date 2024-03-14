@@ -42,12 +42,9 @@
                                          client.RelationStatus == null ||
                                          client.RelationStatus.Equals(FriendShipRequestStatus.CANCEL))
                                     {
-                                        <form>
-                                            <input type="hidden" id="FriendId" value="@client.id"/>
-                                            <button class="btn btn-primary" onclick="requestInvitation()">
+                                            <button onclick="requestInvitation('@client.id')" class="btn btn-primary" >
                                                 <i class="fa-solid fa-user-plus add-icon"></i>
                                             </button>
-                                        </form>
                                     }
                                     else if (client.RelationStatus.Equals(FriendShipRequestStatus.ACCEPTED))
                                     {
