@@ -154,8 +154,7 @@
         }).catch(function (err) {
             return console.error(err.toString());
         });
-        // Remove the existing click event listener for the send button
-        document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
+
         if(!chatBox.isLeft){
             const button = document.querySelector('#sendButton button');
             button.disabled = false;
@@ -185,7 +184,7 @@
             inputMes.disabled = true;
             console.log('diablebuton');          
         }
-       
+
 
         //Add click event to show clients in chat box
         const showClient = document.getElementsByClassName("show-clients")[0];
