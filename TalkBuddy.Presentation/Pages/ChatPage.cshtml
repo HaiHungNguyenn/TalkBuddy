@@ -163,7 +163,7 @@
         // Append the elements to construct the HTML structure
         chatHeader.appendChild(img);
         chatHeader.appendChild(span);
-        chatHeader.appendChild(button);
+        
         connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
             // Handle received messages
             displayMessages(messages);
