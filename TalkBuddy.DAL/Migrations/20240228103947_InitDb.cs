@@ -23,7 +23,6 @@ namespace TalkBuddy.DAL.Migrations
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -83,49 +82,6 @@ namespace TalkBuddy.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Notification",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    SendAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notification", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notification_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "OtpCodes",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Used = table.Column<bool>(type: "bit", nullable: false),
-                    Version = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_OtpCodes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_OtpCodes_Clients_ClientId",
-                        column: x => x.ClientId,
-                        principalTable: "Clients",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
@@ -162,7 +118,6 @@ namespace TalkBuddy.DAL.Migrations
                     IsLeft = table.Column<bool>(type: "bit", nullable: false),
                     IsNotificationOn = table.Column<bool>(type: "bit", nullable: false),
                     IsModerator = table.Column<bool>(type: "bit", nullable: false),
-                    NickName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClientId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChatBoxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
@@ -192,7 +147,6 @@ namespace TalkBuddy.DAL.Migrations
                     SentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ChatBoxId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    MessageType = table.Column<int>(type: "int", nullable: false),
                     Version = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -309,16 +263,6 @@ namespace TalkBuddy.DAL.Migrations
                 column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notification_ClientId",
-                table: "Notification",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_OtpCodes_ClientId",
-                table: "OtpCodes",
-                column: "ClientId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reports_InformantClientId",
                 table: "Reports",
                 column: "InformantClientId");
@@ -343,12 +287,6 @@ namespace TalkBuddy.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "Medias");
-
-            migrationBuilder.DropTable(
-                name: "Notification");
-
-            migrationBuilder.DropTable(
-                name: "OtpCodes");
 
             migrationBuilder.DropTable(
                 name: "Reports");
