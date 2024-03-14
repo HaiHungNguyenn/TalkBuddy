@@ -40,16 +40,16 @@ namespace TalkBuddy.Presentation.Pages
             if (!string.IsNullOrEmpty(selectedFriendsHidden))
             {
                 SelectedValuesString = JsonConvert.DeserializeObject<List<string>>(selectedFriendsHidden);
-                foreach(var friendId in SelectedValuesString)
+                foreach (var friendId in SelectedValuesString)
                 {
-                    if(!string.IsNullOrEmpty(friendId))
+                    if (!string.IsNullOrEmpty(friendId))
                     {
-                        
+
                         var friend = await _clientService.GetClientById(new Guid(friendId));
-                      
+
                         SelectedValues = SelectedValues.Append(friend);
                     }
-                   
+
                 }
             }
             return Page();
@@ -78,7 +78,13 @@ namespace TalkBuddy.Presentation.Pages
                 Type = ChatBoxType.Group,
                 GroupCreatorId = new Guid(userId)
             };
-
+            chatbox.Messages.Add(new Message
+            {
+                Content = $"{client.Name} created the group",
+                SentDate = DateTime.Now,
+                SenderId = new Guid(userId),
+                MessageType = MessageTypes.Notification
+            });
             chatbox.ClientChatBoxes.Add(new ClientChatBox
             {
                 ClientId = new Guid(userId),
@@ -91,7 +97,7 @@ namespace TalkBuddy.Presentation.Pages
             });
             foreach (var friend in SelectedValues)
             {
-                
+
                 chatbox.ClientChatBoxes.Add(new ClientChatBox
                 {
                     ClientId = friend.Id,

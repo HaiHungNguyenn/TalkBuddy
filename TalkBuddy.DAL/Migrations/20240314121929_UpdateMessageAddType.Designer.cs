@@ -12,8 +12,8 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    [Migration("20240314110329_InitDb")]
-    partial class InitDb
+    [Migration("20240314121929_UpdateMessageAddType")]
+    partial class UpdateMessageAddType
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

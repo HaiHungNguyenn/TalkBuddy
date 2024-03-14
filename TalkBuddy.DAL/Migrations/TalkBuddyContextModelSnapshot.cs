@@ -239,6 +239,9 @@ namespace TalkBuddy.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("MessageType")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("SenderId")
                         .HasColumnType("uniqueidentifier");
 
@@ -258,27 +261,7 @@ namespace TalkBuddy.DAL.Migrations
                     b.ToTable("Messages");
                 });
 
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Notification", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-                b.Property<Guid>("ClientId")
-                    .HasColumnType("uniqueidentifier");
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-                b.Property<int>("Version")
-                    .IsConcurrencyToken()
-                    .HasColumnType("int");
-                b.HasKey("Id");
-                b.HasIndex("ClientId");
-                b.ToTable("Notification", (string)null);
-            });
-
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.OtpCode", b =>
-
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,31 +269,55 @@ namespace TalkBuddy.DAL.Migrations
 
                     b.Property<Guid>("ClientId")
                         .HasColumnType("uniqueidentifier");
-                        
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-                        
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-                        
-                    b.Property<DateTime>("CreatedAt")
+
+                    b.Property<DateTime>("SendAt")
                         .HasColumnType("datetime2");
-                        
-                    b.Property<bool>("Used")
-                        .HasColumnType("bit");
-                        
+
                     b.Property<int>("Version")
                         .IsConcurrencyToken()
                         .HasColumnType("int");
-                        
+
                     b.HasKey("Id");
-                    
+
                     b.HasIndex("ClientId");
-                    
+
                     b.ToTable("Notification", (string)null);
-                    
+                });
+
+            modelBuilder.Entity("TalkBuddy.Domain.Entities.OtpCode", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Used")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Version")
+                        .IsConcurrencyToken()
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
                     b.ToTable("OtpCodes");
                 });
 
@@ -447,12 +454,15 @@ namespace TalkBuddy.DAL.Migrations
                 });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Notification", b =>
-            {
-                b.HasOne("TalkBuddy.Domain.Entities.Client", "Client")
-                    .WithMany("Notifications")
-                    .HasForeignKey("ClientId")
-                    .OnDelete(DeleteBehavior.NoAction);
-            });
+                {
+                    b.HasOne("TalkBuddy.Domain.Entities.Client", "Client")
+                        .WithMany("Notifications")
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Client");
+                });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.OtpCode", b =>
                 {
@@ -460,7 +470,6 @@ namespace TalkBuddy.DAL.Migrations
                         .WithMany("Codes")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
-
                         .IsRequired();
 
                     b.Navigation("Client");
