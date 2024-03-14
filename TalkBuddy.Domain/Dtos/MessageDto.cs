@@ -1,4 +1,5 @@
 ﻿using TalkBuddy.Domain.Entities;
+using TalkBuddy.Domain.Enums;
 
 namespace TalkBuddy.Domain.Dtos
 {
@@ -9,7 +10,7 @@ namespace TalkBuddy.Domain.Dtos
 
         public Guid ChatBoxId { get; set; }
         public Guid SenderId { get; set; }
-
+        public string MessageType { get; set; }
         public string SenderName { get; set; }
         public bool IsYourOwnMess { get; set; }
         public string SenderAvatar { get; set; } 
