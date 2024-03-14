@@ -53,5 +53,10 @@ namespace TalkBuddy.Service.Implementations
                 Find(x => x.ChatBoxId.Equals(chatBoxId) && !x.ClientId.Equals(userId))
                 .Select(x => x.NickName).FirstOrDefaultAsync();
         }
+
+        public async Task RemoveClientFromChatBox(Guid chatBoxId, Guid clientId)
+        {
+            await _unitOfWork.ClientChatBoxRepository.DeleteManyAsync(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(clientId));
+        }
     }
 }

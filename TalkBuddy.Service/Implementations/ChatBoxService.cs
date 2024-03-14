@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TalkBuddy.DAL.Implementations;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
-using TalkBuddy.Domain.Enums;
 using TalkBuddy.Service.Interfaces;
 
 namespace TalkBuddy.Service.Implementations
@@ -25,6 +23,12 @@ namespace TalkBuddy.Service.Implementations
         public async Task<ChatBox> GetChatBoxAsync(Guid chatBoxId)
         {
             return _unitOfWork.ChatBoxRepository.Find(x => x.Id == chatBoxId).Include(x => x.Messages).FirstOrDefault();  
+        }
+
+        public Task UpdateChatBox(ChatBox chatBox)
+        {
+            _unitOfWork.ChatBoxRepository.Update(chatBox);
+            return _unitOfWork.CommitAsync();
         }
     }
 }
