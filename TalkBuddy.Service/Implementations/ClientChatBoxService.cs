@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TalkBuddy.Common.Enums;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Domain.Enums;
@@ -9,10 +11,14 @@ namespace TalkBuddy.Service.Implementations
     public class ClientChatBoxService : IClientChatBoxService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IFriendShipRepository _friendShipRepository;
+        private readonly IClientRepository _clientRepository;
 
-        public ClientChatBoxService(IUnitOfWork unitOfWork)
+        public ClientChatBoxService(IUnitOfWork unitOfWork, IFriendShipRepository friendShipRepository, IClientRepository clientRepository)
         {
             _unitOfWork = unitOfWork;
+            _friendShipRepository = friendShipRepository;
+            _clientRepository = clientRepository;
         }
         public async Task<IList<ClientChatBox>> GetClientChatBoxes()
         {
@@ -59,7 +65,39 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task RemoveClientFromChatBox(Guid chatBoxId, Guid clientId)
         {
-            await _unitOfWork.ClientChatBoxRepository.DeleteManyAsync(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(clientId));
+            var clientChatBox = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(clientId));
+            var updateClientChatBox = clientChatBox.FirstOrDefault();
+            updateClientChatBox.IsLeft = true;
+            await _unitOfWork.ClientChatBoxRepository.UpdateAsync(updateClientChatBox);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<IList<Client>> GetFriendsNotInChatBoxes(Guid chatBoxId, Guid userId)
+        {
+            var friendships = await (await _friendShipRepository.GetAllAsync())
+            .Where(fs => fs.Status == FriendShipRequestStatus.ACCEPTED && (fs.SenderID == userId || fs.ReceiverId == userId))
+            .Include(fs => fs.Sender)
+            .Include(fs => fs.Receiver)
+            .ToListAsync();
+
+             var friends = friendships.Select(fs => fs.SenderID == userId ? fs.Receiver : fs.Sender);
+            IList<Client> returnList = new List<Client>();
+            foreach (var friend in friends)
+            {
+                var list = await _unitOfWork.ClientChatBoxRepository
+                    .Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(friend.Id)).ToListAsync();
+                if (list.IsNullOrEmpty())
+                {
+                    returnList.Add(friend);
+                }
+            }
+            return returnList;
+        }
+
+        public async Task AddClientToGroup(ClientChatBox clientChatBox)
+        {
+            await _unitOfWork.ClientChatBoxRepository.AddAsync(clientChatBox);
+            await _unitOfWork.CommitAsync();
         }
     }
 }
