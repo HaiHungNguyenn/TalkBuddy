@@ -6,6 +6,5 @@ namespace TalkBuddy.Service.Interfaces
     {
         Task<ChatBox> GetChatBoxAsync(Guid chatBoxId);
         Task CreateNewChatBox(ChatBox chatBox);
-        Task UpdateChatBox(ChatBox chatBox);
     }
 }

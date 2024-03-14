@@ -78,13 +78,7 @@ namespace TalkBuddy.Presentation.Pages
                 Type = ChatBoxType.Group,
                 GroupCreatorId = new Guid(userId)
             };
-            chatbox.Messages.Add(new Message
-            {
-                Content = $"{client.Name} created the group",
-                SentDate = DateTime.Now,
-                SenderId = new Guid(userId),
-                MessageType = MessageTypes.Notification
-            });
+
             chatbox.ClientChatBoxes.Add(new ClientChatBox
             {
                 ClientId = new Guid(userId),

@@ -16,7 +16,7 @@ namespace TalkBuddy.Service.Implementations
         }
         public async Task<IList<ClientChatBox>> GetClientChatBoxes()
         {
-            return await _unitOfWork.ClientChatBoxRepository.GetAll().Include(clb=>clb.ChatBox).OrderByDescending(clb=>clb.ChatBox.CreatedDate).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.GetAll().Include(clb => clb.ChatBox).OrderByDescending(clb => clb.ChatBox.CreatedDate).ToListAsync();
         }
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxesIncludeNotEmptyMessages(Guid clientId)
@@ -26,7 +26,7 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId)
         {
-            
+
             var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ClientId.Equals(clientId));
             return res.Include(x => x.ChatBox)
                 .Where(x => (x.IsLeft && x.ChatBox.Type == ChatBoxType.TwoPerson) || !x.IsLeft)
@@ -43,7 +43,7 @@ namespace TalkBuddy.Service.Implementations
         {
             return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(userId))
                 .Include(x => x.Client)
-                .Include(x => x.ChatBox).ThenInclude(c=>c.ClientChatBoxes)
+                .Include(x => x.ChatBox).ThenInclude(c => c.ClientChatBoxes)
                 .Where(c => c.ChatBox.ChatBoxName
                 .Contains(searchName) ||
                 c.ChatBox.ClientChatBoxes
@@ -55,11 +55,6 @@ namespace TalkBuddy.Service.Implementations
             return await _unitOfWork.ClientChatBoxRepository.
                 Find(x => x.ChatBoxId.Equals(chatBoxId) && !x.ClientId.Equals(userId))
                 .Select(x => x.NickName).FirstOrDefaultAsync();
-        }
-
-        public async Task RemoveClientFromChatBox(Guid chatBoxId, Guid clientId)
-        {
-            await _unitOfWork.ClientChatBoxRepository.DeleteManyAsync(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(clientId));
         }
     }
 }
