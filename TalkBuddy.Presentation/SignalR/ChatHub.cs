@@ -10,6 +10,7 @@ namespace TalkBuddy.Presentation.SignalR
     {
         public readonly static List<UserConnection> _ConnectionRooms = new List<UserConnection>();
         private readonly static List<string> _ConnectionPresences = new List<string>();
+
         private readonly IMessageService _messageService;
         private readonly IClientChatBoxService _clientChatBoxService;
         private readonly IClientService _clientService;
@@ -188,38 +189,10 @@ namespace TalkBuddy.Presentation.SignalR
                 SentDate = messageObject.SentDate,
                 IsYourOwnMess = false
             };
-           
-            var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(fromUserId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
-            foreach (var connection in currentUserConnection)
-            {
-                await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
-            }
-            await Clients.GroupExcept(chatBoxId, currentUserConnection.Select(x=>x.ConnectionId)).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
+            await Clients.Caller.SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
+            await Clients.OthersInGroup(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
             //[Nhi]3/4/2024: fix message return type from string to object
         }
-
-        public async Task ExitGroupChat(string chatBoxId)
-        {
-            var userId = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_ID);
-            var userName = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME);
-            await _clientChatBoxService.RemoveClientFromChatBox(new Guid(userId), new Guid(chatBoxId));
-            var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
-            var notiMess = new Message
-            {
-                Content = $"{userName} left the group",
-                SentDate = DateTime.Now,
-                SenderId = new Guid(userId),
-                MessageType = Domain.Enums.MessageTypes.Notification
-            };  
-            chatBox.Messages.Add(notiMess);
-            await _chatBoxService.UpdateChatBox(chatBox);
-            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatBoxId);
-            await Clients.Groups(chatBoxId).SendAsync("ExitGroupChat", notiMess);
-            //update group chat list
-            //////////////
-            await Clients.Caller.SendAsync("UserExitGroupChat", chatBoxId);
-        }
-
 
         private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId, IList<ClientChatBox> clientChatBoxes)
         {
