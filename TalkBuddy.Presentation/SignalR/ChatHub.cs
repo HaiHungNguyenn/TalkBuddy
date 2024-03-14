@@ -255,6 +255,7 @@ namespace TalkBuddy.Presentation.SignalR
                     ChatBoxName = chatBoxName,
                     ChatBoxType = x.ChatBox.Type.ToString(),
                     ClientId = otherClientId,
+                    IsLeft = x.IsLeft,
                 };
                 returnList.Add(chatBox);
             }

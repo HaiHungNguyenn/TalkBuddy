@@ -16,9 +16,9 @@ namespace TalkBuddy.Presentation.SignalR
         }
 
         public override async Task OnConnectedAsync()
-        {
+        {            
             var httpContext = Context.GetHttpContext();
-            var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+            var userId = httpContext?.Session.GetString(SessionConstants.USER_ID);
             var isOnline = await _presenceTracker.UserConnected(userId, Context.ConnectionId);
             var friends = await _friendShipService.GetClientFriends(Guid.Parse(userId));    
             var onlineFirends = new List<Guid>();
@@ -30,20 +30,33 @@ namespace TalkBuddy.Presentation.SignalR
                     {
                         onlineFirends.Add(friend.Id);
                         await Groups.AddToGroupAsync(Context.ConnectionId, friend.Id.ToString());
-                        var friendConnectionId = PresenceTracker.GetConnectionsForUser(friend.Id.ToString()).Result.ToList().FirstOrDefault();
-                        await Groups.AddToGroupAsync(friendConnectionId, userId.ToString());
-                        await Clients.Groups(friend.Id.ToString()).SendAsync("GetOnlineUsers", userId);
+                        var friendConnectionIds = PresenceTracker.GetConnectionsForUser(friend.Id.ToString()).Result.ToList();
+                        foreach (var friendConnectionId in friendConnectionIds)
+                        {
+                            await Groups.AddToGroupAsync(friendConnectionId, userId.ToString());
+                            
+                        }
+                        // await Clients.Groups(friend.Id.ToString()).SendAsync("GetOnlineUsers", userId);
                     }
                 }              
                 await Clients.Groups(userId).SendAsync("UpdateOnlineStatus", userId, true);
+                
+                
                 await Clients.Caller.SendAsync("GetOnlineFriends", onlineFirends);
+                await base.OnConnectedAsync();
             }            
         }
+    //    var friendConnectionIds = PresenceTracker.GetConnectionsForUser(friend.Id.ToString()).Result.ToList();
+    //                    foreach (var friendConnectionId in friendConnectionIds)
+    //                    {
+    //                        await Groups.AddToGroupAsync(friendConnectionId, userId.ToString());
+    //}
+    //await Clients.Groups(friend.Id.ToString()).SendAsync("GetOnlineUsers", userId);
 
-        public override async Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
         {
             var httpContext = Context.GetHttpContext();
-            var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
+            var userId = httpContext?.Session.GetString(SessionConstants.USER_ID);
             var isOffline = await _presenceTracker.UserDisconnected(userId, Context.ConnectionId);
             if (isOffline)
             {
