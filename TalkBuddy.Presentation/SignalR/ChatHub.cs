@@ -210,6 +210,7 @@ namespace TalkBuddy.Presentation.SignalR
                     var clientList = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
                     var otherClient = clientList.Select(c => c.Client).Where(c => c.Id.ToString() != userId.ToString()).FirstOrDefault();
                     if(otherClient != null) otherClientId = otherClient.Id;
+                    x.ChatBox.ChatBoxAvatar = otherClient.ProfilePicture;
                 }
                 else if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
                 {

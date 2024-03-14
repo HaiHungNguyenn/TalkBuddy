@@ -13,7 +13,7 @@ public class BlobService : IBlobService
     private readonly IConfiguration _configuration;
     private readonly AzureSettings _azureSettings;
 
-    public BlobService(BlobServiceClient blobServiceClient, IConfiguration configuration, AzureSettings azureSettings)
+    public BlobService(IConfiguration configuration)
     {
         _configuration = configuration;
         _azureSettings = _configuration.GetSection(nameof(AzureSettings)).Get<AzureSettings>() ?? throw new Exception("invalid azure settings configuration.");

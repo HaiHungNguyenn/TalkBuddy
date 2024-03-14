@@ -6,6 +6,7 @@
     border-radius: 10px;
     border: 1px;
     width: 57%;
+    max-width: 550px;
 }
 
 #show-clients-dialog::backdrop{
@@ -18,15 +19,21 @@
 
 .client-name-dialog{
     display: flex;
-    align-content: center;
+    flex-direction: column;
+    align-content: flex-start;
     flex-wrap: wrap;
     justify-content: center;
     font-size: large;
     font-weight: 500;
 }
 
+.leader-tag{
+    font-weight: normal;
+    font-size: 14px;
+}
+
 .client-avatar-dialog{
-    width: 100px;
+    width: 100%;
 }
 
 .dialog-title{
@@ -35,4 +42,31 @@
 
 .client-row{
     margin-top: 15px;   
+    height: 40px;
 }
+
+.client-row a{
+    width: 10%;
+    min-width: 60px;
+}
+
+.show-client-btn{
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    background: white;
+}
+
+.show-client-btn:hover{
+    background: rgb(0, 0, 0, 0.1);
+}
+
+.show-client-btn:active{
+    background: rgb(0, 0, 0, 0.2);
+}
+
+.btn-active{
+    border-bottom: 4px solid #0866FF;
+}
+
+

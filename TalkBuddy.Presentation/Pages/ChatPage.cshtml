@@ -3,13 +3,14 @@
 @model TalkBuddy.Presentation.Pages.ChatPage
 
 <link rel="stylesheet" href="~/css/header.css"/>
+<link rel="stylesheet" href="~/css/chatPage.css"/>
 
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
-<<<<<<< HEAD
+    <!--<<<<<<< HEAD-->
 
     <component type="typeof(Header)" render-mode="Static"/>
 
-=======
+<!--=======
     <div class="w-100 d-flex justify-content-between align-items-center py-3 px-5" style="background-color: #5e73e2;">
         <form method="post" class="search-form">
             <input type="text" placeholder="Type to search..." />
@@ -29,7 +30,7 @@
             <img class="rounded-circle" style="cursor: pointer;" width="40" height="40" src="default-avatar.png" alt="User avatar"/>
         </div>
     </div>
->>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
+    >>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39-->
     <div class="w-100 h-100 chat-container">
         <div class="chat-layout">
             <div class="left-container">
@@ -66,7 +67,18 @@
         <h2 class="dialog-title col-8">Members</h2>
         <button class="close-btn btn col-2" onclick="this.parentElement.parentElement.close()">&#10005;</button>
     </div>
+    <div class="btn-row row p-4">
+        <button class="btn btn-secondary">
+            <i class="fas fa-user-friends"></i>
+            <span>Add member</span>
+        </button>
+    </div>
+    <div class="btn-row row">
+        <button class="col-2 show-client-btn btn-active">All</button>
+        <button class="col-2 show-client-btn">Media</button>
+    </div>
     <div class="modal-body-dialog">
+        
         <div class="client-row row">
             <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png"/>
             <span class="client-name-dialog col-7">Tri</span>
@@ -92,15 +104,15 @@
     });
     
     
-<<<<<<< HEAD
+//<<<<<<< HEAD
     
-=======
+//=======
     notiConnection.start().then(() => {
         console.log("Notification server connected.")
     }).catch(function (error){
         console.error(error);
     })
->>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
+//>>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
 
     connection.start().then(function () {
         console.log("SignalR Connected");
@@ -270,8 +282,8 @@
         return li;
     }
     
-<<<<<<< HEAD
-=======
+//<<<<<<< HEAD
+//=======
      notiConnection.on("ReceiveNotification", (notifications, connectionId) => {
             console.log("Received notification: ", notifications);
             console.log("connection id",connectionId);
@@ -337,7 +349,7 @@
         var x = notifications.reduce((count, notification) => !notification.isRead ? count + 1 : count, 0);
         unreadCount.innerHTML = x !== 0 ? x : '';
     }
->>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
+//>>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
 
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
@@ -347,15 +359,35 @@
 
     function displayClients(clients){
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
+        let leaderExist = false;
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
-            dialogBody.innerHTML += `
-            <div class="client-row row">
-                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                <span class="client-name-dialog col-7">${client.name}</span>
-            </div>
-            `
-        })
+            if(!leaderExist && client.inChatboxes[0].isModerator){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                        <span class="leader-tag">Leader</span>
+                    </div>
+                </div>
+                `;
+                leaderExist = true;
+                console.log("leader");
+                return;
+            }
+            console.log("normal");
+            //else if(leaderExist){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                    </div>
+                </div>
+                `;
+            //}
+           })
     }
     
     const scrollMessagesToBottom = () => {
