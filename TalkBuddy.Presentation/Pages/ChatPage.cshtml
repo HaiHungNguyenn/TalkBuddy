@@ -143,10 +143,13 @@
         var span = document.createElement("span");
         span.className = "fs-5 fw-semibold";
         span.innerHTML = chatBox.chatBoxName;
-        // <button type="button" class="btn btn-primary" >
-        //     <i class="fas fa-sign-out-alt" > </i> Exit Group Chat
-        //         < /button>
-        if(chatBox.chatBoxType.toLowerCase() === "group"){
+      
+
+        // Append the elements to construct the HTML structure
+        chatHeader.appendChild(img);
+        chatHeader.appendChild(span);
+     
+        if (chatBox.chatBoxType.toLowerCase() === "group") {
             var button = document.createElement("button");
             button.className = "btn btn-primary";
             var i = document.createElement("i");
@@ -159,26 +162,40 @@
                 });
             });
         }
-
-        // Append the elements to construct the HTML structure
-        chatHeader.appendChild(img);
-        chatHeader.appendChild(span);
-        chatHeader.appendChild(button);
         connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
             // Handle received messages
             displayMessages(messages);
         }).catch(function (err) {
             return console.error(err.toString());
         });
-  
-        // Remove the existing click event listener for the send button
-        document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
 
-        // Add a new click event listener for the send button
-        document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
-
-        // Set the chatBoxId as a data attribute on the sendButton element
-        document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
+        if (!chatBox.isLeft) {
+            const button = document.querySelector('#sendButton button');
+            button.disabled = false;
+            var inputMes = document.getElementById("messageInput");
+            inputMes.value = '';
+            inputMes.style.color = 'black';
+            inputMes.disabled = false;
+            // Remove the existing click event listener for the send button
+            document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
+            // Add a new click event listener for the send button
+            document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
+            // Set the chatBoxId as a data attribute on the sendButton element
+            document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
+        } else {
+            const button = document.querySelector('#sendButton button');
+            // Disable the button
+            button.disabled = true;
+            var inputMes = document.getElementById("messageInput");
+            if (chatBox.chatBoxType.toLowerCase() === "group") {
+                inputMes.value = 'You are currently not a member of this group';
+            } else {
+                inputMes.value = 'You are currently not friends. Add friend to send messages';
+            }
+            inputMes.style.color = 'red';
+            inputMes.disabled = true;
+            console.log('diablebuton');
+        }
 
         //Add click event to show clients in chat box
         const showClient = document.getElementsByClassName("show-clients")[0];

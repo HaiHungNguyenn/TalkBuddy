@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
+using TalkBuddy.Domain.Enums;
 using TalkBuddy.Service.Interfaces;
 
 namespace TalkBuddy.Service.Implementations
@@ -27,7 +28,9 @@ namespace TalkBuddy.Service.Implementations
         {
             
             var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ClientId.Equals(clientId));
-            return res.Include(x => x.ChatBox).OrderByDescending(clb => clb.ChatBox.CreatedDate).Include(x => x.Client).ToList();
+            return res.Include(x => x.ChatBox)
+                .Where(x => (x.IsLeft && x.ChatBox.Type == ChatBoxType.TwoPerson) || !x.IsLeft)
+                .OrderByDescending(clb => clb.ChatBox.CreatedDate).Include(x => x.Client).ToList();
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)
