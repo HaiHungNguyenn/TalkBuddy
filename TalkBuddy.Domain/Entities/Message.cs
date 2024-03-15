@@ -1,4 +1,5 @@
 ﻿using TalkBuddy.Domain.Entities.BaseEntities;
+using TalkBuddy.Domain.Enums;
 
 namespace TalkBuddy.Domain.Entities;
 
@@ -6,7 +7,7 @@ public partial class Message : BaseEntity<Guid>
 {
     public string Content { get; set; }
     public DateTime SentDate { get; set; }
-    
+    public MessageTypes MessageType { get; set; } = MessageTypes.Message;
     public Guid ChatBoxId { get; set; }
     public Guid SenderId { get; set; }
     public virtual Client Sender { get; set; } = null!;

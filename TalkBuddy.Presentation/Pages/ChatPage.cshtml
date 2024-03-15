@@ -2,16 +2,16 @@
 @using TalkBuddy.Presentation.Components
 @model TalkBuddy.Presentation.Pages.ChatPage
 
-<link rel="stylesheet" href="~/css/header.css"/>
-<link rel="stylesheet" href="~/css/chatPage.css"/>
+<link rel="stylesheet" href="~/css/header.css" />
+<link rel="stylesheet" href="~/css/chatPage.css" />
 
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
-    <component type="typeof(Header)" render-mode="Static"/>
+    <component type="typeof(Header)" render-mode="Static" />
     <div class="w-100 h-100 chat-container">
         <div class="chat-layout">
             <div class="left-container">
                 <form method="post" class="search-chatbox-form">
-                    <input class="rounded-3" type="text" placeholder="Search for conversation..." id="searchChatInput"/>
+                    <input class="rounded-3" type="text" placeholder="Search for conversation..." id="searchChatInput" />
                     <button type="submit" class="search-btn" id="searchChatButon" onclick="searchChatButtonClickHandler(event)">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     </button>
@@ -21,11 +21,12 @@
                 </div>
             </div>
             <div class="chat-window">
-                <div class="chat-header" id="chat-title"></div>
+                <div class="chat-header" id="chat-title">
+                </div>
 
                 <ul id="messages"></ul>
                 <div class="chat-footer">
-                    <input placeholder="Type your message here" id="messageInput"/>
+                    <input placeholder="Type your message here" id="messageInput" />
                     <div id="sendButton">
                         <button>
                             <i class="fa-solid fa-paper-plane"></i>
@@ -45,14 +46,15 @@
     </div>
     <div class="modal-body-dialog">
         <div class="client-row row">
-            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png"/>
+            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png" />
             <span class="client-name-dialog col-7">Tri</span>
         </div>
         <div class="client-row row">
-            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png"/>
+            <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png" />
             <span class="client-name-dialog col-7">Hai</span>
         </div>
     </div>
+
     <form method="dialog">
     </form>
 </dialog>
@@ -75,41 +77,48 @@
     });
 
     connection.on("InitializeChat", function (chatBoxes) {
-        
+
         document.getElementById("chatBoxtList").innerHTML = "";
         chatBoxes.forEach(function (chatBox) {
             var li = document.createElement("li");
-                     
+
             console.log(chatBox.ChatBoxName);
             // Create the image element
-            var img = document.createElement("img");            
+            var img = document.createElement("img");
             img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
             img.className = "avatar";
 
             // Create the span element for the text
             var span = document.createElement("span");
             span.className = "fs-5 fw-semibold";
-            span.innerHTML = chatBox.chatBoxName ;
+            span.innerHTML = chatBox.chatBoxName;
 
             // Append the elements to construct the HTML structure
-          
-            li.appendChild(img);           
+
+            li.appendChild(img);
             li.appendChild(span);
             li.addEventListener("click", function () {
                 requestMessagesForChatBox(chatBox);
             });
+            var chatHeader = document.getElementById("chat-title");
+            var messagesList = document.getElementById("messages");
+            chatHeader.innerHTML = "Please choose chat to start conversation!";
+            messagesList.innerHTML = ""
+            const button = document.getElementById("sendButton").style.display = 'none';
+
+            var inputMes = document.getElementById("messageInput").style.display = 'none';
 
             // Append the list item to the chat box list
-            
+
             document.getElementById("chatBoxtList").appendChild(li);
         });
     });
-       
+
 
     function sendButtonClickHandler(event) {
         var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
         var message = document.getElementById("messageInput").value;
-      
+
         if (message !== "") { // Check if message is not empty
             connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
                 return console.error(err.toString());
@@ -122,7 +131,7 @@
 
     //search for chatbox
     function searchChatButtonClickHandler(event) {
-     
+
         var searchString = document.getElementById("searchChatInput").value;
         connection.invoke("SearchByChatBoxName", searchString).catch(function (err) {
             return console.error(err.toString());
@@ -132,7 +141,7 @@
     }
 
     function requestMessagesForChatBox(chatBox) {
-   
+
         var chatHeader = document.getElementById("chat-title");
         chatHeader.innerHTML = "";
         var img = document.createElement("img");
@@ -143,40 +152,92 @@
         span.className = "fs-5 fw-semibold";
         span.innerHTML = chatBox.chatBoxName;
 
+        document.getElementById("sendButton").style.display = 'block';
+        document.getElementById("messageInput").style.display = 'block';
         // Append the elements to construct the HTML structure
         chatHeader.appendChild(img);
         chatHeader.appendChild(span);
+
+        if (chatBox.chatBoxType.toLowerCase() === "group" && !chatBox.isLeft) {
+            var button = document.createElement("button");
+            button.className = "btn btn-primary";
+            var i = document.createElement("i");
+            i.className = "fas fa-sign-out-alt";
+            button.appendChild(i);
+            chatHeader.appendChild(button);
+            button.addEventListener("click", function () {
+                connection.invoke("ExitGroupChat", chatBox.chatBoxId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
+
+            //add person to group chat
+
+            var buttonAdd = document.createElement("button");
+            buttonAdd.className = "btn btn-primary";
+            var iAdd = document.createElement("i");
+            iAdd.className = "fas fa-user-plus";
+            buttonAdd.appendChild(iAdd);
+            chatHeader.appendChild(buttonAdd);
+            buttonAdd.addEventListener("click", function () {
+                connection.invoke("GetFriendsListNotInChat", chatBox.chatBoxId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+
+            });
+
+        }
         connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
             // Handle received messages
             displayMessages(messages);
         }).catch(function (err) {
             return console.error(err.toString());
         });
-        // Remove the existing click event listener for the send button
-        document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
 
-        // Add a new click event listener for the send button
-        document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
-
-        // Set the chatBoxId as a data attribute on the sendButton element
-        document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
-
-        //Add click event to show clients in chat box
-        const showClient = document.getElementsByClassName("show-clients")[0];
-        const clientsDialog = document.getElementById("show-clients-dialog");
-        showClient.addEventListener("click", () => {
-            //check type of chat box
-            console.log(chatBox);
-            if(chatBox.chatBoxType == "TwoPerson"){
-                window.location.href = `/Profile?id=${chatBox.clientId}`
+        if (!chatBox.isLeft) {
+            const button = document.querySelector('#sendButton button');
+            button.disabled = false;
+            var inputMes = document.getElementById("messageInput");
+            inputMes.value = '';
+            inputMes.style.color = 'black';
+            inputMes.disabled = false;
+            // Remove the existing click event listener for the send button
+            document.getElementById("sendButton").removeEventListener("click", sendButtonClickHandler);
+            // Add a new click event listener for the send button
+            document.getElementById("sendButton").addEventListener("click", sendButtonClickHandler);
+            // Set the chatBoxId as a data attribute on the sendButton element
+            document.getElementById("sendButton").setAttribute("data-chatBoxId", chatBox.chatBoxId);
+            //Add click event to show clients in chat box
+            const showClient = document.getElementsByClassName("show-clients")[0];
+            const clientsDialog = document.getElementById("show-clients-dialog");
+            showClient.addEventListener("click", () => {
+                //check type of chat box
+                console.log(chatBox);
+                if (chatBox.chatBoxType == "TwoPerson") {
+                    window.location.href = `/Profile?id=${chatBox.clientId}`
+                }
+                else {
+                    clientsDialog.showModal();
+                    connection.invoke("GetClientsOfChatBox", chatBox.chatBoxId).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
+            });
+        } else {
+            const button = document.querySelector('#sendButton button');
+            // Disable the button
+            button.disabled = true;
+            var inputMes = document.getElementById("messageInput");
+            if (chatBox.chatBoxType.toLowerCase() === "group") {
+                inputMes.value = 'You are currently not a member of this group';
+            } else {
+                inputMes.value = 'You are currently not friends. Add friend to send messages';
             }
-            else {
-                clientsDialog.showModal();
-                connection.invoke("GetClientsOfChatBox", chatBox.chatBoxId).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            }
-        });
+            inputMes.style.color = 'red';
+            inputMes.disabled = true;
+            console.log('diablebuton');
+        }
+
     }
 
     // Function to display messages on the UI
@@ -189,13 +250,19 @@
         messages.forEach(msg => messagesList.append(convertMessageToListItem(msg)));
         scrollMessagesToBottom();
     }
-    
+
     function convertMessageToListItem(message) {
         // Create a new list item for each message
         const li = document.createElement("li");
-
-        message.isYourOwnMess && li.classList.add('self-msg');
+        console.log(message.messageType);
+        if (message.messageType == "Notification") {
+            console.log('notification');
+            li.innerHTML = `<p class="notification" style="align-items:center; color:darkblue; text-align:center">
+                ${message.content}</p>`;
         
+        } else {
+         message.isYourOwnMess && li.classList.add('self-msg');
+         console.log('message');
         // add avatar, the image is a placeholder, replace the image's source with client's avatar
         const imgAvatar = document.createElement("img");
         imgAvatar.src = message.senderAvatar || '/default-avatar.png';
@@ -240,6 +307,7 @@
         const dropDown = document.createElement("div");
         dropDown.classList.add("dropdown","ml-3");       
         dropDown.innerHTML = displayDropdownReportation(message.senderId, message.senderName);        
+          
         if (message.isYourOwnMess) {
             // message to the left, avatar to the right
             li.appendChild(spanContainer);
@@ -252,26 +320,33 @@
             li.appendChild(spanContainer);
             li.appendChild(dropDown);
         }
-        li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+           li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+        }
         return li;
     }
-    
+
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
-    console.log(clients);
-    displayClients(clients)
+        console.log(clients);
+        displayClients(clients)
     })
-    function displayClients(clients){
+    function displayClients(clients) {
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
         dialogBody.innerHTML += `
-            <div class="client-row row">
-                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                <span class="client-name-dialog col-7">${client.name}</span>
-            </div>
-        `})
-    } 
+                                    <div class="client-row row">
+                                        <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                                        <span class="client-name-dialog col-7">${client.name}</span>
+                                    </div>
+                                `})
+    }
+
+    const scrollMessagesToBottom = () => {
+        const ulMessages = document.getElementById('messages');
+        ulMessages.scrollTop = ulMessages.scrollHeight;
+    }
+    
     function displayDropdownReportation(userId, userName) {
         var x = userId;
         return `
@@ -320,10 +395,81 @@
                 </div>
             </div>`;
     }
-    const scrollMessagesToBottom = () => {
-            const ulMessages = document.getElementById('messages');
-            ulMessages.scrollTop = ulMessages.scrollHeight;
-        }
+
+    connection.on("showFriendsListModal", function (friends, chatBoxId) {
+        // Here, you can create a modal or dropdown list to display the list of friends
+        // Populate the modal or dropdown list with the fetched data
+        // For example, you can create a Bootstrap modal:
+        var modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+                        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select Friends</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="friendCheckboxForm">
+                        <ul class="list-group">
+                            ${friends.map(friend => `
+                                <li class="list-group-item">
+                                    <input type="checkbox" name="selectedFriends" value="${friend.id}" id="friend-${friend.id}">
+                                    <label for="friend-${friend.id}">${friend.name}</label>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Add Selected</button>
+                </div>
+            </div>
+        </div>
+
+                `;
+        document.body.appendChild(modal);
+
+        // Initialize the Bootstrap modal
+        var modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+
+        // Handle the "Add Selected" button click event
+        modal.querySelector('.btn-primary').addEventListener('click', function () {
+            connection.invoke("AddPeopleToChatBox", getSelectedFriendsFromModal(), chatBoxId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            modalInstance.hide();
+        });
+
+        // Handle the modal dismissal event
+        modal.addEventListener('hidden.bs.modal', function () {
+            // Remove the modal from the DOM when it's closed
+            modal.remove();
+        });
+    });
+
+    function getSelectedFriendsFromModal() {
+        // Get the form element containing the checkboxes
+        var form = document.getElementById('friendCheckboxForm');
+
+        // Initialize an array to store the IDs of selected friends
+        var selectedFriends = [];
+
+        // Iterate over each checkbox in the form
+        var checkboxes = form.querySelectorAll('input[type="checkbox"]');
+        checkboxes.forEach(function (checkbox) {
+            // Check if the checkbox is checked
+            if (checkbox.checked) {
+                // If checked, add the value (friend ID) to the selectedFriends array
+                selectedFriends.push(checkbox.value);
+            }
+        });
+
+        // Return the array of selected friend IDs
+        return selectedFriends;
+    }
 </script>
-<script src="/js/viewListClientsInChat.js"/>
+<script src="/js/viewListClientsInChat.js" />
 

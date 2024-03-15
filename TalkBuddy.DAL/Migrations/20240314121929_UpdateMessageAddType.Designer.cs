@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalkBuddy.DAL.Data;
 
@@ -11,9 +12,11 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    partial class TalkBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20240314121929_UpdateMessageAddType")]
+    partial class UpdateMessageAddType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -355,30 +358,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.ReportEvidence", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EvidenceUrl")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ReportId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Version")
-                        .IsConcurrencyToken()
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReportId");
-
-                    b.ToTable("ReportEvidence");
-                });
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.HasOne("TalkBuddy.Domain.Entities.Client", "GroupCreator")
@@ -518,17 +497,6 @@ namespace TalkBuddy.DAL.Migrations
                     b.Navigation("ReportedClient");
                 });
 
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.ReportEvidence", b =>
-                {
-                    b.HasOne("TalkBuddy.Domain.Entities.Report", "Report")
-                        .WithMany("ReportEvidences")
-                        .HasForeignKey("ReportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Report");
-                });
-
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ChatBox", b =>
                 {
                     b.Navigation("ClientChatBoxes");
@@ -560,11 +528,6 @@ namespace TalkBuddy.DAL.Migrations
             modelBuilder.Entity("TalkBuddy.Domain.Entities.Message", b =>
                 {
                     b.Navigation("Medias");
-                });
-
-            modelBuilder.Entity("TalkBuddy.Domain.Entities.Report", b =>
-                {
-                    b.Navigation("ReportEvidences");
                 });
 #pragma warning restore 612, 618
         }

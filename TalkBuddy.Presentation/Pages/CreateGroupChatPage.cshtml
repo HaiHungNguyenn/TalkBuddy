@@ -72,7 +72,7 @@
             <h4 class="text-center">Create group chat:</h4>
 
             <div class="form-group">
-               
+
                 <form method="get" onsubmit="saveSelectedFriends()">
                     <div class="row">
                         <input name="search" class="form-control" type="text" placeholder="type name to search friend" id="search-friend" />
@@ -82,7 +82,7 @@
 
                     </div>
                 </form>
-                
+
                 <form method="post" onsubmit="saveSelectedFriends()">
                     <div class="row" style="margin-block-end: 10px">
                         <label for="groupName">Group name:</label>
@@ -90,20 +90,20 @@
                     </div>
                     <div class="row">
                         <div class="col-6 friend-list" style="height: calc(100vh - 220px);">
-                           
-                                <h7 class="text-center">Friends:</h7>
-                                <div class="friend-scroll">
-                                    @foreach (var friend in Model.FriendsList)
-                                    {
-                                        <div class="list-item">
-                                            <input type="checkbox" id="friend-@friend.Id" class="checkbox" name="selectedFriends" value="@friend.Id" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Contains(friend.Id.ToString()) ? "checked" : "") onchange="updateChosenList(this)">
-                                            <label for="friend-@friend.Id">@friend.Name</label>
-                                        </div>
-                                    }
 
-                                </div>
+                            <h7 class="text-center">Friends:</h7>
+                            <div class="friend-scroll">
+                                @foreach (var friend in Model.FriendsList)
+                                {
+                                    <div class="list-item">
+                                        <input type="checkbox" id="friend-@friend.Id" class="checkbox" name="selectedFriends" value="@friend.Id" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Contains(friend.Id.ToString()) ? "checked" : "") onchange="updateChosenList(this)">
+                                        <label for="friend-@friend.Id">@friend.Name</label>
+                                    </div>
+                                }
 
-                           
+                            </div>
+
+
                         </div>
 
                         <div class="col-6 chosenList" style="height: calc(100vh - 220px);">
@@ -115,12 +115,12 @@
                                     {
                                         <div id="chosen|@selectedFriend.Id">@selectedFriend.Name</div>
                                     }
-                                }                                
+                                }
                             </div>
                         </div>
                     </div>
                     <input type="hidden" class="selectedFriendsHidden" name="selectedFriendsHidden" />
-                    <button type="submit" class="btn btn-primary mt-3 float-end" id="createGroupChatBtn" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Count()<2 ? "disabled" : "")>Create group chat</button>
+                    <button type="submit" class="btn btn-primary mt-3 float-end" id="createGroupChatBtn" @(Model.SelectedValuesString != null && Model.SelectedValuesString.Count() < 2 ? "disabled" : "")>Create group chat</button>
                 </form>
 
             </div>
@@ -140,13 +140,13 @@
             // Add the selected friend to the chosen list
             chosenList.innerHTML += `<div id="chosen|${friendId}">${friendName}</div>`;
             console.log("check: " + friendName);
-            
+
         } else {
             // Remove the unselected friend from the chosen list
             var friendToRemove = chosenList.querySelector(`#chosen\\|${friendId}`);
             if (friendToRemove) {
                 friendToRemove.remove();
-               
+
             }
             console.log("uncheck: " + friendName);
         }
@@ -165,15 +165,15 @@
     function saveSelectedFriends() {
 
         var chosenListDiv = document.querySelector('.chosenList');
-        var selectedFriendIds = Array.from(chosenListDiv.querySelectorAll('div')).map(div => div.id.split('|')[1]).filter(id=>id!=null)  
-       
+        var selectedFriendIds = Array.from(chosenListDiv.querySelectorAll('div')).map(div => div.id.split('|')[1]).filter(id => id != null)
+
         var hiddenInputs = document.querySelectorAll('.selectedFriendsHidden');
 
         // Loop through each element and set its value to the JSON string of selected friend IDs
         hiddenInputs.forEach(function (hiddenInput) {
             hiddenInput.value = JSON.stringify(selectedFriendIds);
         });
-        
+
     }
 </script>
 
