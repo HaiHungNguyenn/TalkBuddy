@@ -44,7 +44,18 @@
         <h2 class="dialog-title col-8">Members</h2>
         <button class="close-btn btn col-2" onclick="this.parentElement.parentElement.close()">&#10005;</button>
     </div>
+    <div class="btn-row row p-4">
+        <button class="btn btn-secondary">
+            <i class="fas fa-user-friends"></i>
+            <span>Add member</span>
+        </button>
+    </div>
+    <div class="btn-row row">
+        <button class="col-2 show-client-btn btn-active">All</button>
+        <button class="col-2 show-client-btn">Media</button>
+    </div>
     <div class="modal-body-dialog">
+        
         <div class="client-row row">
             <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png" />
             <span class="client-name-dialog col-7">Tri</span>
@@ -371,29 +382,50 @@
         return li;
     }
 
+    //save client list
+    let clientList = null;
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
-        console.log(clients);
-        displayClients(clients)
+        displayClients(clients);
+        clientList = clients;
     })
   function displayClients(clients) {
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
+        let leaderExist = false;
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
-            dialogBody.innerHTML += `
-            <div class="client-row row">
-                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                <span class="client-name-dialog col-7">${client.name}</span>
-            </div>
-        `})
-  }
-
-
-    const scrollMessagesToBottom = () => {
-        const ulMessages = document.getElementById('messages');
-        ulMessages.scrollTop = ulMessages.scrollHeight;
+            if(!leaderExist && client.inChatboxes[0].isModerator){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                        <span class="leader-tag">Leader</span>
+                    </div>
+                </div>
+                `;
+                leaderExist = true;
+                console.log("leader");
+                return;
+            }
+            console.log("normal");
+            //else if(leaderExist){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                    </div>
+                </div>
+                `;
+            //}
+           })
     }
-
+    
+    const scrollMessagesToBottom = () => {
+        const ulMessages = document.getElementById("messages");
+        ulMessages.scrollTop = ulMessages.scrollHeight;
+     }
     
     function displayDropdownReportation(userId, userName) {
         return `
@@ -519,5 +551,5 @@
         return selectedFriends;
     }
 </script>
-<script src="/js/viewListClientsInChat.js" />
+<script src="~/js/viewListClientsInChat.js" />
 
