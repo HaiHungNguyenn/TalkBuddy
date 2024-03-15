@@ -61,8 +61,12 @@
                         </li>
                         <li class="nav-item nav-item-container align-items-center px-2">
                             <i class="fa-solid fa-user-group add-icon nav-icon"></i>
-                            <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/FriendsList">Friends</a>
+                                <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/createGroupChatPage">Create Group Chat</a>
 						</li>
+                            <li class="nav-item nav-item-container align-items-center px-2">
+                                <i class="fa-solid fa-user-group add-icon nav-icon"></i>
+                                <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/FriendsList">Friends</a>
+                            </li>
                         <li class="nav-item nav-item-container align-items-center px-2">
                             <i class="fa-solid fa-user-plus add-icon nav-icon"></i>
                             <a class="nav-link text-dark fw-semibold" asp-area="" asp-page="/AddFriendPage">Add Friend</a>
@@ -91,9 +95,9 @@
 <script src="~/js/header.js"></script>
 <script src="~/js/signalr/dist/browser/signalr.js" ></script>
 <script src="~/js/notification.js"></script>
-
-
-
+<script src="~/js/presence.js"></script>
+<script src="~/js/media.js"></script>
+<script src="~/js/common.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

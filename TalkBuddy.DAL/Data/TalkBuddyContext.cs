@@ -48,7 +48,7 @@ public partial class TalkBuddyContext : DbContext
             .HasForeignKey(f => f.SenderId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        modelBuilder.Entity<Client>()
+        modelBuilder.Entity<Client>().ToTable("Users")
            .HasMany(c=>c.Messages)
            .WithOne(m => m.Sender)
            .HasForeignKey(m=>m.SenderId)
@@ -76,6 +76,11 @@ public partial class TalkBuddyContext : DbContext
                 .HasOne(x => x.ReportedClient)
                 .WithMany(x => x.ReportedClients)
                 .HasForeignKey(x => x.ReportedClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ReportEvidence>()
+                .HasOne(x => x.Report)
+                .WithMany(x => x.ReportEvidences)
+                .HasForeignKey(x => x.ReportId)
                 .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<ClientChatBox>()

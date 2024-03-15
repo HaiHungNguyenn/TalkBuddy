@@ -13,9 +13,22 @@ namespace TalkBuddy.Service.Implementations
         {
             _unitOfWork = unitOfWork;
         }
+
+        public async Task CreateNewChatBox(ChatBox chatBox)
+        {
+            await _unitOfWork.ChatBoxRepository.AddAsync(chatBox);
+            _unitOfWork.CommitAsync();
+        }
+
         public async Task<ChatBox> GetChatBoxAsync(Guid chatBoxId)
         {
-            return _unitOfWork.ChatBoxRepository.Find(x => x.Id == chatBoxId).Include(x => x.Messages).FirstOrDefault();  
+            return _unitOfWork.ChatBoxRepository.Find(x => x.Id == chatBoxId).Include(x => x.Messages).FirstOrDefault();
+        }
+
+        public Task UpdateChatBox(ChatBox chatBox)
+        {
+            _unitOfWork.ChatBoxRepository.Update(chatBox);
+            return _unitOfWork.CommitAsync();
         }
     }
 }

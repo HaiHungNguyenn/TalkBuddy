@@ -3,14 +3,15 @@ using TalkBuddy.Domain.Entities;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
 using TalkBuddy.Domain.Dtos;
+using Microsoft.Extensions.Azure;
+using System;
 
 namespace TalkBuddy.Presentation.SignalR
 {
     public class ChatHub : Hub
     {
         public readonly static List<UserConnection> _ConnectionRooms = new List<UserConnection>();
-        private readonly static List<string> _ConnectionPresences = new List<string>();
-
+        private readonly static List<UserConnection> _ConnectionPresences = new List<UserConnection>();
         private readonly IMessageService _messageService;
         private readonly IClientChatBoxService _clientChatBoxService;
         private readonly IClientService _clientService;
@@ -38,12 +39,17 @@ namespace TalkBuddy.Presentation.SignalR
                 // var clientChatBoxesContainMessages = await _clientChatBoxService.GetClientChatBoxesIncludeNotEmptyMessages(new Guid(userId));
                 var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
                 await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId, clientChatBoxes));
-                if (!_ConnectionPresences.Contains(userId))
+                if (!_ConnectionPresences.Any(x => x.UserId.Equals(userId)))
                 {
-                    _ConnectionPresences.Add(userId);
+                    _ConnectionPresences.Add(
+                        new UserConnection
+                        {
+                            UserId = userId,
+                            ConnectionId = Context.ConnectionId
+                        });
                 }
             }
-          
+
             base.OnConnectedAsync();
         }
 
@@ -56,7 +62,7 @@ namespace TalkBuddy.Presentation.SignalR
                 var httpContext = Context.GetHttpContext();
 
                 var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-                var user = _ConnectionPresences.Where(u => u.Equals(userId)).First();
+                var user = _ConnectionPresences.Where(u => u.UserId.Equals(userId)&&u.ConnectionId.Equals(Context.ConnectionId)).First();
                 _ConnectionPresences.Remove(user);
                 foreach (var room in _ConnectionRooms.Where(x => x.UserId.Equals(userId) && x.ConnectionId.Equals(httpContext.Connection.Id)))
                 {
@@ -76,20 +82,20 @@ namespace TalkBuddy.Presentation.SignalR
         {
             var httpContext = Context.GetHttpContext();
             var userId = httpContext.Session.GetString(SessionConstants.USER_ID);
-            
+
             var messageReturns = new List<MessageDto>();
-            if (_ConnectionPresences.Contains(userId))
+            if (_ConnectionPresences.Any(x=>x.UserId.Equals(userId)))
             {
                 List<UserConnection> userInChatList = _ConnectionRooms.Where(x => x.UserId.Equals(userId)
                                                 && !x.ChatBoxId.Equals(chatBoxId)
                                                 && x.ConnectionId.Equals(Context.ConnectionId)).ToList();
-                if (userInChatList!=null && userInChatList.Any())
+                if (userInChatList != null && userInChatList.Any())
                 {
                     foreach (var room in userInChatList)
                     {
                         _ConnectionRooms.Remove(room);
                         await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.ChatBoxId);
-                    }                    
+                    }
 
                 }
                 _ConnectionRooms.Add(new UserConnection
@@ -99,9 +105,9 @@ namespace TalkBuddy.Presentation.SignalR
                     ConnectionId = Context.ConnectionId
                 });
                 await Groups.AddToGroupAsync(Context.ConnectionId, chatBoxId.ToString());
-             
+
                 var messages = await _messageService.GetMessages(chatBoxId);
-                
+
                 foreach (var message in messages)
                 {
                     var mess = new MessageDto
@@ -113,12 +119,13 @@ namespace TalkBuddy.Presentation.SignalR
                         SenderId = message.SenderId,
                         ChatBoxId = chatBoxId,
                         SentDate = message.SentDate,
+                        MessageType = message.MessageType.ToString(),
                         IsYourOwnMess = userId.Equals(message.SenderId.ToString())
 
                     };
                     messageReturns.Add(mess);
                 }
-           
+
             }
             return messageReturns;
         }
@@ -142,7 +149,7 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 //await Clients.Caller.SendAsync("ChatBoxNotExist");
             }
-               
+
         }
 
         public async Task SendMessage(string chatBoxId, string message)
@@ -175,7 +182,8 @@ namespace TalkBuddy.Presentation.SignalR
                 Content = messageObject.Content,
                 SenderId = messageObject.SenderId,
                 SentDate = messageObject.SentDate,
-                IsYourOwnMess = true
+                IsYourOwnMess = true,
+                MessageType = messageObject.MessageType.ToString()
 
             };
 
@@ -187,23 +195,173 @@ namespace TalkBuddy.Presentation.SignalR
                 Content = messageObject.Content,
                 SenderId = messageObject.SenderId,
                 SentDate = messageObject.SentDate,
-                IsYourOwnMess = false
+                IsYourOwnMess = false,
+                MessageType = messageObject.MessageType.ToString()
             };
-            await Clients.Caller.SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
-            await Clients.OthersInGroup(chatBoxId).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
+
+            var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(fromUserId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
+            foreach (var connection in currentUserConnection)
+            {
+                await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
+            }
+            await Clients.GroupExcept(chatBoxId, currentUserConnection.Select(x => x.ConnectionId)).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
             //[Nhi]3/4/2024: fix message return type from string to object
         }
 
+        public async Task ExitGroupChat(string chatBoxId)
+        {
+            var userId = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_ID);
+            var userName = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME);
+            await _clientChatBoxService.RemoveClientFromChatBox(new Guid(chatBoxId), new Guid(userId));
+            var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
+            var notiMess = new Message
+            {
+                Content = $"{userName} left the group",
+                SentDate = DateTime.Now,
+                SenderId = new Guid(userId),
+                MessageType = Domain.Enums.MessageTypes.Notification
+            };
+            chatBox.Messages.Add(notiMess);
+            var messReturnForOthers = new MessageDto
+            {
+                Content = notiMess.Content,
+                SenderId = notiMess.SenderId,
+                SentDate = notiMess.SentDate,
+                IsYourOwnMess = true,
+                MessageType = notiMess.MessageType.ToString()
+            };
+            await _chatBoxService.UpdateChatBox(chatBox);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatBoxId);
+            await Clients.Groups(chatBoxId).SendAsync("ReceiveMessage", userName, messReturnForOthers);
+            //update group chat list
+            //////////////
+            var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(userId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
+            var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
+
+            foreach (var connection in currentUserConnection)
+            {
+                await Clients.Client(connection.ConnectionId).SendAsync("InitializeChat", await GetClientChatBox(userId, clientChatBoxes));
+            }
+        }
+
+        public async Task GetFriendsListNotInChat(string chatBoxId)
+        {
+            var userId = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_ID);
+            var friends = await _clientChatBoxService.GetFriendsNotInChatBoxes(new Guid(chatBoxId), new Guid(userId));
+            await Clients.Caller.SendAsync("showFriendsListModal", friends, chatBoxId);
+        } 
+        public async Task ChangeChatBoxName(string chatBoxId, string changeName)
+        {
+            var userId = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_ID);
+            var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
+            chatBox.ChatBoxName = changeName;
+            var mess = new Message
+            {
+                Content = $"{Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME)} changed group name to {changeName}",
+                SentDate = DateTime.Now,
+                SenderId = new Guid(userId),
+                MessageType = Domain.Enums.MessageTypes.Notification
+            };
+            var messToReturn = new MessageDto
+            {
+                Content = mess.Content,
+                SenderId = mess.SenderId,
+                SentDate = mess.SentDate,
+                IsYourOwnMess = false,
+                MessageType = mess.MessageType.ToString()
+            };
+            chatBox.Messages.Add(mess);
+            await _chatBoxService.UpdateChatBox(chatBox);
+
+            var clientInChat = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId));
+            foreach(var client in clientInChat)
+            {
+                if (_ConnectionPresences.Any(x => x.UserId.Equals(client.ClientId)))
+                {
+                   
+                    var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(client.ClientId);
+                    ///
+                    var currentUserConnection = _ConnectionPresences.Where(x => x.UserId.Equals(client.ClientId)).Select(x => x.ConnectionId).ToList();
+                    foreach (var connection in currentUserConnection)
+                    {
+                        await Clients.Client(connection).SendAsync("InitializeChat", await GetClientChatBox(client.ClientId.ToString(), clientChatBoxes));
+                    }
+                    ///
+                }
+            }           
+
+            await Clients.Group(chatBoxId).SendAsync("ReceiveMessage", Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME), messToReturn);
+                        
+        }
+        public async Task AddPeopleToChatBox(List<string> addPeopleList, string chatBoxId)
+        {
+            var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
+
+            foreach (var people in addPeopleList)
+            {
+                var person = await _clientService.GetClientById(new Guid(people));
+                var clientChatBox = new ClientChatBox
+                {
+                    ChatBoxId = new Guid(chatBoxId),
+                    ClientId = new Guid(people),
+                    IsBlocked = false,
+                    IsLeft = false,
+                    IsNotificationOn = true,
+                    IsModerator = false,
+                    NickName = person.Name
+                };
+                await _clientChatBoxService.AddClientToGroup(clientChatBox);
+                var mess = new Message
+                {
+                    Content = $"{Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME)} added {person.Name} to the group",
+                    SentDate = DateTime.Now,
+                    SenderId = new Guid(people),
+                    MessageType = Domain.Enums.MessageTypes.Notification
+                };
+                var messToReturn = new MessageDto
+                {
+                    Content = mess.Content,
+                    SenderId = mess.SenderId,
+                    SentDate = mess.SentDate,
+                    IsYourOwnMess = false,
+                    MessageType = mess.MessageType.ToString()
+                };
+                chatBox.Messages.Add(mess);
+                if (_ConnectionPresences.Any(x => x.UserId.Equals(people)))
+                {
+                    await _chatBoxService.UpdateChatBox(chatBox);
+                    var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(people));
+                    ///
+                    var currentUserConnection = _ConnectionPresences.Where(x => x.UserId.Equals(people)).Select(x => x.ConnectionId).ToList();
+                    foreach (var connection in currentUserConnection)
+                    {
+                        await Clients.Client(connection).SendAsync("InitializeChat", await GetClientChatBox(people, clientChatBoxes));
+                    }
+                    ///
+                }
+                var currentUserConnectionOfCurrentUser = _ConnectionRooms
+                    .Where(x => x.UserId.Equals(Context.GetHttpContext()?
+                    .Session.GetString(SessionConstants.USER_ID)) && x.ChatBoxId.Equals(chatBoxId))
+                    .ToList();
+                foreach (var connection in currentUserConnectionOfCurrentUser)
+                {
+                    await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage",
+                        Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_NAME), messToReturn);
+                }
+            }
+        }
+
+
         private async Task<IList<ClientChatBoxDto>> GetClientChatBox(string userId, IList<ClientChatBox> clientChatBoxes)
         {
-            
+
             IList<ClientChatBoxDto> returnList = new List<ClientChatBoxDto>();
             foreach (var x in clientChatBoxes)
             {
                 //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
                 string chatBoxName;
                 Guid otherClientId = Guid.Empty;
-                if(x.ChatBox.Type == Domain.Enums.ChatBoxType.TwoPerson)
+                if (x.ChatBox.Type == Domain.Enums.ChatBoxType.TwoPerson)
                 {
                     chatBoxName = await _clientChatBoxService
                         .GetChatBoxNameOfTwoPersonType(x.ChatBoxId, new Guid(userId));
@@ -228,7 +386,8 @@ namespace TalkBuddy.Presentation.SignalR
                     ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
                     ChatBoxName = chatBoxName,
                     ChatBoxType = x.ChatBox.Type.ToString(),
-                    ClientId = otherClientId,
+                    ClientId = new Guid(userId),
+                    IsLeft = x.IsLeft,
                 };
                 returnList.Add(chatBox);
             }
@@ -243,5 +402,5 @@ namespace TalkBuddy.Presentation.SignalR
             await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients);
         }
     }
-        
+
 }

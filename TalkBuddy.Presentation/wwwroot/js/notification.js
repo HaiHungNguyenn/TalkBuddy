@@ -1,5 +1,7 @@
-<<<<<<< HEAD
-﻿var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
+
+
+
+var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
 notiConnection.start().then(function () {
     console.log("Connection started");
 }).catch(function (err) {
@@ -8,18 +10,22 @@ notiConnection.start().then(function () {
 
 
 notiConnection.on("ReceiveNotification", (notifications, connectionId) => {
-    console.log("Received notification: ", notifications);
+    // console.log("Received notification: ", notifications);
     console.log("connection id",connectionId);
     countUnreadNotifications(notifications);
     renderNotifications(notifications);
 });
-// RequestInvitation(@client.id)
-// FriendId
 
-function requestInvitation(){
-    var friendId = document.getElementById("FriendId").value;
+notiConnection.on("TestHub", (message) => {
+    // console.log("Received notification: ", notifications);
+    console.log("TEst message");
+});
+
+
+function requestInvitation(friendId){
+    console.log("FRIENDID ",friendId)
     notiConnection.invoke("HandleAddFriend",friendId).then(()=>{
-        location.href = "/AddFriendPage"
+        location.href= "/AddFriendPage"
     }).catch(error => console.log(error.toString()))
 }
 
@@ -28,9 +34,8 @@ function acceptInvitation(){
     var senderId = document.getElementById("SenderId").value;
     var receiverId = document.getElementById("ReceiverId").value;
     notiConnection.invoke("HandleAccept",friendshipId,senderId,receiverId).then(()=>{
-        location.href = "/AddFriendPage"
+        console.log("acp request")
     }).catch(error => console.log(error.toString()))
-
 }
 function rejectInvitation(){
     var friendshipId = document.getElementById("FriendShipId").value;
@@ -58,7 +63,7 @@ function renderNotifications(notifications) {
         var notificationItem = document.createElement("div");
         notificationItem.style.marginBottom = "20px";
         notificationItem.classList.add("notification-item","d-flex","align-item-center");
-        notificationItem.style.backgroundColor = notification.isRead ? "" : "gray";
+        notificationItem.style.backgroundColor = notification.isRead ? "" : "#01e4e3";
 
         // Create avatar
         var avatar = document.createElement("img");
@@ -147,55 +152,3 @@ function timeAgo(dateString) {
     }
 }
 
-=======
-﻿$(()=>{
-    // var connection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
-    // connection.start().then(function () {
-    //     console.log("Connection started");
-    // }).catch(function (err) {
-    //     return console.error(err.toString());
-    // });
-    //
-    // connection.on("ReceiveNotification", (notifications, connectionId) => {
-    //     console.log("Received notification: ", notifications);
-    //     renderNotifications(notifications);
-    // });
-    //
-    // function renderNotifications(notifications) {
-    //     $(".notification-item").remove(); // Clear previous notifications
-    //     notifications.forEach(notification => {
-    //         const $notificationItem = $("<div>").addClass("notification-item");
-    //         const $avatar = $("<img>").addClass("avatar").attr("alt", "Notification Avatar");
-    //         $avatar.attr("src", notification.sender.profileImage);
-    //         const $notificationContent = $("<div>").addClass("notification-content");
-    //         const $description = $("<p>").addClass("description").text(notification.message);
-    //         const $time = $("<p>").addClass("time").text(formatTime(notification.sentAt));
-    //         $notificationContent.append($description, $time);
-    //         $notificationItem.append($avatar, $notificationContent);
-    //         $(".notification-box").append($notificationItem);
-    //     });
-    // }
-    //
-    //
-    // function formatTime(dateTime) {
-    //     const formattedDateTime = new Date(dateTime).toLocaleString();
-    //     return formattedDateTime;
-    // }
-    //
-    // function acceptInvitation(){
-    //     var friendshipId = document.getElementById("FriendShipId").value;
-    //     var senderId = document.getElementById("SenderId").value;
-    //     var receiverId = document.getElementById("ReceiverId").value;
-    //     connection.invoke("HandleAccept",friendshipId,senderId,receiverId)
-    //     location.href="/AddFriendPage"
-    // }
-    // function rejecrInvitation(){
-    //     var friendshipId = document.getElementById("FriendShipId").value;
-    //     var senderId = document.getElementById("SenderId").value;
-    //     var receiverId = document.getElementById("ReceiverId").value;
-    //     connection.invoke("HandleReject",friendshipId,senderId,receiverId)
-    //     location.href="/AddFriendPage"
-    // }
-    
-})
->>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
