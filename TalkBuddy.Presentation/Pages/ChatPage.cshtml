@@ -303,66 +303,72 @@
         if (message.messageType == "Notification") {
             console.log('notification');
             li.innerHTML = `<p class="notification" style="align-items:center; color:darkblue; text-align:center">
-                                ${message.content}</p>`;
 
+                ${message.content}</p>`;
+        
         } else {
-            message.isYourOwnMess && li.classList.add('self-msg');
-            console.log('message');
-            // add avatar, the image is a placeholder, replace the image's source with client's avatar
-            const imgAvatar = document.createElement("img");
-            imgAvatar.src = message.senderAvatar || '/default-avatar.png';
-            imgAvatar.alt = "User avatar";
-            imgAvatar.height = 40;
-            imgAvatar.width = 40;
-            imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
-
-            const divAvatarContainer = document.createElement('div');
-            if (!message.isYourOwnMess) {
-                var avatarId = uuidv4();
-                imgAvatar.addEventListener('mouseenter', () => {
-                    const divClientName = document.getElementById(avatarId);
-                    divClientName.style.visibility = 'visible';
-                });
-                imgAvatar.addEventListener('mouseleave', () => {
-                    const divClientName = document.getElementById(avatarId);
-                    divClientName.style.visibility = 'hidden';
-                });
-
-                divAvatarContainer.innerHTML = `
-                                                                <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
-                                                            `;
-            }
-            divAvatarContainer.appendChild(imgAvatar);
-            divAvatarContainer.classList.add("position-relative");
-
-            const spanMessageContent = document.createElement("span");
-            spanMessageContent.textContent = message.content;
-
-            const smallTime = document.createElement("small");
-            smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
-            smallTime.classList.add("align-self-end");
-
-            // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
-            const spanContainer = document.createElement("span");
-            spanContainer.classList.add("d-flex", "flex-column");
-            spanContainer.appendChild(spanMessageContent);
-            spanContainer.appendChild(smallTime);
-
-            if (message.isYourOwnMess) {
-                // message to the left, avatar to the right
-                li.appendChild(spanContainer);
-                //li.appendChild(imgAvatar);
-                li.appendChild(divAvatarContainer);
-            } else {
-                // message to the right, avatar to the left
-                li.appendChild(divAvatarContainer);
-                //li.appendChild(imgAvatar);
-                li.appendChild(spanContainer);
-            }
-
-            li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+         message.isYourOwnMess && li.classList.add('self-msg');
+         console.log('message');
+        // add avatar, the image is a placeholder, replace the image's source with client's avatar
+        const imgAvatar = document.createElement("img");
+        imgAvatar.src = message.senderAvatar || '/default-avatar.png';
+        imgAvatar.alt = "User avatar";
+        imgAvatar.height = 40;
+        imgAvatar.width = 40;
+        imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
+        
+        const divAvatarContainer = document.createElement('div');
+        if (!message.isYourOwnMess)
+        {
+            var avatarId = uuidv4();
+            imgAvatar.addEventListener('mouseenter', () => {
+                const divClientName = document.getElementById(avatarId); 
+                divClientName.style.visibility = 'visible';
+            });
+            imgAvatar.addEventListener('mouseleave', () => {
+                const divClientName = document.getElementById(avatarId); 
+                divClientName.style.visibility = 'hidden';
+            });
+        
+            divAvatarContainer.innerHTML = `
+                <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
+            `;
         }
+        divAvatarContainer.appendChild(imgAvatar);
+        divAvatarContainer.classList.add("position-relative");
+        
+        const spanMessageContent = document.createElement("span");
+        spanMessageContent.textContent = message.content;
+        
+        const smallTime = document.createElement("small");
+        smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
+        smallTime.classList.add("align-self-end");
+        
+        // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
+        const spanContainer = document.createElement("span");
+        spanContainer.classList.add("d-flex", "flex-column");
+        spanContainer.appendChild(spanMessageContent);
+        spanContainer.appendChild(smallTime);
+        
+        const dropDown = document.createElement("div");
+        dropDown.classList.add("dropdown","ml-3");       
+        dropDown.innerHTML = displayDropdownReportation(message.senderId, message.senderName);        
+          
+        if (message.isYourOwnMess) {
+            // message to the left, avatar to the right
+            li.appendChild(spanContainer);
+            //li.appendChild(imgAvatar);
+            li.appendChild(divAvatarContainer);
+        } else {
+            // message to the right, avatar to the left
+            li.appendChild(divAvatarContainer);
+            //li.appendChild(imgAvatar);
+            li.appendChild(spanContainer);
+            li.appendChild(dropDown);
+        }
+           li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
 
+        }
         return li;
     }
 
@@ -375,18 +381,71 @@
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
-            dialogBody.innerHTML += `
-                                                    <div class="client-row row">
-                                                        <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                                                        <span class="client-name-dialog col-7">${client.name}</span>
-                                                    </div>
-                                                `})
+
+        dialogBody.innerHTML += `
+                                    <div class="client-row row">
+                                        <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                                        <span class="client-name-dialog col-7">${client.name}</span>
+                                    </div>
+                                `})
+
     }
 
     const scrollMessagesToBottom = () => {
         const ulMessages = document.getElementById('messages');
         ulMessages.scrollTop = ulMessages.scrollHeight;
     }
+
+    
+    function displayDropdownReportation(userId, userName) {
+        var x = userId;
+        return `
+            <button class="btn bg-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-h text-dark"></i>
+            </button>
+            <ul class="dropdown-menu">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal_${userId}">
+                    <i class="fa-solid fa-flag text-dark"></i> Report this user!
+                </button>
+            </ul>
+            <div class="modal fade" id="exampleModal_${userId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5">Your Reportation ${userId}</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="reportForm_${userId}" >
+                                <input type="hidden" name="UserId" value="${userId}" />
+                                <div class="mb-3">
+                                    <label for="reported-name" class="col-form-label">Reported Person's Name:</label>
+                                    <input type="text" disabled class="form-control" value="${userName}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reason" class="col-form-label">Reason for Report:</label>
+                                    <select class="form-select" id="reason" name="Detail">
+                                        <option selected>Select a reason</option>
+                                        <option value="Harassment">Harassment</option>
+                                        <option value="Spam">Spam</option>
+                                        <option value="Inappropriate Content">Inappropriate Content</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="evidence" class="col-form-label">Evidence (if any):</label>
+                                    <input type="file" class="form-control" id="fileInput" accept="image/*" name="image">
+                                </div>
+                                <button type="button" onclick="HandleReport('${userId}')" class="btn btn-primary">Send reportation</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
 
     connection.on("showFriendsListModal", function (friends, chatBoxId) {
         // Here, you can create a modal or dropdown list to display the list of friends

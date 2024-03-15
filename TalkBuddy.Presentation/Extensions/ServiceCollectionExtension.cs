@@ -31,6 +31,8 @@ public static class ServiceCollectionExtension
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IOtpCodeRepository, OtpCodeRepository>();
         services.AddScoped<IBlobService,BlobService>();
+        services.AddScoped<IReportRepository, ReportRepository>();
+        services.AddScoped<IReportService, ReportService>();
         //var config = new MapperConfiguration(AutoMapperConfiguration.RegisterMaps);
         //var mapper = config.CreateMapper();
         //services.AddSingleton(mapper);

@@ -14,6 +14,6 @@ public partial class Report : BaseEntity<Guid>
     public Client? ReportedClient { get; set; }
     [ForeignKey("InformantClientId")]
     public Client? InformantClient { get; set; }
+    public ICollection<ReportEvidence> ReportEvidences { get; set; } = new List<ReportEvidence>();
 
-    
 }
