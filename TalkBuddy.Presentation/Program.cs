@@ -49,6 +49,7 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ChatHub>("/chat");
     endpoints.MapHub<PresenceHub>("/presence");
     endpoints.MapHub<NotificationHub>("/notification");
+    endpoints.MapHub<MediaHub>("/media");
 
 });
 
