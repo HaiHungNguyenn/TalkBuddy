@@ -73,12 +73,19 @@
 
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
+    var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
 
     connection.on("ReceiveMessage", function (user, message) {
         console.log('username is', user);
         document.getElementById("messages").appendChild(convertMessageToListItem(message));
         scrollMessagesToBottom();
     });
+
+    notiConnection.start().then(() => {
+        console.log("Notification server connected.")
+    }).catch(function (error){
+        console.error(error);
+    })
 
      connection.start().then(function () {
         console.log("SignalR Connected");
@@ -450,11 +457,12 @@
         unreadCount.innerHTML = x !== 0 ? x : '';
     }
 //>>>>>>> 8a3e9873fb4f0691b39bad03746b2dc9c286ca39
-
+    //save client list
+    let clientList = null;
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
-        console.log(clients);
-        displayClients(clients)
+        displayClients(clients);
+        clientList = clients;
     })
   function displayClients(clients) {
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
@@ -618,5 +626,5 @@
         return selectedFriends;
     }
 </script>
-<script src="/js/viewListClientsInChat.js" />
+<script src="~/js/viewListClientsInChat.js" />
 
