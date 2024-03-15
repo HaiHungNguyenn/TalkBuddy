@@ -58,7 +58,6 @@
     <form method="dialog">
     </form>
 </dialog>
-
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 
 <script>
@@ -70,7 +69,7 @@
         scrollMessagesToBottom();
     });
 
-    connection.start().then(function () {
+     connection.start().then(function () {
         console.log("SignalR Connected");
     }).catch(function (err) {
         return console.error(err.toString());
@@ -261,33 +260,33 @@
                 ${message.content}</p>`;
         
         } else {
-         message.isYourOwnMess && li.classList.add('self-msg');
-         console.log('message');
-        // add avatar, the image is a placeholder, replace the image's source with client's avatar
-        const imgAvatar = document.createElement("img");
-        imgAvatar.src = message.senderAvatar || '/default-avatar.png';
-        imgAvatar.alt = "User avatar";
-        imgAvatar.height = 40;
-        imgAvatar.width = 40;
-        imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
-        
-        const divAvatarContainer = document.createElement('div');
-        if (!message.isYourOwnMess)
-        {
-            var avatarId = uuidv4();
-            imgAvatar.addEventListener('mouseenter', () => {
-                const divClientName = document.getElementById(avatarId); 
-                divClientName.style.visibility = 'visible';
-            });
-            imgAvatar.addEventListener('mouseleave', () => {
-                const divClientName = document.getElementById(avatarId); 
-                divClientName.style.visibility = 'hidden';
-            });
-        
-            divAvatarContainer.innerHTML = `
-                <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
-            `;
-        }
+            message.isYourOwnMess && li.classList.add('self-msg');
+            console.log('message');
+            // add avatar, the image is a placeholder, replace the image's source with client's avatar
+            const imgAvatar = document.createElement("img");
+            imgAvatar.src = message.senderAvatar || '/default-avatar.png';
+            imgAvatar.alt = "User avatar";
+            imgAvatar.height = 40;
+            imgAvatar.width = 40;
+            imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
+
+            const divAvatarContainer = document.createElement('div');
+            if (!message.isYourOwnMess) 
+            {
+                var avatarId = uuidv4();
+                imgAvatar.addEventListener('mouseenter', () => {
+                    const divClientName = document.getElementById(avatarId);
+                    divClientName.style.visibility = 'visible';
+                });
+                imgAvatar.addEventListener('mouseleave', () => {
+                    const divClientName = document.getElementById(avatarId);
+                    divClientName.style.visibility = 'hidden';
+                });
+
+                divAvatarContainer.innerHTML = `
+                                                <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
+                                            `;
+            }
         divAvatarContainer.appendChild(imgAvatar);
         divAvatarContainer.classList.add("position-relative");
         
@@ -320,7 +319,7 @@
             li.appendChild(spanContainer);
             li.appendChild(dropDown);
         }
-           li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+            li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
         }
         return li;
     }
@@ -330,17 +329,17 @@
         console.log(clients);
         displayClients(clients)
     })
-    function displayClients(clients) {
+  function displayClients(clients) {
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
-        dialogBody.innerHTML += `
-                                    <div class="client-row row">
-                                        <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                                        <span class="client-name-dialog col-7">${client.name}</span>
-                                    </div>
-                                `})
-    }
+            dialogBody.innerHTML += `
+            <div class="client-row row">
+                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                <span class="client-name-dialog col-7">${client.name}</span>
+            </div>
+        `})
+  }
 
     const scrollMessagesToBottom = () => {
         const ulMessages = document.getElementById('messages');
@@ -348,7 +347,6 @@
     }
     
     function displayDropdownReportation(userId, userName) {
-        var x = userId;
         return `
             <button class="btn bg-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-ellipsis-h text-dark"></i>
