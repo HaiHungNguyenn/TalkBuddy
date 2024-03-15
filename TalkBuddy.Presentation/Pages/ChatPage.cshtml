@@ -158,17 +158,14 @@
         chatHeader.appendChild(span);
 
         if (chatBox.chatBoxType.toLowerCase() === "group" && !chatBox.isLeft) {
-            var button = document.createElement("button");
-            button.className = "btn btn-primary";
-            var i = document.createElement("i");
-            i.className = "fas fa-sign-out-alt";
-            button.appendChild(i);
-            chatHeader.appendChild(button);
-            button.addEventListener("click", function () {
-                connection.invoke("ExitGroupChat", chatBox.chatBoxId).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            });
+
+            var buttonEdit = document.createElement("button");
+            buttonEdit.className = "btn btn-primary";
+            var iEdit = document.createElement("i");
+            iEdit.className = "fas fa-pen";
+            buttonEdit.appendChild(iEdit);
+            chatHeader.appendChild(buttonEdit);
+
 
             //add person to group chat
 
@@ -184,8 +181,56 @@
                 });
 
             });
+            //out group chat
+            var button = document.createElement("button");
+            button.className = "btn btn-primary";
+            var i = document.createElement("i");
+            i.className = "fas fa-sign-out-alt";
+            button.appendChild(i);
+            chatHeader.appendChild(button);
+            button.addEventListener("click", function () {
+                connection.invoke("ExitGroupChat", chatBox.chatBoxId).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            });
 
+            //modify name
+
+            buttonEdit.addEventListener("click", function () {
+                var input = document.createElement("input");
+                input.type = "text";
+                input.className = "fs-5 fw-semibold";
+                console.log('debug in change name ' + chatBox.chatBoxName);
+                input.value = span.innerHTML;
+                chatHeader.replaceChild(input, span);
+
+                // Add event listener to handle blur event (when input loses focus)
+                input.addEventListener("blur", function () {
+                    // Replace the input element with a new span element
+                    if (input.value !== "") {
+                        if (input.value.length > 50) {
+                            alert("Name of chat box is too long");
+                            return;
+                        }
+                        if (input.value !== span.innerHTML) {
+                            connection.invoke("ChangeChatBoxName", chatBox.chatBoxId, input.value).catch(function (err) {
+                                return console.error(err.toString());
+                            });
+                            span.innerHTML = input.value;
+                        }
+
+                        chatHeader.replaceChild(span, input);
+                       
+                    }
+                    buttonEdit.style.display = "block";
+                });
+
+                // Hide the button
+                buttonEdit.style.display = "none";
+
+            });
         }
+
         connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
             // Handle received messages
             displayMessages(messages);
@@ -236,8 +281,8 @@
             inputMes.disabled = true;
             console.log('diablebuton');
         }
-
     }
+
 
     // Function to display messages on the UI
     function displayMessages(messages) {
@@ -257,6 +302,7 @@
         if (message.messageType == "Notification") {
             console.log('notification');
             li.innerHTML = `<p class="notification" style="align-items:center; color:darkblue; text-align:center">
+
                 ${message.content}</p>`;
         
         } else {
@@ -320,6 +366,7 @@
             li.appendChild(dropDown);
         }
             li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+
         }
         return li;
     }
@@ -341,10 +388,12 @@
         `})
   }
 
+
     const scrollMessagesToBottom = () => {
         const ulMessages = document.getElementById('messages');
         ulMessages.scrollTop = ulMessages.scrollHeight;
     }
+
     
     function displayDropdownReportation(userId, userName) {
         return `
@@ -394,6 +443,7 @@
             </div>`;
     }
 
+
     connection.on("showFriendsListModal", function (friends, chatBoxId) {
         // Here, you can create a modal or dropdown list to display the list of friends
         // Populate the modal or dropdown list with the fetched data
@@ -401,32 +451,32 @@
         var modal = document.createElement('div');
         modal.className = 'modal';
         modal.innerHTML = `
-                        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Select Friends</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="friendCheckboxForm">
-                        <ul class="list-group">
-                            ${friends.map(friend => `
-                                <li class="list-group-item">
-                                    <input type="checkbox" name="selectedFriends" value="${friend.id}" id="friend-${friend.id}">
-                                    <label for="friend-${friend.id}">${friend.name}</label>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Add Selected</button>
-                </div>
-            </div>
-        </div>
+                                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Select Friends</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="friendCheckboxForm">
+                                        <ul class="list-group">
+                                            ${friends.map(friend => `
+                                                <li class="list-group-item">
+                                                    <input type="checkbox" name="selectedFriends" value="${friend.id}" id="friend-${friend.id}">
+                                                    <label for="friend-${friend.id}">${friend.name}</label>
+                                                </li>
+                                            `).join('')}
+                                        </ul>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary">Add Selected</button>
+                                </div>
+                            </div>
+                        </div>
 
-                `;
+                                `;
         document.body.appendChild(modal);
 
         // Initialize the Bootstrap modal

@@ -85,7 +85,7 @@ namespace TalkBuddy.Service.Implementations
             foreach (var friend in friends)
             {
                 var list = await _unitOfWork.ClientChatBoxRepository
-                    .Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(friend.Id)).ToListAsync();
+                    .Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(friend.Id)&&!x.IsLeft).ToListAsync();
                 if (list.IsNullOrEmpty())
                 {
                     returnList.Add(friend);
@@ -96,6 +96,15 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task AddClientToGroup(ClientChatBox clientChatBox)
         {
+            var x= await _unitOfWork.ClientChatBoxRepository.FindAsync(x=>x.ChatBoxId.Equals(clientChatBox.ChatBoxId)&&x.ClientId.Equals(clientChatBox.ClientId));
+            if (x.Any())
+            {
+                var updateClientChatBox = x.FirstOrDefault();
+                updateClientChatBox.IsLeft = false;
+                await _unitOfWork.ClientChatBoxRepository.UpdateAsync(updateClientChatBox);
+                await _unitOfWork.CommitAsync();
+                return;
+            }
             await _unitOfWork.ClientChatBoxRepository.AddAsync(clientChatBox);
             await _unitOfWork.CommitAsync();
         }
