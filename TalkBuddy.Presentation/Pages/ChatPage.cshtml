@@ -54,7 +54,18 @@
         <h2 class="dialog-title col-8">Members</h2>
         <button class="close-btn btn col-2" onclick="this.parentElement.parentElement.close()">&#10005;</button>
     </div>
+    <div class="btn-row row p-4">
+        <button class="btn btn-secondary">
+            <i class="fas fa-user-friends"></i>
+            <span>Add member</span>
+        </button>
+    </div>
+    <div class="btn-row row">
+        <button class="col-2 show-client-btn btn-active">All</button>
+        <button class="col-2 show-client-btn">Media</button>
+    </div>
     <div class="modal-body-dialog">
+        
         <div class="client-row row">
             <img class="client-avatar-dialog col-3 rounded-circle" src="/default-avatar.png" />
             <span class="client-name-dialog col-7">Tri</span>
@@ -68,7 +79,6 @@
     <form method="dialog">
     </form>
 </dialog>
-
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
 
 <script>
@@ -80,7 +90,7 @@
         scrollMessagesToBottom();
     });
 
-    connection.start().then(function () {
+     connection.start().then(function () {
         console.log("SignalR Connected");
     }).catch(function (err) {
         return console.error(err.toString());
@@ -376,8 +386,9 @@
             console.log('notification');
             li.innerHTML = `<p class="notification" style="align-items:center; color:darkblue; text-align:center">
 
-                        ${message.content}</p>`;
 
+                ${message.content}</p>`;
+        
         } else {
             message.isYourOwnMess && li.classList.add('self-msg');
             console.log('message');
@@ -390,7 +401,8 @@
             imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
 
             const divAvatarContainer = document.createElement('div');
-            if (!message.isYourOwnMess) {
+            if (!message.isYourOwnMess) 
+            {
                 var avatarId = uuidv4();
                 imgAvatar.addEventListener('mouseenter', () => {
                     const divClientName = document.getElementById(avatarId);
@@ -402,74 +414,95 @@
                 });
 
                 divAvatarContainer.innerHTML = `
-                        <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
-                    `;
+                                                <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
+                                            `;
             }
-            divAvatarContainer.appendChild(imgAvatar);
-            divAvatarContainer.classList.add("position-relative");
+        divAvatarContainer.appendChild(imgAvatar);
+        divAvatarContainer.classList.add("position-relative");
+        
+        const spanMessageContent = document.createElement("span");
+        spanMessageContent.textContent = message.content;
+        
+        const smallTime = document.createElement("small");
+        smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
+        smallTime.classList.add("align-self-end");
+        
+        // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
+        const spanContainer = document.createElement("span");
+        spanContainer.classList.add("d-flex", "flex-column");
+        spanContainer.appendChild(spanMessageContent);
+        spanContainer.appendChild(smallTime);
+        
+        const dropDown = document.createElement("div");
+        dropDown.classList.add("dropdown","ml-3");       
+        dropDown.innerHTML = displayDropdownReportation(message.senderId, message.senderName);        
+          
+        if (message.isYourOwnMess) {
+            // message to the left, avatar to the right
+            li.appendChild(spanContainer);
+            //li.appendChild(imgAvatar);
+            li.appendChild(divAvatarContainer);
+        } else {
+            // message to the right, avatar to the left
+            li.appendChild(divAvatarContainer);
+            //li.appendChild(imgAvatar);
+            li.appendChild(spanContainer);
+            li.appendChild(dropDown);
+        }
 
-            const spanMessageContent = document.createElement("span");
-            spanMessageContent.textContent = message.content;
-
-            const smallTime = document.createElement("small");
-            smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
-            smallTime.classList.add("align-self-end");
-
-            // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
-            const spanContainer = document.createElement("span");
-            spanContainer.classList.add("d-flex", "flex-column");
-            spanContainer.appendChild(spanMessageContent);
-            spanContainer.appendChild(smallTime);
-
-            const dropDown = document.createElement("div");
-            dropDown.classList.add("dropdown", "ml-3");
-            dropDown.innerHTML = displayDropdownReportation(message.senderId, message.senderName);
-
-            if (message.isYourOwnMess) {
-                // message to the left, avatar to the right
-                li.appendChild(spanContainer);
-                //li.appendChild(imgAvatar);
-                li.appendChild(divAvatarContainer);
-            } else {
-                // message to the right, avatar to the left
-                li.appendChild(divAvatarContainer);
-                //li.appendChild(imgAvatar);
-                li.appendChild(spanContainer);
-                li.appendChild(dropDown);
-            }
             li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
 
         }
         return li;
     }
 
+    //save client list
+    let clientList = null;
     //show clients members for group chatbox
     connection.on("ShowClientsOfChatBox", (clients) => {
-        console.log(clients);
-        displayClients(clients)
+        displayClients(clients);
+        clientList = clients;
     })
-    function displayClients(clients) {
+  function displayClients(clients) {
         const dialogBody = document.getElementsByClassName("modal-body-dialog")[0];
+        let leaderExist = false;
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
 
-            dialogBody.innerHTML += `
-                                            <div class="client-row row">
-                                                <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
-                                                <span class="client-name-dialog col-7">${client.name}</span>
-                                            </div>
-                                        `})
+            if(!leaderExist && client.inChatboxes[0].isModerator){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                        <span class="leader-tag">Leader</span>
+                    </div>
+                </div>
+                `;
+                leaderExist = true;
+                console.log("leader");
+                return;
+            }
+            console.log("normal");
+            //else if(leaderExist){
+                dialogBody.innerHTML += `
+                <div class="client-row row">
+                    <a href="/Profile?id=${client.id}" class="col-3"><img class="client-avatar-dialog rounded-circle" src="${client.profilePicture ?? '/default-avatar.png'}"/></a>
+                    <div class="client-name-dialog col-7">
+                        <div>${client.name}</div>
+                    </div>
+                </div>
+                `;
+            //}
+           })
 
     }
-
+    
     const scrollMessagesToBottom = () => {
-        const ulMessages = document.getElementById('messages');
+        const ulMessages = document.getElementById("messages");
         ulMessages.scrollTop = ulMessages.scrollHeight;
-    }
-
 
     function displayDropdownReportation(userId, userName) {
-        var x = userId;
         return `
                     <button class="btn bg-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-ellipsis-h text-dark"></i>
@@ -696,5 +729,5 @@
         return selectedFriendId;
     }
 </script>
-<script src="/js/viewListClientsInChat.js" />
+<script src="~/js/viewListClientsInChat.js" />
 

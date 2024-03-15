@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalkBuddy.DAL.Data;
 
@@ -11,9 +12,11 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    partial class TalkBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20240315111539_ChangeDataTypeOfReportStatus")]
+    partial class ChangeDataTypeOfReportStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,9 +75,6 @@ namespace TalkBuddy.DAL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAccountSuspended")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsVerified")
                         .HasColumnType("bit");
 
@@ -92,22 +92,13 @@ namespace TalkBuddy.DAL.Migrations
                     b.Property<string>("ProfilePicture")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SuspensionCount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SuspensionEndDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Version")
                         .IsConcurrencyToken()
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Clients");
                 });
 
             modelBuilder.Entity("TalkBuddy.Domain.Entities.ClientChatBox", b =>

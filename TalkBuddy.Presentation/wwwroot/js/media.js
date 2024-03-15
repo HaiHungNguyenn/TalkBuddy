@@ -12,10 +12,23 @@ async function HandleReport(userId) {
     const detail = detailSelect.options[detailSelect.selectedIndex].value;
     const fileInput = document.getElementById('fileInput');
     try {
-        const url = await GetImageString(fileInput);
-        console.log(url);
+        let url = '';
+        if (fileInput.files.length !== 0) {
+            url = await GetImageString(fileInput);
+            console.log(url);
+        }
         mediaConnection.invoke("SendReport",Id,detail,url)
-        local.href=("/ChatPage")
+
+        // Hide the modal
+        const modal = document.getElementById(`exampleModal_${userId}`);
+        modal.classList.remove("show")
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.style.display = 'none';
+        }
+
+   
+        
     } catch (error) {
         console.error(error);
     }                                                            

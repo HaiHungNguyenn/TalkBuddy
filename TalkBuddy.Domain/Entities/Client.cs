@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using TalkBuddy.Common.Enums;
 using TalkBuddy.Domain.Entities.BaseEntities;
 
 namespace TalkBuddy.Domain.Entities;
@@ -13,7 +14,14 @@ public partial class Client: BaseEntity<Guid>
     public DateTime LastLoginDate { get; set; }
     public string? ProfilePicture { get; set; }
     public bool IsVerified { get; set; }
+    
+    public bool IsAccountSuspended { get; set; }
+    
+    public int SuspensionCount { get; set; }
+    
+    public DateTime SuspensionEndDate { get; set; }
 
+    public UserRole Role { get; set; } = UserRole.CLIENT;
     public ICollection<Friendship> Friends { get; set; } = new List<Friendship>();
     public ICollection<Report>? ReportedClients { get; set; }
     public ICollection<Report>? InformantClients { get; set; }
