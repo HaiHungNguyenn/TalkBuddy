@@ -20,6 +20,12 @@ namespace TalkBuddy.Service.Implementations
             _unitOfWork.CommitAsync();
         }
 
+        public async Task DeleteChatBox(Guid chatBoxId)
+        {
+            await _unitOfWork.ChatBoxRepository.DeleteManyAsync(x=>x.Id.Equals(chatBoxId));
+            await _unitOfWork.CommitAsync();
+        }
+
         public async Task<ChatBox> GetChatBoxAsync(Guid chatBoxId)
         {
             return _unitOfWork.ChatBoxRepository.Find(x => x.Id == chatBoxId).Include(x => x.Messages).FirstOrDefault();
