@@ -108,5 +108,16 @@ namespace TalkBuddy.Service.Implementations
             await _unitOfWork.ClientChatBoxRepository.AddAsync(clientChatBox);
             await _unitOfWork.CommitAsync();
         }
+
+        public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId, Guid userId)
+        {
+            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(userId)).Include(x => x.Client).ToListAsync();
+        }
+
+        public async Task Update(ClientChatBox clientChatBox)
+        {
+            await _unitOfWork.ClientChatBoxRepository.UpdateAsync(clientChatBox);
+            await _unitOfWork.CommitAsync();
+        }
     }
 }

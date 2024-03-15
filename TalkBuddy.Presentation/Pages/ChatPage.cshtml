@@ -4,7 +4,17 @@
 
 <link rel="stylesheet" href="~/css/header.css" />
 <link rel="stylesheet" href="~/css/chatPage.css" />
+<style>
+    #dropdowntranfer .btn {
+        border: none; /* Remove border */
+        background-color: white; /* Set background to white */
+    }
 
+    .dropdown-menu-end {
+        right: 0; /* Align dropdown to the right */
+    }
+
+</style>
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
     <component type="typeof(Header)" render-mode="Static" />
     <div class="w-100 h-100 chat-container">
@@ -150,6 +160,11 @@
         event.preventDefault();
     }
 
+    connection.on("UpdateMessagesForChatBox", function (chatBox) {
+        console.log('debug in update message');
+        requestMessagesForChatBox(chatBox)
+    });
+
     function requestMessagesForChatBox(chatBox) {
 
         var chatHeader = document.getElementById("chat-title");
@@ -199,11 +214,7 @@
             i.className = "fas fa-sign-out-alt";
             button.appendChild(i);
             chatHeader.appendChild(button);
-            button.addEventListener("click", function () {
-                connection.invoke("ExitGroupChat", chatBox.chatBoxId).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            });
+
 
             //modify name
 
@@ -212,7 +223,7 @@
                 input.type = "text";
                 input.className = "fs-5 fw-semibold";
                 console.log('debug in change name ' + chatBox.chatBoxName);
-                input.value = span.innerHTML;
+                input.value = span.innerHTML.trim();
                 chatHeader.replaceChild(input, span);
 
                 // Add event listener to handle blur event (when input loses focus)
@@ -223,15 +234,15 @@
                             alert("Name of chat box is too long");
                             return;
                         }
-                        if (input.value !== span.innerHTML) {
-                            connection.invoke("ChangeChatBoxName", chatBox.chatBoxId, input.value).catch(function (err) {
+                        if (input.value.trim() !== span.innerHTML.trim()) {
+                            connection.invoke("ChangeChatBoxName", chatBox.chatBoxId, input.value.trim()).catch(function (err) {
                                 return console.error(err.toString());
                             });
-                            span.innerHTML = input.value;
+                            span.innerHTML = input.value.trim();
                         }
 
                         chatHeader.replaceChild(span, input);
-                       
+
                     }
                     buttonEdit.style.display = "block";
                 });
@@ -240,6 +251,67 @@
                 buttonEdit.style.display = "none";
 
             });
+            if (chatBox.isModerator) {
+                button.addEventListener("click", function () {
+                    alert("Please change the leader group role to another person before out group");
+                });
+
+                var buttonDelete = document.createElement("button");
+                buttonDelete.className = "btn btn-danger";
+                var iDelete = document.createElement("i");
+                iDelete.className = "fas fa-trash-alt";
+                buttonDelete.appendChild(iDelete);
+                chatHeader.appendChild(buttonDelete);
+
+                buttonDelete.addEventListener("click", function () {
+                    // Display a confirmation dialog
+                    var confirmDelete = confirm("Are you sure you want to delete the group chat?");
+                    if (confirmDelete) {
+                        connection.invoke("DeleteGroupChat", chatBox.chatBoxId).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    } else {
+                        // If user cancels, do nothing
+                        console.log('Deletion canceled');
+                    }
+                });
+                var dropdown = document.createElement("div");
+                dropdown.innerHTML = `
+        <div class="dropdown" id="dropdowntranfer">
+            <button class="btn btn-secondary dropdown-toggle bg-white border-0" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-ellipsis-v" style="color: black;"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                <li><a class="dropdown-item" href="#" id="dropdownItem">Transfer group leader position for another person</a></li>
+            </ul>
+        </div>
+    `;
+
+                chatHeader.appendChild(dropdown);
+
+                // Select the dropdown item by its ID
+                var dropdownItem = document.getElementById("dropdownItem");
+
+                // Add a click event listener to the dropdown item
+                dropdownItem.addEventListener("click", function (event) {
+                    connection.invoke("GetFriendsInChat", chatBox.chatBoxId).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                    event.preventDefault();
+
+                    // Add your logic here to handle the click event
+                    console.log("Dropdown item clicked");
+                });
+
+
+            }
+            else {
+                button.addEventListener("click", function () {
+                    connection.invoke("ExitGroupChat", chatBox.chatBoxId).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                });
+            }
         }
 
         connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
@@ -314,6 +386,7 @@
             console.log('notification');
             li.innerHTML = `<p class="notification" style="align-items:center; color:darkblue; text-align:center">
 
+
                 ${message.content}</p>`;
         
         } else {
@@ -376,6 +449,7 @@
             li.appendChild(spanContainer);
             li.appendChild(dropDown);
         }
+
             li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
 
         }
@@ -394,6 +468,7 @@
         let leaderExist = false;
         dialogBody.innerHTML = "";
         clients.forEach((client) => {
+
             if(!leaderExist && client.inChatboxes[0].isModerator){
                 dialogBody.innerHTML += `
                 <div class="client-row row">
@@ -420,59 +495,59 @@
                 `;
             //}
            })
+
     }
     
     const scrollMessagesToBottom = () => {
         const ulMessages = document.getElementById("messages");
         ulMessages.scrollTop = ulMessages.scrollHeight;
-     }
-    
+
     function displayDropdownReportation(userId, userName) {
         return `
-            <button class="btn bg-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-ellipsis-h text-dark"></i>
-            </button>
-            <ul class="dropdown-menu">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal_${userId}">
-                    <i class="fa-solid fa-flag text-dark"></i> Report this user!
-                </button>
-            </ul>
-            <div class="modal fade" id="exampleModal_${userId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5">Your Reportation ${userId}</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="reportForm_${userId}" >
-                                <input type="hidden" name="UserId" value="${userId}" />
-                                <div class="mb-3">
-                                    <label for="reported-name" class="col-form-label">Reported Person's Name:</label>
-                                    <input type="text" disabled class="form-control" value="${userName}">
+                    <button class="btn bg-light border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-h text-dark"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal_${userId}">
+                            <i class="fa-solid fa-flag text-dark"></i> Report this user!
+                        </button>
+                    </ul>
+                    <div class="modal fade" id="exampleModal_${userId}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5">Your Reportation ${userId}</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="reason" class="col-form-label">Reason for Report:</label>
-                                    <select class="form-select" id="reason" name="Detail">
-                                        <option selected>Select a reason</option>
-                                        <option value="Harassment">Harassment</option>
-                                        <option value="Spam">Spam</option>
-                                        <option value="Inappropriate Content">Inappropriate Content</option>
-                                    </select>
+                                <div class="modal-body">
+                                    <form id="reportForm_${userId}" >
+                                        <input type="hidden" name="UserId" value="${userId}" />
+                                        <div class="mb-3">
+                                            <label for="reported-name" class="col-form-label">Reported Person's Name:</label>
+                                            <input type="text" disabled class="form-control" value="${userName}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="reason" class="col-form-label">Reason for Report:</label>
+                                            <select class="form-select" id="reason" name="Detail">
+                                                <option selected>Select a reason</option>
+                                                <option value="Harassment">Harassment</option>
+                                                <option value="Spam">Spam</option>
+                                                <option value="Inappropriate Content">Inappropriate Content</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="evidence" class="col-form-label">Evidence (if any):</label>
+                                            <input type="file" class="form-control" id="fileInput" accept="image/*" name="image">
+                                        </div>
+                                        <button type="button" onclick="HandleReport('${userId}')" class="btn btn-primary">Send reportation</button>
+                                    </form>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="evidence" class="col-form-label">Evidence (if any):</label>
-                                    <input type="file" class="form-control" id="fileInput" accept="image/*" name="image">
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
-                                <button type="button" onclick="HandleReport('${userId}')" class="btn btn-primary">Send reportation</button>
-                            </form>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
+                    </div>`;
     }
 
 
@@ -482,33 +557,53 @@
         // For example, you can create a Bootstrap modal:
         var modal = document.createElement('div');
         modal.className = 'modal';
-        modal.innerHTML = `
-                                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Select Friends</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="friendCheckboxForm">
-                                        <ul class="list-group">
-                                            ${friends.map(friend => `
-                                                <li class="list-group-item">
-                                                    <input type="checkbox" name="selectedFriends" value="${friend.id}" id="friend-${friend.id}">
-                                                    <label for="friend-${friend.id}">${friend.name}</label>
-                                                </li>
-                                            `).join('')}
-                                        </ul>
-                                    </form>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary">Add Selected</button>
-                                </div>
-                            </div>
-                        </div>
+        if (friends.length == 0) {
+            modal.innerHTML = `
+                        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">No friends to add</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body"> <!-- Corrected: Added closing double quote -->
+                    <p>You have no friends to add to this chat box. All your friends already in chat.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
 
-                                `;
+                    `;
+        } else {
+            modal.innerHTML = `
+                                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Select Friends</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="friendCheckboxForm">
+                                                <ul class="list-group">
+                                                    ${friends.map(friend => `
+                                                        <li class="list-group-item">
+                                                            <input type="checkbox" name="selectedFriends" value="${friend.id}" id="friend-${friend.id}">
+                                                            <label for="friend-${friend.id}">${friend.name}</label>
+                                                        </li>
+                                                    `).join('')}
+                                                </ul>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-primary">Add Selected Friend</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                            `;
+        }
         document.body.appendChild(modal);
 
         // Initialize the Bootstrap modal
@@ -549,6 +644,89 @@
 
         // Return the array of selected friend IDs
         return selectedFriends;
+    }
+
+    connection.on("showFriendsListModalLeader", function (friends, chatBoxId) {
+        // Here, you can create a modal or dropdown list to display the list of friends
+        // Populate the modal or dropdown list with the fetched data
+        // For example, you can create a Bootstrap modal:
+        var modal = document.createElement('div');
+        modal.className = 'modal';
+        if (friends.length == 0) {
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">No friends to add</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Have no person in chat to choose.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            modal.innerHTML = `
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Select a Friend</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="friendRadioForm">
+                                <ul class="list-group">
+                                    ${friends.map(friend => `
+                                        <li class="list-group-item">
+                                            <input type="radio" name="selectedFriend" value="${friend.id}" id="friend-${friend.id}">
+                                            <label for="friend-${friend.id}">${friend.name}</label>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary">Tranfer leader position.</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        document.body.appendChild(modal);
+
+        // Initialize the Bootstrap modal
+        var modalInstance = new bootstrap.Modal(modal);
+        modalInstance.show();
+
+        // Handle the "Add Selected" button click event
+        modal.querySelector('.btn-primary').addEventListener('click', function () {
+            connection.invoke("TranferLeaderPosition", getSelectedLeaderFromModal(), chatBoxId).catch(function (err) {
+                return console.error(err.toString());
+            });
+            modalInstance.hide();
+        });
+
+        // Handle the modal dismissal event
+        modal.addEventListener('hidden.bs.modal', function () {
+            // Remove the modal from the DOM when it's closed
+            modal.remove();
+        });
+    });
+
+    function getSelectedLeaderFromModal() {
+        // Get the form element containing the radio buttons
+        var form = document.getElementById('friendRadioForm');
+
+        // Get the value of the selected radio button (the ID of the selected friend)
+        var selectedFriendId = form.querySelector('input[name="selectedFriend"]:checked').value;
+
+        // Return the ID of the selected friend
+        return selectedFriendId;
     }
 </script>
 <script src="~/js/viewListClientsInChat.js" />
