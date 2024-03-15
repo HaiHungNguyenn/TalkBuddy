@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TalkBuddy.DAL.Data;
 
@@ -11,9 +12,11 @@ using TalkBuddy.DAL.Data;
 namespace TalkBuddy.DAL.Migrations
 {
     [DbContext(typeof(TalkBuddyContext))]
-    partial class TalkBuddyContextModelSnapshot : ModelSnapshot
+    [Migration("20240315111539_ChangeDataTypeOfReportStatus")]
+    partial class ChangeDataTypeOfReportStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
