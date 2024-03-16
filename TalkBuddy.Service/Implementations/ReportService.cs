@@ -61,4 +61,9 @@ public class ReportService : IReportService
                 .Include(x => x.ReportedClients);
         return clients;
     }
+
+    public async Task<IEnumerable<Report>> GetAllReports()
+    {
+        return await (await _reportRepository.GetAllAsync()).ToListAsync();
+    }
 }
