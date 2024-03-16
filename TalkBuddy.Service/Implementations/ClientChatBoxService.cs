@@ -41,7 +41,7 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)
         {
-            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId));
+            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId)&&!x.IsLeft);
             return res.Include(x => x.Client).ToList();
         }
 
