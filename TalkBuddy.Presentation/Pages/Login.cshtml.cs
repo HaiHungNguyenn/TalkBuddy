@@ -49,6 +49,8 @@ public class Login : PageModel
             HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
             HttpContext.Response.Cookies.Append("userId", user.Id.ToString());
             
+            
+            
             return RedirectToPage(nameof(ChatPage));
         }
         catch (Exception ex)
