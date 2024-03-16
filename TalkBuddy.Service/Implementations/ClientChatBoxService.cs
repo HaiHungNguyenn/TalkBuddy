@@ -53,7 +53,7 @@ namespace TalkBuddy.Service.Implementations
                 .Where(c => (c.ChatBox.ChatBoxName
                 .Contains(searchName) && !c.IsLeft) ||
                 c.ChatBox.ClientChatBoxes
-                .Any(d => !d.ClientId.Equals(userId) && d.NickName.Contains(searchName)&&(!d.IsLeft||(d.IsLeft&&c.ChatBox.Type.Equals(ChatBoxType.TwoPerson))))).ToListAsync();
+                .Any(d => !d.ClientId.Equals(userId) && d.NickName.Contains(searchName)&&(d.ClientId.Equals(userId)&&(!d.IsLeft||(d.IsLeft&&c.ChatBox.Type.Equals(ChatBoxType.TwoPerson)))))).ToListAsync();
         }
 
         public async Task<string> GetChatBoxNameOfTwoPersonType(Guid chatBoxId, Guid userId)
