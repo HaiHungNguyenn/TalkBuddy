@@ -538,8 +538,7 @@ document.querySelectorAll('.remove-btn').forEach(button => {
 // Add event listener for the "Confirm Remove" button in the modal
 document.getElementById('confirmRemove').addEventListener('click', function() {
     const clientId = this.getAttribute('data-client-id');
-    const chatBoxId = this.getAttribute('data-chatbox-id');
-       
+    const chatBoxId = this.getAttribute('data-chatbox-id');       
     removeClientFromChatBox(clientId, chatBoxId);
 });
 

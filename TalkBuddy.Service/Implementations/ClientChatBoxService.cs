@@ -50,10 +50,10 @@ namespace TalkBuddy.Service.Implementations
             return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(userId))
                 .Include(x => x.Client)
                 .Include(x => x.ChatBox).ThenInclude(c => c.ClientChatBoxes)
-                .Where(c => c.ChatBox.ChatBoxName
-                .Contains(searchName) ||
+                .Where(c => (c.ChatBox.ChatBoxName
+                .Contains(searchName) && !c.IsLeft) ||
                 c.ChatBox.ClientChatBoxes
-                .Any(c => !c.ClientId.Equals(userId) && c.NickName.Contains(searchName))).ToListAsync();
+                .Any(d => !d.ClientId.Equals(userId) && d.NickName.Contains(searchName)&&(!d.IsLeft||(d.IsLeft&&c.ChatBox.Type.Equals(ChatBoxType.TwoPerson))))).ToListAsync();
         }
 
         public async Task<string> GetChatBoxNameOfTwoPersonType(Guid chatBoxId, Guid userId)
@@ -111,7 +111,7 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId, Guid userId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(userId)).Include(x => x.Client).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(userId)&&!x.IsLeft).Include(x => x.Client).ToListAsync();
         }
 
         public async Task Update(ClientChatBox clientChatBox)
