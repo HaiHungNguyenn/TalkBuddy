@@ -467,8 +467,9 @@ namespace TalkBuddy.Presentation.SignalR
         {
             var clientChatBoxes = await _clientChatBoxService.GetClientOfChatBoxes(chatBoxId);
             var clients = clientChatBoxes.Select(c => c.Client);
-
-            await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients, chatBoxId);
+            var userId = Context.GetHttpContext()?.Session.GetString(SessionConstants.USER_ID);
+            var clientChatBox = await _clientChatBoxService.GetClientOfChatBoxes(chatBoxId, new Guid(userId));
+            await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients, chatBoxId, clientChatBox.FirstOrDefault()?.IsModerator);
         }
 
         public async Task GetFriendsInChat(Guid chatBoxId)
