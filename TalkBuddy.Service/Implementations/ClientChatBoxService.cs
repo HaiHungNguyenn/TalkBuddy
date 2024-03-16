@@ -102,7 +102,7 @@ namespace TalkBuddy.Service.Implementations
                 var updateClientChatBox = x.FirstOrDefault();
                 updateClientChatBox.IsLeft = false;
                 await _unitOfWork.ClientChatBoxRepository.UpdateAsync(updateClientChatBox);
-                await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync(); 
                 return;
             }
             await _unitOfWork.ClientChatBoxRepository.AddAsync(clientChatBox);

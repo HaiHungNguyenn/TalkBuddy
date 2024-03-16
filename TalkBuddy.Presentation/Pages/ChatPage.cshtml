@@ -64,12 +64,7 @@
         <h2 class="dialog-title col-8">Members</h2>
         <button class="close-btn btn col-2" onclick="this.parentElement.parentElement.close()">&#10005;</button>
     </div>
-    <div class="btn-row row p-4">
-        <button class="btn btn-secondary">
-            <i class="fas fa-user-friends"></i>
-            <span>Add member</span>
-        </button>
-    </div>
+    
     <div class="btn-row row">
         <button class="col-2 show-client-btn btn-active">All</button>
         <button class="col-2 show-client-btn">Media</button>
@@ -85,7 +80,7 @@
             <span class="client-name-dialog col-7">Hai</span>
         </div>
     </div>
-    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal" id="confirmationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -102,6 +97,7 @@
             </div>
         </div>
     </div>
+
 
     <form method="dialog">
     </form>
@@ -523,24 +519,42 @@
             </div>
         </div>`;
         })
-     
-    }
-   // Add event listener for the "Remove" button
-document.querySelectorAll('.remove-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        const clientId = this.getAttribute('data-client-id');
-        const chatBoxId = this.getAttribute('data-chatbox-id');            
-        document.getElementById('confirmRemove').setAttribute('data-client-id', clientId);
-        document.getElementById('confirmRemove').setAttribute('data-chatbox-id', chatBoxId);
-    });
-});
+        // Add event listener for the "Remove" button
+        document.querySelectorAll('.remove-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                // Get the client and chat box IDs from the button's data attributes
+                const clientId = this.getAttribute('data-client-id');
+                const chatBoxId = this.getAttribute('data-chatbox-id');
 
-// Add event listener for the "Confirm Remove" button in the modal
-document.getElementById('confirmRemove').addEventListener('click', function() {
-    const clientId = this.getAttribute('data-client-id');
-    const chatBoxId = this.getAttribute('data-chatbox-id');       
-    removeClientFromChatBox(clientId, chatBoxId);
-});
+                // Log the client and chat box IDs to the console
+                console.log("console in remove button:", clientId, chatBoxId);
+
+                // Set the client and chat box IDs as attributes of the confirmRemove button
+                document.getElementById('confirmRemove').setAttribute('data-client-id', clientId);
+                document.getElementById('confirmRemove').setAttribute('data-chatbox-id', chatBoxId);
+            });
+        });
+
+        // Add event listener for the "Confirm Remove" button in the modal
+        document.getElementById('confirmRemove').addEventListener('click', function () {
+            // Get the client and chat box IDs from the confirmRemove button's data attributes
+            const clientId = this.getAttribute('data-client-id');
+            const chatBoxId = this.getAttribute('data-chatbox-id');
+
+            // Call the removeClientFromChatBox function with the client and chat box IDs
+            removeClientFromChatBox(clientId, chatBoxId);
+
+            // Hide the confirmation modal using Bootstrap modal methods
+            const modalElement = document.getElementById('confirmationModal');
+            const modal = new bootstrap.Modal(modalElement);
+            modal.hide();
+        });
+
+
+
+    }
+
+
 
 function removeClientFromChatBox(clientId, chatBoxId) {
         console.log(clientId + " " + chatBoxId);
