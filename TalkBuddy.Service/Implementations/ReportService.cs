@@ -64,6 +64,18 @@ public class ReportService : IReportService
 
     public async Task<IEnumerable<Report>> GetAllReports()
     {
-        return await (await _reportRepository.GetAllAsync()).ToListAsync();
+        return await (await _reportRepository.GetAllAsync()).Include(r => r.ReportedClient).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Report>> GetWaitingReports()
+    {
+        return await (await _reportRepository.GetAllAsync())
+            .Where(r => r.Status == ReportationStatus.WAITING)
+            .Include(r => r.ReportedClient).ToListAsync();
+    }
+
+    public async Task<Report> GetReport(Guid reportId)
+    {
+        throw new NotImplementedException();
     }
 }
