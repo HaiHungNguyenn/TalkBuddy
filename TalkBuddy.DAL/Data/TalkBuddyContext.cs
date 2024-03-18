@@ -111,6 +111,18 @@ public partial class TalkBuddyContext : DbContext
             .WithMany(x => x.Codes)
             .HasForeignKey(x => x.ClientId)
             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.Entity<ClientChatBoxStatus>()
+            .ToTable("ClientChatBoxStatus")
+            .HasOne(x => x.Message)
+            .WithMany(x => x.MessageStatus)
+            .HasForeignKey(x => x.MessageId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
+        modelBuilder.Entity<ClientChatBoxStatus>()
+            .ToTable("ClientChatBoxStatus")
+            .HasOne(x => x.ClientChatBox)
+            .WithMany(x => x.MessageStatus)
+            .HasForeignKey(x => x.ClientChatBoxId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
 
     }
 
