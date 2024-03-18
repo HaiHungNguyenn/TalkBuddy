@@ -16,10 +16,5 @@ namespace TalkBuddy.Service.Constants
 		public const string HD = "hd";
 		public const string PROMPT = "prompt";
 		public const string GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-		
-		public static string BuildGoogleOauthUrl(GoogleSettings googleSettings)
-		{
-			return $"https://accounts.google.com/o/oauth2/v2/auth?client_id={googleSettings.ClientId}&scope=email%20profile%20openid&redirect_uri={googleSettings.RedirectUri}&response_type=code";
-		}
 	}
 }

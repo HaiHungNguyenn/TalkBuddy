@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Common.Enums;
+using TalkBuddy.Common.Helpers;
 using TalkBuddy.Service.Constants;
 using TalkBuddy.Service.Interfaces;
 using TalkBuddy.Service.Settings;
@@ -22,12 +23,14 @@ public class Login : PageModel
 
     public string GoogleOAuthUrl { get; }
 
-    public string FacebookOAuthUrl { get; } = FacebookOAuthConstants.FACEBOOK_OAUTH_URL;
+    public string FacebookOAuthUrl { get; }
 
 	public Login(IClientService clientService, IConfiguration configuration)
 	{
         var googleSettings = configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>() ?? throw new Exception("Missing google settings");
-        GoogleOAuthUrl = GoogleOAuthConstants.BuildGoogleOauthUrl(googleSettings);
+        var facebookSettings = configuration.GetSection(nameof(FacebookSettings)).Get<FacebookSettings>() ?? throw new Exception("Missing facebook settings");
+        GoogleOAuthUrl = OAuthHelper.BuildGoogleOauthUrl(googleSettings);
+        FacebookOAuthUrl = OAuthHelper.BuildFacebookOauthUrl(facebookSettings);
 		_clientService = clientService;
 	}
 
