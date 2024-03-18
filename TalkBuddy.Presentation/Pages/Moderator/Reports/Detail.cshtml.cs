@@ -31,4 +31,18 @@ public class Detail : PageModel
             return Page();
         }
     }
+    
+    public async Task<IActionResult> OnPostSuspendAccount(Guid reportId)
+    {
+        try
+        {
+            await _reportService.SuspendAccount(reportId);
+            return Redirect("/Moderator/Reports");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return Page();
+        }
+    }
 }

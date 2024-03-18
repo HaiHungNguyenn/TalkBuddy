@@ -14,4 +14,5 @@ public interface IReportService
     Task<IEnumerable<Report>> GetAllReports();
     Task<IEnumerable<Report>> GetWaitingReports();
     Task<Report> GetReportById(Guid reportId);
+    Task SuspendAccount(Guid reportId);
 }

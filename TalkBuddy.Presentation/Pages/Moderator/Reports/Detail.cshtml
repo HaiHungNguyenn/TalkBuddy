@@ -60,7 +60,9 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-danger">Suspend account</button>
+                <form asp-page-handler="SuspendAccount" asp-route-reportId="@reportDetail.Id" style="display: inline;">
+                    <button class="btn btn-danger">Suspend account</button>
+                </form>
                 <form asp-page-handler="DismissReport" asp-route-reportId="@reportDetail.Id" style="display: inline;">
                     <button class="btn btn-secondary">Dismiss</button>
                 </form>
