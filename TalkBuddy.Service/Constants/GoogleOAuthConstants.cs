@@ -1,4 +1,6 @@
-﻿namespace TalkBuddy.Service.Constants
+﻿using TalkBuddy.Service.Settings;
+
+namespace TalkBuddy.Service.Constants
 {
 	public static class GoogleOAuthConstants
 	{
@@ -14,6 +16,10 @@
 		public const string HD = "hd";
 		public const string PROMPT = "prompt";
 		public const string GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-		public const string GOOGLE_OAUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth?client_id=897518282928-bld8l8o32hplqgo4irb1dv0pj6krlgr4.apps.googleusercontent.com&scope=email%20profile%20openid&redirect_uri=http://localhost:3000/oauth/gg&response_type=code";
+		
+		public static string BuildGoogleOauthUrl(GoogleSettings googleSettings)
+		{
+			return $"https://accounts.google.com/o/oauth2/v2/auth?client_id={googleSettings.ClientId}&scope=email%20profile%20openid&redirect_uri={googleSettings.RedirectUri}&response_type=code";
+		}
 	}
 }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Constants;
 using TalkBuddy.Service.Interfaces;
+using TalkBuddy.Service.Settings;
 
 namespace TalkBuddy.Presentation.Pages
 {
@@ -19,12 +20,14 @@ namespace TalkBuddy.Presentation.Pages
 
 		public string ErrorMessage { get; set; } = string.Empty;
 
-		public string GoogleOAuthUrl { get; } = GoogleOAuthConstants.GOOGLE_OAUTH_URL;
+		public string GoogleOAuthUrl { get; }
 
 		private readonly IClientService _clientService;
 
-        public Register(IClientService clientService)
+        public Register(IClientService clientService, IConfiguration configuration)
         {
+			var googleSettings = configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>() ?? throw new Exception("Missing google settings");
+			GoogleOAuthUrl = GoogleOAuthConstants.BuildGoogleOauthUrl(googleSettings);
 			_clientService = clientService;
         }
 

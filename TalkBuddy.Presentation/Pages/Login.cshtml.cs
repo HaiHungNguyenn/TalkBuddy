@@ -4,6 +4,7 @@ using TalkBuddy.Common.Constants;
 using TalkBuddy.Common.Enums;
 using TalkBuddy.Service.Constants;
 using TalkBuddy.Service.Interfaces;
+using TalkBuddy.Service.Settings;
 
 namespace TalkBuddy.Presentation.Pages;
 
@@ -19,12 +20,14 @@ public class Login : PageModel
 
     private readonly IClientService _clientService;
 
-    public string GoogleOAuthUrl { get; } = GoogleOAuthConstants.GOOGLE_OAUTH_URL;
+    public string GoogleOAuthUrl { get; }
 
     public string FacebookOAuthUrl { get; } = FacebookOAuthConstants.FACEBOOK_OAUTH_URL;
 
-	public Login(IClientService clientService)
+	public Login(IClientService clientService, IConfiguration configuration)
 	{
+        var googleSettings = configuration.GetSection(nameof(GoogleSettings)).Get<GoogleSettings>() ?? throw new Exception("Missing google settings");
+        GoogleOAuthUrl = GoogleOAuthConstants.BuildGoogleOauthUrl(googleSettings);
 		_clientService = clientService;
 	}
 
