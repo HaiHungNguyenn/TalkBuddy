@@ -45,6 +45,7 @@ function acceptInvitation(){
     var receiverId = document.getElementById("ReceiverId").value;
     notiConnection.invoke("HandleAccept",friendshipId,senderId,receiverId).then(()=>{
         console.log("acp request")
+        window.location.reload();
     }).catch(error => console.log(error.toString()))
 }
 function rejectInvitation(){
