@@ -14,4 +14,6 @@ public partial class Message : BaseEntity<Guid>
     public virtual ChatBox ChatBox { get; set; } = null!;
     public virtual ICollection<Media> Medias { get; set; } = new List <Media>();
   
+    public virtual ICollection<ClientChatBoxStatus> MessageStatus { get; set; } = new List<ClientChatBoxStatus>();
+
 }

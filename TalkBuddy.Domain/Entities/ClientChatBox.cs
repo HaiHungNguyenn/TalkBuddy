@@ -12,4 +12,7 @@ public partial class ClientChatBox : BaseEntity<Guid>
     public Guid ChatBoxId { get; set; }
     public virtual ChatBox ChatBox { get; set; } = null!;
     public virtual Client Client { get; set; } = null!;
+
+    public virtual ICollection<ClientChatBoxStatus> MessageStatus { get; set; } = new List<ClientChatBoxStatus>();
+
 }

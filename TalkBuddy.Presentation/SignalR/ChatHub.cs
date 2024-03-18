@@ -166,6 +166,25 @@ namespace TalkBuddy.Presentation.SignalR
             //uncomment this if want to implement rule: if have no messages before do not present chatbox
             //var IsChatBoxContainMessages = _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId)).Result.Messages.Any();
             await _messageService.AddMessage(messageObject);
+            var clientChatBoxes =
+                await _clientChatBoxService.GetClientOfChatBoxes(messageObject.ChatBoxId, messageObject.SenderId);
+            foreach (var client in clientChatBoxes)
+            {
+                   client.MessageStatus.Add(new ClientChatBoxStatus()
+                   {
+                       MessageId = messageObject.Id,
+                       ClientChatBoxId = client.Id,
+                       IsRead = false
+                   });
+                   await _clientChatBoxService.Update(client);
+            }
+            // messageObject.MessageStatus.Add(new ClientChatB oxStatus()
+            // {
+            //     MessageId = messageObject.Id,
+            //     IsRead = false,
+            //     ClientChatBoxId = ,
+            //     
+            // });
             //if (!IsChatBoxContainMessages)
             //{
             //    await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(fromUserId));
