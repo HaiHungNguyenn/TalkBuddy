@@ -1,12 +1,44 @@
-﻿@page
+﻿@page "/Moderator/SuspendedUsersList"
 @using TalkBuddy.Common.Constants
+@using TalkBuddy.Domain.Entities;
+@using TalkBuddy.Presentation.Components;
 @model TalkBuddy.Presentation.Pages.Moderator.SuspendedUsersList
 
 @{
     Layout = "Shared/_PrivateLayout";
+    var suspendedUsers = TempData["suspendedUsers"] as IEnumerable<Client> ?? new List<Client>();
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome @Model.HttpContext.Session.GetString(SessionConstants.USER_NAME)</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<link rel="stylesheet" href="~/css/header.css" />
+
+<section class="h-100 w-100 d-flex flex-column justify-content-start" style="background-color: #e4e7f5;">
+    <component type="typeof(Header)" render-mode="Static" />
+    <div class="d-flex justify-content-center align-items-start h-100" style="background-color: #e4e7f5;">
+        <div class="d-flex flex-column justify-content-center align-items-center h-100" style="width: 70%">
+            <h2 class="text-center">Suspended users list:</h2>
+
+            <ul class="navbar-nav flex-grow-1 flex-column w-100 gap-1" style="max-height: 650px; overflow: hidden;">
+                <li class="p-2 align-items-center bg-secondary text-white fw-bold" style="display: grid; grid-template-columns: repeat(5, 1fr);">
+                    <span>Username</span>
+                    <span>User email</span>
+                    <span>Suspension reason</span>
+                    <span>Suspension end date</span>
+                </li>
+                @foreach (var user in suspendedUsers)
+                {
+                    <li class="nav-item p-2 align-items-center" style="cursor: pointer; transition: background-color 0.3s ease-out; display: grid; grid-template-columns: repeat(5, 1fr)">
+                        <span>@user.Name</span>
+                        <span>@user.Email</span>
+                        <span>@user.ReportedClients.OrderByDescending(c => c.CreatedDate).FirstOrDefault()?.Details</span>
+                        <span>@user.SuspensionEndDate</span>
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <form method="post" asp-page-handler="UnbanUser" asp-route-userId="@user.Id">
+                                <button type="submit" class="btn btn-primary">Unban user</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>
