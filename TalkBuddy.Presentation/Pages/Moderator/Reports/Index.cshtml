@@ -31,9 +31,7 @@
                         <span>@report.Details</span>
                         <span class="online-status-text fw-bold">@report.ReportedClient?.Name</span>
                         <div class="d-flex justify-content-end align-items-center gap-2">
-                            <form method="post" asp-route-friendId="@report.Id">
-                                <button id="submit-button" type="submit" class="btn btn-primary">Details</button>
-                            </form>
+                            <a href="http://localhost:3000/Moderator/Reports/Detail?reportId=@report.Id" class="btn btn-primary">Details</a>
                             <form method="post" asp-page-handler="DismissReport" asp-route-reportId="@report.Id">
                                 <button type="submit" class="btn btn-secondary">Dismiss</button>
                             </form>

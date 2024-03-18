@@ -71,11 +71,16 @@ public class ReportService : IReportService
     {
         return await (await _reportRepository.GetAllAsync())
             .Where(r => r.Status == ReportationStatus.WAITING)
-            .Include(r => r.ReportedClient).ToListAsync();
+            .Include(r => r.ReportedClient)
+            .ToListAsync();
     }
 
-    public async Task<Report> GetReport(Guid reportId)
+    public async Task<Report> GetReportById(Guid reportId)
     {
-        throw new NotImplementedException();
+        return await (await _reportRepository.FindAsync(r => r.Id == reportId))
+            .Include(r => r.ReportedClient)
+            .Include(r => r.InformantClient)
+            .Include(r => r.ReportEvidences)
+            .FirstOrDefaultAsync() ?? throw new Exception("Report not found");
     }
 }

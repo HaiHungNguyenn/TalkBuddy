@@ -13,5 +13,5 @@ public interface IReportService
     Task<IQueryable> GetSuspendedClient();
     Task<IEnumerable<Report>> GetAllReports();
     Task<IEnumerable<Report>> GetWaitingReports();
-    Task<Report> GetReport(Guid reportId);
+    Task<Report> GetReportById(Guid reportId);
 }
