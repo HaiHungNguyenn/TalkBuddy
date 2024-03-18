@@ -11,4 +11,8 @@ public interface IReportService
     Task BanUser(Guid reportId, SuspensionType suspensionType);
 
     Task<IQueryable> GetSuspendedClient();
+    Task<IEnumerable<Report>> GetAllReports();
+    Task<IEnumerable<Report>> GetWaitingReports();
+    Task<Report> GetReportById(Guid reportId);
+    Task SuspendAccount(Guid reportId);
 }

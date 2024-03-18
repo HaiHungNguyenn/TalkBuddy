@@ -35,6 +35,8 @@ public class ClientService : IClientService
         var client = await _clientRepository.GetAsync(c => c.Email == username && c.IsVerified);
         if (client != null && PasswordHelper.IsValidPassword(password, client.Password))
         {
+            if (client.IsAccountSuspended)
+                throw new Exception($"Your account has been suspended until {client.SuspensionEndDate}");
             return client;
         }
 

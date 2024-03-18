@@ -1,0 +1,44 @@
+﻿@page
+@using TalkBuddy.Presentation.Components
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using TalkBuddy.Domain.Entities
+@model TalkBuddy.Presentation.Pages.Moderator.Reports.Index
+
+@{
+    Layout = "Shared/_PrivateLayout";
+    var reportsList = TempData["reportsList"] as IEnumerable<Report> ?? new List<Report>();
+}
+
+<link rel="stylesheet" href="~/css/header.css"/>
+
+<section class="h-100 w-100 d-flex flex-column justify-content-start" style="background-color: #e4e7f5;">
+    <component type="typeof(Header)" render-mode="Static"/>
+    <div class="d-flex justify-content-center align-items-start h-100" style="background-color: #e4e7f5;">
+        <div class="d-flex flex-column justify-content-center align-items-center h-100" style="width: 70%">
+            <h2 class="text-center">Reports list:</h2>
+
+            <ul class="navbar-nav flex-grow-1 flex-column w-100 gap-1" style="max-height: 650px; overflow: hidden;">
+                <li class="p-2 align-items-center bg-secondary text-white fw-bold" style="display: grid; grid-template-columns: repeat(3, 1fr);">
+                    <span>Reason</span>
+                    <span class="online-status-text">Reported user</span>
+                    <div class="d-flex justify-content-end align-items-center gap-2">
+                        <span>Actions</span>
+                    </div>
+                </li>
+                @foreach (var report in reportsList)
+                {
+                    <li class="nav-item p-2 align-items-center" style="cursor: pointer; transition: background-color 0.3s ease-out; display: grid; grid-template-columns: repeat(3, 1fr)">
+                        <span>@report.Details</span>
+                        <span class="online-status-text fw-bold">@report.ReportedClient?.Name</span>
+                        <div class="d-flex justify-content-end align-items-center gap-2">
+                            <a href="http://localhost:3000/Moderator/Reports/Detail?reportId=@report.Id" class="btn btn-primary">Details</a>
+                            <form method="post" asp-page-handler="DismissReport" asp-route-reportId="@report.Id">
+                                <button type="submit" class="btn btn-secondary">Dismiss</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>

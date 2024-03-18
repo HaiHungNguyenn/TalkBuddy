@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TalkBuddy.Common.Constants;
+using TalkBuddy.Common.Enums;
 using TalkBuddy.Service.Constants;
 using TalkBuddy.Service.Interfaces;
 
@@ -46,10 +47,11 @@ public class Login : PageModel
 
             HttpContext.Session.SetString(SessionConstants.USER_NAME, user.Name);
             HttpContext.Session.SetString(SessionConstants.USER_ID, user.Id.ToString());
+            HttpContext.Session.SetString(SessionConstants.USER_ROLE, user.Role.ToString());
             HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
             HttpContext.Response.Cookies.Append("userId", user.Id.ToString());
-            
-            return RedirectToPage(nameof(ChatPage));
+
+            return RedirectToPage(user.Role == UserRole.MODERATOR ? "/Moderator/Index" : nameof(ChatPage));
         }
         catch (Exception ex)
         {

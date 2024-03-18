@@ -61,4 +61,51 @@ public class ReportService : IReportService
                 .Include(x => x.ReportedClients);
         return clients;
     }
+
+    public async Task<IEnumerable<Report>> GetAllReports()
+    {
+        return await (await _reportRepository.GetAllAsync()).Include(r => r.ReportedClient).ToListAsync();
+    }
+
+    public async Task<IEnumerable<Report>> GetWaitingReports()
+    {
+        return await (await _reportRepository.GetAllAsync())
+            .Where(r => r.Status == ReportationStatus.WAITING)
+            .Include(r => r.ReportedClient)
+            .ToListAsync();
+    }
+
+    public async Task<Report> GetReportById(Guid reportId)
+    {
+        return await (await _reportRepository.FindAsync(r => r.Id == reportId))
+            .Include(r => r.ReportedClient)
+            .Include(r => r.InformantClient)
+            .Include(r => r.ReportEvidences)
+            .FirstOrDefaultAsync() ?? throw new Exception("Report not found");
+    }
+
+    public async Task SuspendAccount(Guid reportId)
+    {
+        var report = await _reportRepository.GetAsync(r => r.Id == reportId) ?? throw new Exception("Report not found");
+        var reportedClient = await _clientRepository.GetAsync(c => c.Id == report.ReportedClientId) ?? throw new Exception("Reported client not found");
+
+        reportedClient.IsAccountSuspended = true;
+        reportedClient.SuspensionCount++;
+
+        reportedClient.SuspensionEndDate = reportedClient.SuspensionCount switch
+        {
+            1 => DateTime.Now.AddHours(6),
+            2 => DateTime.Now.AddDays(1),
+            3 => DateTime.Now.AddDays(3),
+            4 => DateTime.Now.AddMonths(1),
+            5 => DateTime.Now.AddMonths(6),
+            _ => DateTime.Now.AddMonths(6)
+        };
+
+        report.Status = ReportationStatus.RESOLVED;
+        
+        await _clientRepository.UpdateAsync(reportedClient);
+        await _reportRepository.UpdateAsync(report);
+        await _unitOfWork.CommitAsync();
+    }
 }

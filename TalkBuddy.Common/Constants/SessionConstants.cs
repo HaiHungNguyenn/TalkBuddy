@@ -11,6 +11,7 @@ namespace TalkBuddy.Common.Constants
 		public const string IS_LOGGED_IN = nameof(IS_LOGGED_IN);
 		public const string USER_NAME = nameof(USER_NAME);
 		public const string USER_ID = nameof(USER_ID);
+		public const string USER_ROLE = nameof(USER_ROLE);
 		public const string LOGGED_IN = nameof(LOGGED_IN);
 	}
 }

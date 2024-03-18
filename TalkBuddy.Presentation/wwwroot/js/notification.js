@@ -21,6 +21,13 @@ notiConnection.on("TestHub", (message) => {
     console.log("TEst message");
 });
 
+notiConnection.on("test-noti", (notifications, connectionId) => {
+    console.log("in test noti")
+    console.log("Received notification: ", notifications);
+    console.log("connection id",connectionId);
+    countUnreadNotifications(notifications);
+    renderNotifications(notifications);
+});
 
 function requestInvitation(friendId){
     console.log("FRIENDID ",friendId)

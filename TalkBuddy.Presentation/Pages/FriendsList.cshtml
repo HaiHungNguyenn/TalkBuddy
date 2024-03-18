@@ -30,7 +30,7 @@
             <ul class="navbar-nav flex-grow-1 flex-column w-100 gap-1" style="max-height: 650px; overflow: hidden;">
                 @foreach (var friend in friendsList)
                 {
-                    <li class="nav-item p-2" style="cursor: pointer; transition: background-color 0.3s ease-out; display: grid; grid-template-columns: repeat(3, 1fr)">
+                    <li class="nav-item p-2 align-items-center" style="cursor: pointer; transition: background-color 0.3s ease-out; display: grid; grid-template-columns: repeat(3, 1fr)">
                         <span>@friend.Name</span>
                         <div class="d-flex justify-content-start align-items-center gap-1" data-friend-id="@friend.Id">
 

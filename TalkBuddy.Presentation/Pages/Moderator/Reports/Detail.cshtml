@@ -1,0 +1,108 @@
+﻿@page
+@using TalkBuddy.Presentation.Components
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using TalkBuddy.Domain.Entities
+@model TalkBuddy.Presentation.Pages.Moderator.Reports.Detail
+
+@{
+    Layout = "Shared/_PrivateLayout";
+    var reportDetail = (Report)TempData["reportDetail"]!;
+}
+
+<style>
+    .report-row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+</style>
+
+
+<link rel="stylesheet" href="~/css/header.css"/>
+
+<section class="h-100 w-100 d-flex flex-column justify-content-start" style="background-color: #e4e7f5;">
+    <component type="typeof(Header)" render-mode="Static"/>
+    <div class="d-flex justify-content-center align-items-start h-100" style="background-color: #e4e7f5;">
+        <div class="d-flex flex-column justify-content-start align-items-center gap-4 h-100 py-5" style="width: 70%">
+            <div>
+                <h2>Report detail</h2>
+                <div>
+                    <div class="report-row">
+                        <span>Reported username:</span>
+                        <span class="fw-bold fst-italic">@reportDetail.ReportedClient?.Name</span>
+                    </div>
+                    <div class="report-row">
+                        <span>User email:</span>
+                        <span class="fw-bold fst-italic">@reportDetail.ReportedClient?.Email</span>
+                    </div>
+                    <div class="report-row">
+                        <span>Reason:</span>
+                        <span>@reportDetail.Details</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <p class="m-0">Evidence:</p>
+                    @if (!reportDetail.ReportEvidences.Any())
+                    {
+                        <small>
+                            <i>There is no evidence recorded</i>
+                        </small>
+                    }
+                    <ul class="m-0 p-0" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem">
+                        @foreach (var evidence in reportDetail.ReportEvidences)
+                        {
+                            <li>
+                                <img class="evidence" id="@evidence.Id" src="@evidence.EvidenceUrl" alt="Evidence" width="120" height="120" style="cursor: pointer;">
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div>
+                <form asp-page-handler="SuspendAccount" asp-route-reportId="@reportDetail.Id" style="display: inline;">
+                    <button class="btn btn-danger">Suspend account</button>
+                </form>
+                <form asp-page-handler="DismissReport" asp-route-reportId="@reportDetail.Id" style="display: inline;">
+                    <button class="btn btn-secondary">Dismiss</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('readystatechange', () => {
+        document.body.style.position = 'relative';
+        const evidences = document.getElementsByClassName('evidence');
+        console.log(evidences);
+        for (let i = 0; i < evidences.length; i++) {
+            evidences[i].addEventListener('click', () => {
+                createCanvas(evidences[i]);
+            });
+        }
+    });
+
+    const createCanvas = (evidence) => {
+        const divCanvas = document.createElement('div');
+        divCanvas.style.height = '100dvh';
+        divCanvas.style.width = '100dvw';
+        divCanvas.style.backgroundColor = 'rgba(256, 256, 256, 0.1)';
+        divCanvas.style.position = 'absolute';
+        divCanvas.style.top = '0';
+        divCanvas.style.left = '0';
+        divCanvas.style.display = 'flex';
+        divCanvas.style.justifyContent = 'center';
+        divCanvas.style.alignItems = 'center';
+
+        const img = evidence.cloneNode(true);
+        img.style.height = '70dvh';
+        img.style.width = 'auto';
+
+        divCanvas.addEventListener('click', () => {
+            document.body.removeChild(divCanvas)
+        });
+        divCanvas.appendChild(img);
+        document.body.appendChild(divCanvas);
+    }
+</script>

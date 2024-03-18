@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using TalkBuddy.Common.Constants;
+using TalkBuddy.Common.Enums;
 using TalkBuddy.Presentation.Pages;
 
 namespace TalkBuddy.Presentation.Middleware
@@ -29,6 +30,14 @@ namespace TalkBuddy.Presentation.Middleware
 
 			if (isLoggedIn == SessionConstants.LOGGED_IN)
 			{
+				if (context.Request.Path.HasValue
+				    && context.Request.Path.Value.StartsWith("/Moderator")
+				    && context.Session.GetString(SessionConstants.USER_ROLE) != UserRole.MODERATOR.ToString())
+				{
+					context.Response.Redirect("/");
+					return Task.CompletedTask;
+				}
+				
 				return _next(context);
 			}
 
