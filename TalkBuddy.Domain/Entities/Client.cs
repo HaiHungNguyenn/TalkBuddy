@@ -23,8 +23,8 @@ public partial class Client: BaseEntity<Guid>
 
     public UserRole Role { get; set; } = UserRole.CLIENT;
     public ICollection<Friendship> Friends { get; set; } = new List<Friendship>();
-    public ICollection<Report>? ReportedClients { get; set; }
-    public ICollection<Report>? InformantClients { get; set; }
+    public ICollection<Report> ReportedClients { get; set; } = new List<Report>();
+    public ICollection<Report> InformantClients { get; set; } = new List<Report>();
     public ICollection<ClientChatBox>? InChatboxes { get; set; }
     public ICollection<ChatBox>? CreatedChatBoxes { get; set; }
     public ICollection<ClientMessage>? ClientMessages { get; set; }

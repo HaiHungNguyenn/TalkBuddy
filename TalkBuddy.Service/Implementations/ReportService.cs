@@ -54,9 +54,9 @@ public class ReportService : IReportService
         await _unitOfWork.CommitAsync();
     }
 
-    public async Task<IQueryable> GetSuspendedClient()
+    public async Task<IQueryable<Client>> GetSuspendedClient()
     {
-        var clients =(await _clientRepository.FindAsync(x => x.IsAccountSuspended == true && x.SuspensionEndDate < DateTime.Now))
+        var clients =(await _clientRepository.FindAsync(x => x.IsAccountSuspended == true && x.SuspensionEndDate >= DateTime.Now))
                 .Include(x => x.InformantClients)
                 .Include(x => x.ReportedClients);
         return clients;
@@ -106,6 +106,15 @@ public class ReportService : IReportService
         
         await _clientRepository.UpdateAsync(reportedClient);
         await _reportRepository.UpdateAsync(report);
+        await _unitOfWork.CommitAsync();
+    }
+
+    public async Task UnbanUser(Guid userId)
+    {
+        var user = await _clientRepository.GetAsync(u => u.IsAccountSuspended && u.Id == userId) ?? throw new Exception("User not found");
+        user.IsAccountSuspended = false;
+        
+        await _clientRepository.UpdateAsync(user);
         await _unitOfWork.CommitAsync();
     }
 }
