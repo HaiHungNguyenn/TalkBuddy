@@ -122,13 +122,9 @@ namespace TalkBuddy.Presentation.SignalR
 
         public async Task SendNotification(string receiverId, List<DtoNotification> notifications)
         {
-            try
-            {
-                var connectionId = UserConnections[receiverId];
-                var x = Clients.Client(connectionId);
+            UserConnections.TryGetValue(receiverId, out var connectionId);
+            if (connectionId != null)
                 await Clients.Client(connectionId).SendAsync("ReceiveNotification", notifications,connectionId);
-            }
-            catch { }
         }
 
         public async Task UpdateNotificationStatus()
