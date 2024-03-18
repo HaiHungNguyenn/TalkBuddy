@@ -83,39 +83,58 @@ public class FriendShipService : IFriendShipService
 	        .Include(fs => fs.Receiver)
 	        .FirstOrDefaultAsync() ?? throw new Exception("Not Found FriendInvitation");
 		if (friendship.Status != FriendShipRequestStatus.WAITING) return;
-			
-		var chatbox = new ChatBox
-		{
-			ChatBoxName = $"{friendship.Sender.Name} - {friendship.Receiver.Name}",
-			CreatedDate = DateTime.Now,
-			Type = ChatBoxType.TwoPerson,
-			GroupCreatorId = friendship.SenderID
-		};
 
-		chatbox.ClientChatBoxes.Add(new ClientChatBox
-		{
-			ClientId = friendship.SenderID,
-			ChatBox = chatbox,
-			IsBlocked = false,
-			IsLeft = false,
-			IsNotificationOn = true,
-			IsModerator = true,
-			NickName = friendship.Sender.Name
-		});
+        var senderChatboxes = await _clientChatboxService.GetClientChatBoxes(friendship.SenderID);
+        var receiverChatboxes = await _clientChatboxService.GetClientChatBoxes(friendship.ReceiverId);
 
-		chatbox.ClientChatBoxes.Add(new ClientChatBox
-		{
-			ClientId = friendship.ReceiverId,
-			ChatBox = chatbox,
-			IsBlocked = false,
-			IsLeft = false,
-			IsNotificationOn = true,
-			IsModerator = true,
-			NickName = friendship.Receiver.Name
-		});
+        var commonChatboxIds = GetCommonChatboxIds(senderChatboxes, receiverChatboxes);
 
-		await _chatBoxRepository.AddAsync(chatbox);
-		friendship.Status = FriendShipRequestStatus.ACCEPTED;
+        var chatbox = await _chatBoxRepository.GetAsync(c => commonChatboxIds.Contains(c.Id) && c.Type == ChatBoxType.TwoPerson);
+        if (chatbox != null)
+        {
+            var senderChatbox = chatbox.ClientChatBoxes.FirstOrDefault(c => c.ClientId == friendship.SenderID);
+            var receiverChatbox = chatbox.ClientChatBoxes.FirstOrDefault(c => c.ClientId == friendship.ReceiverId);
+            if (senderChatbox != null)
+                await _clientChatboxService.AddClientToGroup(senderChatbox);
+            if (receiverChatbox != null)
+                await _clientChatboxService.AddClientToGroup(receiverChatbox);
+        }
+        else
+        {
+            var newChatbox = new ChatBox
+            {
+                ChatBoxName = $"{friendship.Sender.Name} - {friendship.Receiver.Name}",
+                CreatedDate = DateTime.Now,
+                Type = ChatBoxType.TwoPerson,
+                GroupCreatorId = friendship.SenderID
+            };
+
+            newChatbox.ClientChatBoxes.Add(new ClientChatBox
+            {
+                ClientId = friendship.SenderID,
+                ChatBox = newChatbox,
+                IsBlocked = false,
+                IsLeft = false,
+                IsNotificationOn = true,
+                IsModerator = true,
+                NickName = friendship.Sender.Name
+            });
+
+            newChatbox.ClientChatBoxes.Add(new ClientChatBox
+            {
+                ClientId = friendship.ReceiverId,
+                ChatBox = newChatbox,
+                IsBlocked = false,
+                IsLeft = false,
+                IsNotificationOn = true,
+                IsModerator = true,
+                NickName = friendship.Receiver.Name
+            });
+
+            await _chatBoxRepository.AddAsync(newChatbox);
+        }
+
+        friendship.Status = FriendShipRequestStatus.ACCEPTED;
 		await _friendShipRepository.UpdateAsync(friendship);
         await _unitOfWork.CommitAsync();
     }
