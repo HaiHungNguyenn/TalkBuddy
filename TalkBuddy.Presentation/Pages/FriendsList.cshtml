@@ -44,8 +44,9 @@
                                 </button>
                             </form>
                             <form method="post" asp-page-handler="RemoveFriend" asp-route-friendId="@friend.Id">
-                                <button type="submit" class="btn btn-primary" onclick="openPopup()">
-                                <i class="fa-solid fa-xmark"></i>
+                                <button type="submit" id="submit-button" style="display: none"></button>
+                                <button type="button" class="btn btn-primary" onclick="openPopup()">
+                                    <i class="fa-solid fa-xmark"></i>
                                 </button>
                             </form>
                             

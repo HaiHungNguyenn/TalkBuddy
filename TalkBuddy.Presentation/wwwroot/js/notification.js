@@ -32,8 +32,11 @@ notiConnection.on("test-noti", (notifications, connectionId) => {
 function requestInvitation(friendId){
     console.log("FRIENDID ",friendId)
     notiConnection.invoke("HandleAddFriend",friendId).then(()=>{
-        location.href= "/AddFriendPage"
-    }).catch(error => console.log(error.toString()))
+        location.href = "/AddFriendPage"
+    }).catch(error => {
+        location.href = "/AddFriendPage"
+        console.log(error.message)
+    })
 }
 
 function acceptInvitation(){
