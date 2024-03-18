@@ -44,7 +44,7 @@
                                 </button>
                             </form>
                             <form method="post" asp-page-handler="RemoveFriend" asp-route-friendId="@friend.Id">
-                                <button type="submit" id="submit-button" style="display: none"></button>
+                                <button type="submit" id="remove-friend-button" style="display: none"></button>
                                 <button type="button" class="btn btn-primary" onclick="openPopup()">
                                     <i class="fa-solid fa-xmark"></i>
                                 </button>
@@ -75,7 +75,7 @@
 
         function confirmPopup() {
             console.log('Yes is clicked');
-            document.getElementById("submit-button").click();
+            document.getElementById("remove-friend-button").click();
         }
     </script>
     <script>

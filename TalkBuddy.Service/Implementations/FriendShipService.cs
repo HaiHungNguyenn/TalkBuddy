@@ -1,5 +1,6 @@
 
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using TalkBuddy.Common.Enums;
 using TalkBuddy.DAL.Interfaces;
 using TalkBuddy.Domain.Entities;
@@ -14,13 +15,19 @@ public class FriendShipService : IFriendShipService
     private readonly IUnitOfWork _unitOfWork;
 	private readonly IClientRepository _clientRepository;
 	private readonly IChatBoxRepository _chatBoxRepository;
+    private readonly IClientChatBoxService _clientChatboxService;
 
-    public FriendShipService(IFriendShipRepository friendShipRepository, IUnitOfWork unitOfWork, IClientRepository clientRepository, IChatBoxRepository chatBoxRepository)
+    public FriendShipService(IFriendShipRepository friendShipRepository,
+                             IUnitOfWork unitOfWork,
+                             IClientRepository clientRepository,
+                             IChatBoxRepository chatBoxRepository,
+                             IClientChatBoxService clientChatboxService)
     {
         _friendShipRepository = friendShipRepository;
 		_clientRepository = clientRepository;
 		_chatBoxRepository = chatBoxRepository;
 		_unitOfWork = unitOfWork;
+        _clientChatboxService = clientChatboxService;
     }
 
     public async Task CreateFriendShip(Friendship friendShip)
@@ -148,7 +155,23 @@ public class FriendShipService : IFriendShipService
     {
         var x = await _friendShipRepository.GetAsync(x =>
                (x.SenderID == friendId && x.ReceiverId == clientId) ||
-               (x.SenderID == clientId && x.ReceiverId == friendId));
+               (x.SenderID == clientId && x.ReceiverId == friendId)) ?? throw new Exception("Friendship does not exist");
+
+        var senderChatboxes = await _clientChatboxService.GetClientChatBoxes(x.SenderID);
+        var receiverChatboxes = await _clientChatboxService.GetClientChatBoxes(x.ReceiverId);
+
+        var commonChatboxIds = GetCommonChatboxIds(senderChatboxes, receiverChatboxes);
+
+        var chatbox = await _chatBoxRepository.GetAsync(c => commonChatboxIds.Contains(c.Id) && c.Type == ChatBoxType.TwoPerson);
+        if (chatbox != null)
+        {
+            var senderChatbox = chatbox.ClientChatBoxes.FirstOrDefault(c => c.ClientId == x.SenderID);
+            var receiverChatbox = chatbox.ClientChatBoxes.FirstOrDefault(c => c.ClientId == x.ReceiverId);
+            if (senderChatbox != null)
+                await _clientChatboxService.RemoveClientFromChatBox(senderChatbox.ChatBoxId, x.SenderID);
+            if (receiverChatbox != null)
+                await _clientChatboxService.RemoveClientFromChatBox(receiverChatbox.ChatBoxId, x.ReceiverId);
+        }
 
         x.Status = FriendShipRequestStatus.REJECTED;
         await _friendShipRepository.UpdateAsync(x);
@@ -198,5 +221,21 @@ public class FriendShipService : IFriendShipService
         var filteredFriends = clientFriends.Where(client => client.Name.Contains(search));
 
         return filteredFriends;
+    }
+
+    private IList<Guid> GetCommonChatboxIds(IList<ClientChatBox> firstList, IList<ClientChatBox> secondList)
+    {
+        var results = new List<Guid>();
+
+        foreach (var clientChatBox1 in firstList)
+        {
+            foreach (var clientChatBox2 in secondList)
+            {
+                if (clientChatBox1.ChatBoxId == clientChatBox2.ChatBoxId)
+                    results.Add(clientChatBox1.ChatBoxId);
+            }
+        }
+
+        return results;
     }
 }
