@@ -6,5 +6,5 @@
 });
 
 document.getElementById('btn-logout').addEventListener('click', () => {
-    document.location.href = 'http://localhost:3000/ChatPage?handler=LogOut';
+    document.location.href = '/ChatPage?handler=LogOut';
 });
