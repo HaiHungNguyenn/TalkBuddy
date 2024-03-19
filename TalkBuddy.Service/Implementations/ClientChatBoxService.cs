@@ -22,26 +22,48 @@ namespace TalkBuddy.Service.Implementations
         }
         public async Task<IList<ClientChatBox>> GetClientChatBoxes()
         {
-            return await _unitOfWork.ClientChatBoxRepository.GetAll().Include(clb => clb.ChatBox).OrderByDescending(clb => clb.ChatBox.CreatedDate).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.GetAll()
+                .Include(clb => clb.ChatBox)
+                .OrderByDescending(clb => clb.ChatBox.CreatedDate)
+                .ToListAsync();
         }
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxesIncludeNotEmptyMessages(Guid clientId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ClientId.Equals(clientId)).Include(x => x.ChatBox).ThenInclude(x => x.Messages).Where(b => b.ChatBox.Messages.Any()).Include(x => x.Client).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository
+                .Find(x => x.ClientId.Equals(clientId))
+                .Include(x => x.ChatBox).ThenInclude(x => x.Messages)
+                .Where(b => b.ChatBox.Messages.Any())
+                .Include(x => x.Client).ToListAsync();
         }
 
         public async Task<IList<ClientChatBox>> GetClientChatBoxes(Guid clientId)
         {
 
-            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ClientId.Equals(clientId));
-            return res.Include(x => x.ChatBox)
-                .Where(x => (x.IsLeft && x.ChatBox.Type == ChatBoxType.TwoPerson) || !x.IsLeft)
-                .OrderByDescending(clb => clb.ChatBox.CreatedDate).Include(x => x.Client).ToList();
+            var clientChatBoxes = await _unitOfWork.ClientChatBoxRepository
+            .FindAsync(x => x.ClientId.Equals(clientId));
+
+            var clientChatBoxList = clientChatBoxes
+                .Include(x => x.ChatBox)
+                    .ThenInclude(x => x.Messages)
+                .Where(x => !x.IsLeft)
+                .OrderByDescending(clb => clb.ChatBox.CreatedDate)
+                .Include(x => x.Client)
+                .ToList();
+
+            clientChatBoxList = clientChatBoxList
+                .OrderByDescending(clb => clb.ChatBox.Messages
+                    .Select(m => m.SentDate)
+                    .DefaultIfEmpty(DateTime.MinValue)
+                    .Max())
+                .ToList();
+
+            return clientChatBoxList;
         }
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId)
         {
-            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId)&&!x.IsLeft);
+            var res = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(chatBoxId) && !x.IsLeft);
             return res.Include(x => x.Client).ToList();
         }
 
@@ -53,7 +75,7 @@ namespace TalkBuddy.Service.Implementations
                 .Where(c => (c.ChatBox.ChatBoxName
                 .Contains(searchName) && !c.IsLeft) ||
                 c.ChatBox.ClientChatBoxes
-                .Any(d => !d.ClientId.Equals(userId) && d.NickName.Contains(searchName)&&(d.ClientId.Equals(userId)&&(!d.IsLeft||(d.IsLeft&&c.ChatBox.Type.Equals(ChatBoxType.TwoPerson)))))).ToListAsync();
+                .Any(d => !d.ClientId.Equals(userId) && d.NickName.Contains(searchName) && (d.ClientId.Equals(userId) && (!d.IsLeft || (d.IsLeft && c.ChatBox.Type.Equals(ChatBoxType.TwoPerson)))))).ToListAsync();
         }
 
         public async Task<string> GetChatBoxNameOfTwoPersonType(Guid chatBoxId, Guid userId)
@@ -80,12 +102,12 @@ namespace TalkBuddy.Service.Implementations
             .Include(fs => fs.Receiver)
             .ToListAsync();
 
-             var friends = friendships.Select(fs => fs.SenderID == userId ? fs.Receiver : fs.Sender);
+            var friends = friendships.Select(fs => fs.SenderID == userId ? fs.Receiver : fs.Sender);
             IList<Client> returnList = new List<Client>();
             foreach (var friend in friends)
             {
                 var list = await _unitOfWork.ClientChatBoxRepository
-                    .Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(friend.Id)&&!x.IsLeft).ToListAsync();
+                    .Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(friend.Id) && !x.IsLeft).ToListAsync();
                 if (list.IsNullOrEmpty())
                 {
                     returnList.Add(friend);
@@ -96,13 +118,13 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task AddClientToGroup(ClientChatBox clientChatBox)
         {
-            var x= await _unitOfWork.ClientChatBoxRepository.FindAsync(x=>x.ChatBoxId.Equals(clientChatBox.ChatBoxId)&&x.ClientId.Equals(clientChatBox.ClientId));
+            var x = await _unitOfWork.ClientChatBoxRepository.FindAsync(x => x.ChatBoxId.Equals(clientChatBox.ChatBoxId) && x.ClientId.Equals(clientChatBox.ClientId));
             if (x.Any())
             {
                 var updateClientChatBox = x.FirstOrDefault();
                 updateClientChatBox.IsLeft = false;
                 await _unitOfWork.ClientChatBoxRepository.UpdateAsync(updateClientChatBox);
-                await _unitOfWork.CommitAsync(); 
+                await _unitOfWork.CommitAsync();
                 return;
             }
             await _unitOfWork.ClientChatBoxRepository.AddAsync(clientChatBox);
@@ -111,7 +133,7 @@ namespace TalkBuddy.Service.Implementations
 
         public async Task<IList<ClientChatBox>> GetClientOfChatBoxes(Guid chatBoxId, Guid userId)
         {
-            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(userId)&&!x.IsLeft).Include(x => x.Client).ToListAsync();
+            return await _unitOfWork.ClientChatBoxRepository.Find(x => x.ChatBoxId.Equals(chatBoxId) && x.ClientId.Equals(userId) && !x.IsLeft).Include(x => x.Client).ToListAsync();
         }
 
         public async Task Update(ClientChatBox clientChatBox)
@@ -119,5 +141,7 @@ namespace TalkBuddy.Service.Implementations
             await _unitOfWork.ClientChatBoxRepository.UpdateAsync(clientChatBox);
             await _unitOfWork.CommitAsync();
         }
+
+
     }
 }
