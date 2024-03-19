@@ -53,7 +53,7 @@
                 <div class="chat-footer">
                     <input placeholder="Type your message here" id="messageInput" />
                     <div id="sendButton">
-                        <button>
+                        <button id="sendMessageButton">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -123,6 +123,11 @@
         console.log("SignalR Connected");
     }).catch(function (err) {
         return console.error(err.toString());
+    });
+
+    document.getElementById('messageInput').addEventListener('keyup', (e) => {
+        if (e.key == 'Enter')
+            document.getElementById('sendMessageButton').click();
     });
 
     connection.on("InitializeChat", function (chatBoxes) {
