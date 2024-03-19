@@ -3,6 +3,7 @@ using TalkBuddy.Domain.Entities;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
 using TalkBuddy.Domain.Dtos;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace TalkBuddy.Presentation.SignalR
 {
@@ -165,12 +166,12 @@ namespace TalkBuddy.Presentation.SignalR
             };
             //uncomment this if want to implement rule: if have no messages before do not present chatbox
             //var IsChatBoxContainMessages = _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId)).Result.Messages.Any();
-            await _messageService.AddMessage(messageObject);
+
             //if (!IsChatBoxContainMessages)
             //{
             //    await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(fromUserId));
             //}
-
+            await _messageService.AddMessage(messageObject);
             //[Nhi]3/4/2024: fix message return type from string to object
             var messageReturnForSender = new MessageDto
             {
@@ -198,11 +199,36 @@ namespace TalkBuddy.Presentation.SignalR
             };
 
             var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(fromUserId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
-            foreach (var connection in currentUserConnection)
+            //foreach (var connection in currentUserConnection)
+            //{
+            //    await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
+            //}
+            //await Clients.GroupExcept(chatBoxId, currentUserConnection
+            //    .Select(x => x.ConnectionId)).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
+            var allClientInChat = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId));
+            foreach (var client in allClientInChat)
             {
-                await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
+                if (_ConnectionPresences.Any(x => x.UserId.Equals(client.ClientId.ToString())))
+                {
+                    var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(client.ClientId);
+                    var firstOrDefaultclientChatBoxes = clientChatBoxes.FirstOrDefault();
+                    if (firstOrDefaultclientChatBoxes != null)
+                    {                        
+                            var currentUserConnectionOfCurrentUser = _ConnectionPresences.Where(x => x.UserId.Equals(client.ClientId.ToString())).Select(x => x.ConnectionId).ToList();
+                            foreach (var connection in currentUserConnectionOfCurrentUser)
+                            {
+                                await Clients.Client(connection).SendAsync("InitializeChat", await GetClientChatBox(client.ClientId.ToString(), clientChatBoxes));
+                                var chatBoxUpdate = await GetClientChatBox(client.ClientId.ToString(),
+                                    await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), client.ClientId));
+                                await Clients.Client(connection).SendAsync("UpdateMessagesForChatBox",
+                                                  chatBoxUpdate.FirstOrDefault());
+                            }
+                       
+                    }
+                        
+                }
             }
-            await Clients.GroupExcept(chatBoxId, currentUserConnection.Select(x => x.ConnectionId)).SendAsync("ReceiveMessage", sender.Name, messReturnForOthers);
+            
             //[Nhi]3/4/2024: fix message return type from string to object
         }
 
@@ -265,21 +291,21 @@ namespace TalkBuddy.Presentation.SignalR
                 IsYourOwnMess = true,
                 MessageType = notiMess.MessageType.ToString()
             };
-            await _chatBoxService.UpdateChatBox(chatBox);            
+            await _chatBoxService.UpdateChatBox(chatBox);
             await Clients.Groups(chatBoxId).SendAsync("ReceiveMessage", userName, messReturnForOthers);
-            
+
             //update group chat list
             //////////////
             var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(clientId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
-           
+
             var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(clientId));
 
             foreach (var connection in currentUserConnection)
             {
                 await Clients.Client(connection.ConnectionId).SendAsync("InitializeChat", await GetClientChatBox(clientId, clientChatBoxes));
-                
+
             }
-           
+
         }
 
         public async Task GetFriendsListNotInChat(string chatBoxId)
@@ -322,7 +348,7 @@ namespace TalkBuddy.Presentation.SignalR
                     foreach (var connection in currentUserConnection)
                     {
                         await Clients.Client(connection).SendAsync("InitializeChat", await GetClientChatBox(client.ClientId.ToString(), clientChatBoxes));
-                        var chatBoxUpdate = await GetClientChatBox(client.ClientId.ToString(), 
+                        var chatBoxUpdate = await GetClientChatBox(client.ClientId.ToString(),
                             await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), client.ClientId));
                         await Clients.Client(connection).SendAsync("UpdateMessagesForChatBox",
                     chatBoxUpdate.FirstOrDefault());
@@ -433,7 +459,8 @@ namespace TalkBuddy.Presentation.SignalR
                         .GetChatBoxNameOfTwoPersonType(x.ChatBoxId, new Guid(userId));
                     var clientList = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
                     var otherClient = clientList.Select(c => c.Client).Where(c => c.Id.ToString() != userId.ToString()).FirstOrDefault();
-                    if(otherClient != null) {
+                    if (otherClient != null)
+                    {
                         clientIdToSend = otherClient.Id;
                         x.ChatBox.ChatBoxAvatar = otherClient.ProfilePicture;
                     }
@@ -522,7 +549,7 @@ namespace TalkBuddy.Presentation.SignalR
                     chatBoxUpdate.FirstOrDefault());
             }
 
-           
+
         }
     }
 
