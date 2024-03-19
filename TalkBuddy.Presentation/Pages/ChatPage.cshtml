@@ -140,6 +140,8 @@
             // Create the image element
             var img = document.createElement("img");
             img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
+            img.style.width = '40px';
+            img.style.height = '40px';
             img.className = "avatar";
 
             // Create the span element for the text
