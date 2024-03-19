@@ -134,6 +134,7 @@ ul, li {
     border: solid 1px #80808080;
     border-radius: 0.25rem;
     height: 4rem;
+    position: relative;
 }
 
 .chat-footer button {
