@@ -11,9 +11,9 @@
 
         mediaContainer.innerHTML = `
         <ul id='mediaList'>
-            <li>
+            <li id='${url}'>
                 <img src="${url}" class="media-image" />
-                <img src="/x-mark.png" alt="remove" class="image-removal" />
+                <img src="/x-mark.png" alt="remove" class="image-removal" onclick='removeImage("${url}")' />
             </li>
         </ul>`;
 
@@ -22,9 +22,10 @@
         document.getElementById('messageInput').placeholder = '';
     } else {
         const media = document.createElement('li');
+        media.id = url;
         media.innerHTML = `
         <img src="${url}" class="media-image" />
-        <img src="/x-mark.png" alt="remove" class="image-removal" />`;
+        <img src="/x-mark.png" alt="remove" class="image-removal" onclick='removeImage("${url}")' />`;
 
         document.getElementById('mediaList').appendChild(media);
     }
@@ -36,4 +37,13 @@ function chooseMedia() {
 
 function isSendingMedia() {
     return !!document.getElementById('mediaContainer');
+}
+
+function removeImage(id) {
+    document.getElementById(id).remove();
+    if (document.getElementById('mediaList').childElementCount == 0) {
+        document.getElementById('messageInput').placeholder = 'Type your message here';
+        document.getElementById('messageInput').disabled = false;
+        document.getElementById('mediaContainer').remove();
+    }
 }

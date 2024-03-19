@@ -54,9 +54,9 @@
     
     .image-removal {
         position: relative;
-        top: -22px;
-        right: 20px;
-        height: 1rem;
+        top: -21px;
+        right: 24px;
+        height: 1.5rem;
         cursor: pointer;
     }
 
@@ -517,7 +517,7 @@
             if (isMediaMessage(message.content)) {
                 spanMessageContent = document.createElement("img");
                 spanMessageContent.src = message.content;
-                spanMessageContent.style.height = '150px';
+                spanMessageContent.style.maxHeight = '150px';
             } else {
                 spanMessageContent = document.createElement("span");
                 spanMessageContent.textContent = message.content;
