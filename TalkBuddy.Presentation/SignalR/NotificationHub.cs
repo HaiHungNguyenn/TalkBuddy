@@ -76,7 +76,7 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 Message = $"{receiver.Name} has just accepted your invitation",
                 ClientId = senderId,
-                SendAt = DateTime.Now
+                SendAt = DateTime.Now.AddHours(7),
             });
             // var notifications =(await _notificationService.GetNotificationByClient(senderId)).ProjectTo<DtoNotification>(_mapper.ConfigurationProvider);
             var notifications = (await _notificationService.GetNotificationByClient(senderId)).Include(x => x.Client);
@@ -101,7 +101,7 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 Message = $"{receiver.Name} has just rejected your invitation",
                 ClientId = senderId,
-                SendAt = DateTime.Now
+                SendAt = DateTime.Now.AddHours(7)
 
             });
             // var notifications = (await _notificationService.GetNotificationByClient(senderId)).ProjectTo<DtoNotification>(_mapper.ConfigurationProvider);
@@ -144,7 +144,7 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 Message = $"{user.Name} has just sent you an invitation",
                 ClientId = new Guid(friendId),
-                SendAt = DateTime.Now
+                SendAt = DateTime.Now.AddHours(7)
             });
             var notifications = (await _notificationService.GetNotificationByClient(new Guid(friendId))).Include(x => x.Client);
             var dtoNotifications = 

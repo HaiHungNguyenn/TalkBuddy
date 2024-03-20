@@ -1,7 +1,7 @@
 
 
 
-var notiConnection = new signalR.HubConnectionBuilder().withUrl("/notification").build();
+var notiConnection = new signalR.HubConnectionBuilder().withAutomaticReconnect().withUrl("/notification").build();
 notiConnection.start().then(function () {
     console.log("Connection started");
 }).catch(function (err) {
