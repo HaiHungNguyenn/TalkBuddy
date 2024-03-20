@@ -39,6 +39,7 @@ public class EditProfile : PageModel
         }
 
         System.Console.WriteLine(CurrentUser.Id);
+        CurrentUser.IsVerified = true;
         await _clientRepo.UpdateAsync(CurrentUser);
         await _unitOfWork.CommitAsync();
         return RedirectToPage("./Edit-Profile");
