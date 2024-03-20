@@ -29,6 +29,40 @@
         overflow: hidden scroll;
     }
 
+    #media-activator {
+        height: 4rem;
+        border: 1px solid #80808080;
+        border-radius: 0.25rem 0 0 0.25rem;
+        cursor: pointer;
+    }
+
+    #media-container {
+        position: absolute;
+        left: 70px;
+        height: 3.75rem;
+    }
+
+    #mediaList {
+        list-style: none;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    #media-container > ul > li {
+        position: relative;
+    }
+    
+    .image-removal {
+        position: relative;
+        top: -21px;
+        right: 24px;
+        height: 1.5rem;
+        cursor: pointer;
+    }
+
+    .media-image {
+        height: 3.75rem;
+    }
 </style>
 <section class="h-100 d-flex flex-column justify-content-start align-items-center">
     <component type="typeof(Header)" render-mode="Static" />
@@ -46,14 +80,15 @@
                 </div>
             </div>
             <div class="chat-window">
-                <div class="chat-header" id="chat-title">
-                </div>
+                <div class="chat-header" id="chat-title"></div>
 
                 <ul id="messages"></ul>
-                <div class="chat-footer">
+                <div class="chat-footer" id="chat-footer" style="position: relative">
+                    <input type="file" hidden accept="image/*" id="media"/>
+                    <img src="~/image-placeholder.png" alt="Media" id="media-activator" onclick="chooseMedia()"/>
                     <input placeholder="Type your message here" id="messageInput" />
                     <div id="sendButton">
-                        <button>
+                        <button id="sendMessageButton">
                             <i class="fa-solid fa-paper-plane"></i>
                         </button>
                     </div>
@@ -109,6 +144,7 @@
     </form>
 </dialog>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/sendMedia.js"></script>
 
 <script>
     var connection = new signalR.HubConnectionBuilder().withUrl("/chat").build();
@@ -125,6 +161,11 @@
         return console.error(err.toString());
     });
 
+    document.getElementById('messageInput').addEventListener('keyup', (e) => {
+        if (e.key == 'Enter')
+            document.getElementById('sendMessageButton').click();
+    });
+
     connection.on("InitializeChat", function (chatBoxes) {
 
         document.getElementById("chatBoxtList").innerHTML = "";
@@ -135,6 +176,8 @@
             // Create the image element
             var img = document.createElement("img");
             img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
+            img.style.width = '40px';
+            img.style.height = '40px';
             img.className = "avatar";
 
             // Create the span element for the text
@@ -168,6 +211,11 @@
         var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
         var message = document.getElementById("messageInput").value;
 
+        if (isSendingMedia()) {
+            sendMediaMessage(chatBoxId);
+            return;
+        }
+
         if (message !== "") { // Check if message is not empty
             connection.invoke("SendMessage", chatBoxId, message).catch(function (err) {
                 return console.error(err.toString());
@@ -176,6 +224,22 @@
 
         document.getElementById("messageInput").value = "";
         event.preventDefault();
+    }
+
+    //send media
+    function sendMediaMessage(chatBoxId) {
+        const mediaList = document.getElementsByClassName('media-image');
+
+        for (let i = 0; i < mediaList.length; i++) {
+            connection.invoke("SendMessage", chatBoxId, mediaList[i].src).catch(function (err) {
+                return console.error(err.toString());
+            });
+        }
+
+        document.getElementById('mediaContainer').remove();
+
+        document.getElementById('messageInput').disabled = false;
+        document.getElementById('messageInput').placeholder = 'Type your message here';
     }
 
     //search for chatbox
@@ -448,8 +512,17 @@
             divAvatarContainer.appendChild(imgAvatar);
             divAvatarContainer.classList.add("position-relative");
 
-            const spanMessageContent = document.createElement("span");
-            spanMessageContent.textContent = message.content;
+            let spanMessageContent;
+
+            if (isMediaMessage(message.content)) {
+                spanMessageContent = document.createElement("img");
+                spanMessageContent.src = message.content;
+                spanMessageContent.style.maxHeight = '150px';
+            } else {
+                spanMessageContent = document.createElement("span");
+                spanMessageContent.textContent = message.content;
+            }
+
 
             const smallTime = document.createElement("small");
             smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
@@ -482,6 +555,10 @@
 
         }
         return li;
+    }
+
+    function isMediaMessage(messageContent) {
+        return messageContent.includes('https');
     }
 
     //save client list
