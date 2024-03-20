@@ -127,7 +127,7 @@
     });
 
     connection.on("InitializeChat", function (chatBoxes) {
-
+        console.log(chatBoxes)
         document.getElementById("chatBoxtList").innerHTML = "";
         chatBoxes.forEach(function (chatBox) {
             var li = document.createElement("li");
@@ -142,11 +142,18 @@
             var span = document.createElement("span");
             span.className = "fs-5 fw-semibold";
             span.innerHTML = chatBox.chatBoxName;
+            
+            var unreadCountSpan = document.createElement("span");
+                unreadCountSpan.className = "unread-count bg-danger rounded-circle";
+                unreadCountSpan.innerHTML = chatBox.unreadMessageCount;
+                unreadCountSpan.style.padding = "5px";
+              
 
             // Append the elements to construct the HTML structure
 
             li.appendChild(img);
             li.appendChild(span);
+            li.appendChild(unreadCountSpan);
             li.addEventListener("click", function () {
                 requestMessagesForChatBox(chatBox);
             });

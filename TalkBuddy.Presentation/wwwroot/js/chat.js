@@ -149,7 +149,7 @@ function requestMessagesForChatBox(chatBox) {
                         alert("Name of chat box is too long");
                         return;
                     }
-                    if (input.value !== span.innerHTML {
+                    if (input.value !== span.innerHTML) {
                         connection.invoke("ChangeChatBoxName", chatBox.chatBoxId, input.value).catch(function (err) {
                             return console.error(err.toString());
                         });

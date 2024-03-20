@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using TalkBuddy.Domain.Entities;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Service.Interfaces;
@@ -19,7 +20,7 @@ namespace TalkBuddy.Presentation.SignalR
             IClientChatBoxService clientChatBoxService,
             IClientService clientService)
         {
-            _chatBoxService = chatBoxService;
+            _chatBoxService = chatBoxService; 
             _messageService = messageService;
             _clientChatBoxService = clientChatBoxService;
             _clientService = clientService;
@@ -35,8 +36,8 @@ namespace TalkBuddy.Presentation.SignalR
             {
                 //replace clientChatBoxes by clientChatBoxesContainMessages if want to load only chatBox which already have conversation - means messages != null
                 // var clientChatBoxesContainMessages = await _clientChatBoxService.GetClientChatBoxesIncludeNotEmptyMessages(new Guid(userId));
-                var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(new Guid(userId));
-                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBox(userId, clientChatBoxes));
+                var clientChatBoxes = (await _clientChatBoxService.GetClientChatBoxes(new Guid(userId))).AsQueryable().Include( x => x.MessageStatus);
+                await Clients.Caller.SendAsync("InitializeChat", await GetClientChatBoxWithSeenMessage(userId, clientChatBoxes.ToList()));
                 if (!_ConnectionPresences.Any(x => x.UserId.Equals(userId) && x.ConnectionId.Equals(Context.ConnectionId.ToString())))
                 {
                     _ConnectionPresences.Add(
@@ -167,16 +168,19 @@ namespace TalkBuddy.Presentation.SignalR
             //var IsChatBoxContainMessages = _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId)).Result.Messages.Any();
             await _messageService.AddMessage(messageObject);
             var clientChatBoxes =
-                await _clientChatBoxService.GetClientOfChatBoxes(messageObject.ChatBoxId, messageObject.SenderId);
+                await _clientChatBoxService.GetClientOfChatBoxes(messageObject.ChatBoxId);
             foreach (var client in clientChatBoxes)
             {
-                   client.MessageStatus.Add(new ClientChatBoxStatus()
-                   {
-                       MessageId = messageObject.Id,
-                       ClientChatBoxId = client.Id,
-                       IsRead = false
-                   });
-                   await _clientChatBoxService.Update(client);
+                if (client.ClientId != messageObject.SenderId)
+                {
+                    client.MessageStatus.Add(new ClientChatBoxStatus()
+                    {
+                        MessageId = messageObject.Id,
+                        ClientChatBoxId = client.Id,
+                        IsRead = false
+                    });
+                    await _clientChatBoxService.Update(client);
+                }
             }
             // messageObject.MessageStatus.Add(new ClientChatB oxStatus()
             // {
@@ -476,6 +480,51 @@ namespace TalkBuddy.Presentation.SignalR
                     ClientId = clientIdToSend,
                     IsLeft = x.IsLeft,
                     IsModerator = x.IsModerator
+                };
+                returnList.Add(chatBox);
+            }
+            return returnList;
+        }
+        private async Task<IList<ClientChatBoxWithSeenMessageDto>> GetClientChatBoxWithSeenMessage(string userId, IList<ClientChatBox> clientChatBoxes)
+        {
+
+            IList<ClientChatBoxWithSeenMessageDto> returnList = new List<ClientChatBoxWithSeenMessageDto>();
+            foreach (var x in clientChatBoxes)
+            {
+                //if chatboxname in chatbox table is null or empty, chatbox name = all client in chat box (chatboxclient)
+                string chatBoxName;
+                Guid clientIdToSend = new Guid(userId);
+                if (x.ChatBox.Type == Domain.Enums.ChatBoxType.TwoPerson)
+                {
+                    chatBoxName = await _clientChatBoxService
+                        .GetChatBoxNameOfTwoPersonType(x.ChatBoxId, new Guid(userId));
+                    var clientList = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
+                    var otherClient = clientList.Select(c => c.Client).Where(c => c.Id.ToString() != userId.ToString()).FirstOrDefault();
+                    if(otherClient != null) {
+                        clientIdToSend = otherClient.Id;
+                        x.ChatBox.ChatBoxAvatar = otherClient.ProfilePicture;
+                    }
+                }
+                else if (!string.IsNullOrEmpty(x.ChatBox.ChatBoxName))
+                {
+                    chatBoxName = x.ChatBox.ChatBoxName;
+                }
+                else
+                {
+                    var clientListInChatBox = await _clientChatBoxService.GetClientOfChatBoxes(x.ChatBoxId);
+
+                    chatBoxName = string.Join(",", clientListInChatBox.Select(c => c.Client.Name).ToList());
+                }
+                var chatBox = new ClientChatBoxWithSeenMessageDto
+                {
+                    ChatBoxId = x.ChatBoxId,
+                    ChatBoxAvatar = x.ChatBox.ChatBoxAvatar,
+                    ChatBoxName = chatBoxName,
+                    ChatBoxType = x.ChatBox.Type.ToString(),
+                    ClientId = clientIdToSend,
+                    IsLeft = x.IsLeft,
+                    IsModerator = x.IsModerator,
+                    UnreadMessageCount = x.MessageStatus.Count()
                 };
                 returnList.Add(chatBox);
             }
