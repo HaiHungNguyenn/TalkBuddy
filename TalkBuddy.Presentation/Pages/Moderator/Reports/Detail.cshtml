@@ -42,6 +42,10 @@
                     </div>
                 </div>
                 <div class="mt-3">
+                    <div class="report-row">
+                        <span>Informant username:</span>
+                        <span class="fw-bold fst-italic">@reportDetail.InformantClient?.Name</span>
+                    </div>
                     <p class="m-0">Evidence:</p>
                     @if (!reportDetail.ReportEvidences.Any())
                     {

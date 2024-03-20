@@ -11,11 +11,13 @@ async function GetImageString(fileInput) {
             body: formData
         });
         if (!response.ok) {
+            alert('Network response was not ok');
             throw new Error('Network response was not ok');
         }
         const data = await response.text();
         return data;
     } catch (error) {
+        alert(err.message);
         console.error('There was a problem with the fetch operation:', error);
         throw error; 
     }
