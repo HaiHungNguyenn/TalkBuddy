@@ -78,8 +78,9 @@ function renderNotifications(notifications) {
 
         // Create avatar
         var avatar = document.createElement("img");
-        avatar.classList.add("avatar","rounded-circle");
-        avatar.src = notification.clientAvatar; // Avatar URL from the JSON
+        avatar.classList.add("avatar", "rounded-circle");
+        //avatar.src = notification.clientAvatar == "null" ? "/default-avatar.png" : notification.clientAvatar; // Avatar URL from the JSON
+        avatar.src = notification.clientAvatar || "/default-avatar.png"; // Avatar URL from the JSON
         avatar.alt = "Notification Avatar";
 
         // Create notification content
