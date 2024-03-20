@@ -275,29 +275,29 @@ namespace TalkBuddy.Presentation.SignalR
             var client = await _clientService.GetClientById(new Guid(clientId));
             await _clientChatBoxService.RemoveClientFromChatBox(new Guid(chatBoxId), new Guid(clientId));
             var chatBox = await _chatBoxService.GetChatBoxAsync(new Guid(chatBoxId));
-            var notiMess = new Message
-            {
-                Content = $"{userName} removed {client.Name} from the group",
-                SentDate = DateTime.Now,
-                SenderId = new Guid(userId),
-                MessageType = Domain.Enums.MessageTypes.Notification
-            };
-            chatBox.Messages.Add(notiMess);
-            var messReturnForOthers = new MessageDto
-            {
-                Content = notiMess.Content,
-                SenderId = notiMess.SenderId,
-                SentDate = notiMess.SentDate,
-                IsYourOwnMess = true,
-                MessageType = notiMess.MessageType.ToString()
-            };
-            await _chatBoxService.UpdateChatBox(chatBox);
-            await Clients.Groups(chatBoxId).SendAsync("ReceiveMessage", userName, messReturnForOthers);
+            //var notiMess = new Message
+            //{
+            //    Content = $"{userName} removed {client.Name} from the group",
+            //    SentDate = DateTime.Now,
+            //    SenderId = new Guid(userId),
+            //    MessageType = Domain.Enums.MessageTypes.Notification
+            //};
+            //chatBox.Messages.Add(notiMess);
+            //var messReturnForOthers = new MessageDto
+            //{
+            //    Content = notiMess.Content,
+            //    SenderId = notiMess.SenderId,
+            //    SentDate = notiMess.SentDate,
+            //    IsYourOwnMess = true,
+            //    MessageType = notiMess.MessageType.ToString()
+            //};
+            //await _chatBoxService.UpdateChatBox(chatBox);
+            //await Clients.Groups(chatBoxId).SendAsync("ReceiveMessage", userName, messReturnForOthers);
 
             var clientChatBoxesUpdateModal = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId));
-            var clients = clientChatBoxesUpdateModal.Select(c => c.Client);            
+            var clients = clientChatBoxesUpdateModal.Select(c => c.Client);
             var clientChatBoxUpdateModal = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), new Guid(userId));
-            await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients, chatBoxId, clientChatBoxUpdateModal.FirstOrDefault()?.IsModerator);
+            await Clients.Groups(chatBoxId).SendAsync("ShowClientsOfChatBox", clients, chatBoxId, clientChatBoxUpdateModal.FirstOrDefault()?.IsModerator);
 
             //update group chat list
             //////////////
