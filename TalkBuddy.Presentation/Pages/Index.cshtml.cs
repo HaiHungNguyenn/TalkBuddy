@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TalkBuddy.Presentation.Pages;
@@ -11,8 +12,8 @@ public class IndexModel : PageModel
         _logger = logger;
     }
 
-    public void OnGet()
+    public IActionResult OnGet()
     {
-        RedirectToPage("/ChatPage");
+        return RedirectToPage("ChatPage");
     }
 }

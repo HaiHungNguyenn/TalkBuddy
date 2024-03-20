@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace TalkBuddy.Presentation.Pages.Moderator;
 
 public class Index : PageModel
 {
-    public void OnGet()
+    public IActionResult OnGet()
     {
-        
+        return RedirectToPage("Reports/Index");
     }
 }
