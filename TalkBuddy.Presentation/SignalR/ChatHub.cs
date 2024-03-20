@@ -294,6 +294,11 @@ namespace TalkBuddy.Presentation.SignalR
             await _chatBoxService.UpdateChatBox(chatBox);
             await Clients.Groups(chatBoxId).SendAsync("ReceiveMessage", userName, messReturnForOthers);
 
+            var clientChatBoxesUpdateModal = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId));
+            var clients = clientChatBoxesUpdateModal.Select(c => c.Client);            
+            var clientChatBoxUpdateModal = await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), new Guid(userId));
+            await Clients.Caller.SendAsync("ShowClientsOfChatBox", clients, chatBoxId, clientChatBoxUpdateModal.FirstOrDefault()?.IsModerator);
+
             //update group chat list
             //////////////
             var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(clientId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
