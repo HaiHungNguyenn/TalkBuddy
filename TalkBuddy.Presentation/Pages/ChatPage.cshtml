@@ -194,11 +194,14 @@
             });
             var chatHeader = document.getElementById("chat-title");
             var messagesList = document.getElementById("messages");
-            chatHeader.innerHTML = "Please choose chat to start conversation!";
+            chatHeader.innerHTML = "<h2>Please choose a conversation to start!<h2>";
             messagesList.innerHTML = ""
-            const button = document.getElementById("sendButton").style.display = 'none';
 
-            var inputMes = document.getElementById("messageInput").style.display = 'none';
+            //document.getElementById("sendButton").style.display = 'none';
+            //document.getElementById("messageInput").style.display = 'none';
+            //document.getElementById("media-activator").style.display = 'none';
+            document.getElementById("chat-footer").style.visibility = 'hidden';
+
 
             // Append the list item to the chat box list
 
@@ -270,8 +273,11 @@
         span.className = "fs-5 fw-semibold";
         span.innerHTML = chatBox.chatBoxName;
 
-        document.getElementById("sendButton").style.display = 'block';
-        document.getElementById("messageInput").style.display = 'block';
+        //document.getElementById("sendButton").style.display = 'block';
+        //document.getElementById("messageInput").style.display = 'block';
+        //document.getElementById("media-activator").style.display = 'block';
+        document.getElementById("chat-footer").style.visibility = 'visible';
+
         // Append the elements to construct the HTML structure
         chatHeader.appendChild(img);
         chatHeader.appendChild(span);
@@ -494,21 +500,21 @@
             imgAvatar.classList.add("rounded-circle", "chat-client-avatar");
 
             const divAvatarContainer = document.createElement('div');
-            if (!message.isYourOwnMess) {
-                var avatarId = uuidv4();
-                imgAvatar.addEventListener('mouseenter', () => {
-                    const divClientName = document.getElementById(avatarId);
-                    divClientName.style.visibility = 'visible';
-                });
-                imgAvatar.addEventListener('mouseleave', () => {
-                    const divClientName = document.getElementById(avatarId);
-                    divClientName.style.visibility = 'hidden';
-                });
+            //if (!message.isYourOwnMess) {
+            //    var avatarId = uuidv4();
+            //    imgAvatar.addEventListener('mouseenter', () => {
+            //        const divClientName = document.getElementById(avatarId);
+            //        divClientName.style.visibility = 'visible';
+            //    });
+            //    imgAvatar.addEventListener('mouseleave', () => {
+            //        const divClientName = document.getElementById(avatarId);
+            //        divClientName.style.visibility = 'hidden';
+            //    });
 
-                divAvatarContainer.innerHTML = `
-                                                        <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
-                                                    `;
-            }
+            //    divAvatarContainer.innerHTML = `
+            //                                            <span class="position-absolute chat-client-name" id=${avatarId}>${message.senderName}</span>
+            //                                        `;
+            //}
             divAvatarContainer.appendChild(imgAvatar);
             divAvatarContainer.classList.add("position-relative");
 
@@ -528,9 +534,16 @@
             smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
             smallTime.classList.add("align-self-end");
 
+
             // this element should be a div, but I have to rewrite my css if I do so I decided to keep it as a span
             const spanContainer = document.createElement("span");
             spanContainer.classList.add("d-flex", "flex-column");
+            if (!message.isYourOwnMess) {
+                const smallUsername = document.createElement("small");
+                smallUsername.textContent = message.senderName;
+                smallUsername.classList.add("fst-italic");
+                spanContainer.appendChild(smallUsername);
+            }
             spanContainer.appendChild(spanMessageContent);
             spanContainer.appendChild(smallTime);
 
@@ -551,7 +564,7 @@
                 li.appendChild(dropDown);
             }
 
-            li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-center", "gap-2");
+            li.classList.add("d-flex", message.isYourOwnMess ? "justify-content-end" : "justify-content-start", "align-items-end", "gap-2");
 
         }
         return li;
