@@ -572,7 +572,9 @@
 
 
             const smallTime = document.createElement("small");
-            smallTime.textContent = new Date(message.sentDate).toLocaleTimeString();
+            const dateTime = new Date(message.sentDate);
+            dateTime.setHours(dateTime.getHours() + 7);
+            smallTime.textContent = dateTime.toLocaleTimeString();
             smallTime.classList.add("align-self-end");
 
 
