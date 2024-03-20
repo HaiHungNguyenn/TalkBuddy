@@ -94,12 +94,12 @@ public class ReportService : IReportService
 
         reportedClient.SuspensionEndDate = reportedClient.SuspensionCount switch
         {
-            1 => DateTime.Now.AddHours(6),
-            2 => DateTime.Now.AddDays(1),
-            3 => DateTime.Now.AddDays(3),
-            4 => DateTime.Now.AddMonths(1),
-            5 => DateTime.Now.AddMonths(6),
-            _ => DateTime.Now.AddMonths(6)
+            1 => DateTime.Now.AddHours(7).AddHours(6),
+            2 => DateTime.Now.AddHours(7).AddDays(1),
+            3 => DateTime.Now.AddHours(7).AddDays(3),
+            4 => DateTime.Now.AddHours(7).AddMonths(1),
+            5 => DateTime.Now.AddHours(7).AddMonths(6),
+            _ => DateTime.Now.AddHours(7).AddMonths(6)
         };
 
         report.Status = ReportationStatus.RESOLVED;
