@@ -18,7 +18,7 @@
                                                                       border-radius: 25px;"></span>
         </div>
         <div class="position-relative">
-            <img class="rounded-circle" id="user-avatar" style="cursor: pointer;" width="40" height="40" src="/default-avatar.png" alt="User avatar"/>
+            <img class="rounded-circle" id="user-avatar" style="cursor: pointer;" width="40" height="40" src="@HttpContextAccessor.HttpContext!.Session.GetString(SessionConstants.USER_PROFILE_IMAGE)" alt="User avatar" />
             <div class="position-absolute p-3 logout-container" id="logout-container">
                 <p>@HttpContextAccessor.HttpContext!.Session.GetString(SessionConstants.USER_NAME)</p>
                 <div class="w-100 text-center fw-bold">

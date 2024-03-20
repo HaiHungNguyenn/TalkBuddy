@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using TalkBuddy.Common.Constants;
 using TalkBuddy.Common.Enums;
@@ -54,6 +55,7 @@ public class Login : PageModel
             HttpContext.Session.SetString(SessionConstants.USER_NAME, user.Name);
             HttpContext.Session.SetString(SessionConstants.USER_ID, user.Id.ToString());
             HttpContext.Session.SetString(SessionConstants.USER_ROLE, user.Role.ToString());
+            HttpContext.Session.SetString(SessionConstants.USER_PROFILE_IMAGE, user.ProfilePicture ?? "/default-avatar.png");
             HttpContext.Session.SetString(SessionConstants.IS_LOGGED_IN, SessionConstants.LOGGED_IN);
             HttpContext.Response.Cookies.Append("userId", user.Id.ToString());
 
