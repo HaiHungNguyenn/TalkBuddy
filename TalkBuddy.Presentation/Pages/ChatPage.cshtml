@@ -194,11 +194,14 @@
             });
             var chatHeader = document.getElementById("chat-title");
             var messagesList = document.getElementById("messages");
-            chatHeader.innerHTML = "Please choose chat to start conversation!";
+            chatHeader.innerHTML = "<h2>Please choose a conversation to start!<h2>";
             messagesList.innerHTML = ""
-            const button = document.getElementById("sendButton").style.display = 'none';
 
-            var inputMes = document.getElementById("messageInput").style.display = 'none';
+            //document.getElementById("sendButton").style.display = 'none';
+            //document.getElementById("messageInput").style.display = 'none';
+            //document.getElementById("media-activator").style.display = 'none';
+            document.getElementById("chat-footer").style.visibility = 'hidden';
+
 
             // Append the list item to the chat box list
 
@@ -270,8 +273,11 @@
         span.className = "fs-5 fw-semibold";
         span.innerHTML = chatBox.chatBoxName;
 
-        document.getElementById("sendButton").style.display = 'block';
-        document.getElementById("messageInput").style.display = 'block';
+        //document.getElementById("sendButton").style.display = 'block';
+        //document.getElementById("messageInput").style.display = 'block';
+        //document.getElementById("media-activator").style.display = 'block';
+        document.getElementById("chat-footer").style.visibility = 'visible';
+
         // Append the elements to construct the HTML structure
         chatHeader.appendChild(img);
         chatHeader.appendChild(span);
