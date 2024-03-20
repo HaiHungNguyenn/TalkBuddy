@@ -209,6 +209,38 @@
         });
     });
 
+    connection.on("InitializeChatOrder", function (chatBoxes) {
+
+        document.getElementById("chatBoxtList").innerHTML = "";
+        chatBoxes.forEach(function (chatBox) {
+            var li = document.createElement("li");
+
+            console.log(chatBox.ChatBoxName);
+            // Create the image element
+            var img = document.createElement("img");
+            img.src = chatBox.chatBoxAvatar ?? "/default-avatar.png";
+            img.style.width = '40px';
+            img.style.height = '40px';
+            img.className = "avatar";
+
+            // Create the span element for the text
+            var span = document.createElement("span");
+            span.className = "fs-5 fw-semibold";
+            span.innerHTML = chatBox.chatBoxName;
+
+            // Append the elements to construct the HTML structure
+
+            li.appendChild(img);
+            li.appendChild(span);
+            li.addEventListener("click", function () {
+                requestMessagesForChatBox(chatBox);
+            });
+            // Append the list item to the chat box list
+
+            document.getElementById("chatBoxtList").appendChild(li);
+        });
+    });
+
 
     function sendButtonClickHandler(event) {
         var chatBoxId = document.getElementById("sendButton").getAttribute("data-chatBoxId");
@@ -259,6 +291,15 @@
     connection.on("UpdateMessagesForChatBox", function (chatBox) {
         console.log('debug in update message');
         requestMessagesForChatBox(chatBox)
+    });
+
+    connection.on("UpdateMessagesToTop", function (chatBox) {
+        connection.invoke("GetMessages", chatBox.chatBoxId).then(function (messages) {
+            // Handle received messages
+            displayMessages(messages);
+        }).catch(function (err) {
+            return console.error(err.toString());
+        });
     });
 
     function requestMessagesForChatBox(chatBox) {

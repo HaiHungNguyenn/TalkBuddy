@@ -198,7 +198,7 @@ namespace TalkBuddy.Presentation.SignalR
                 MessageType = messageObject.MessageType.ToString()
             };
 
-            var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(fromUserId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
+            //var currentUserConnection = _ConnectionRooms.Where(x => x.UserId.Equals(fromUserId) && x.ChatBoxId.Equals(chatBoxId)).ToList();
             //foreach (var connection in currentUserConnection)
             //{
             //    await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", sender.Name, messageReturnForSender);
@@ -213,22 +213,22 @@ namespace TalkBuddy.Presentation.SignalR
                     var clientChatBoxes = await _clientChatBoxService.GetClientChatBoxes(client.ClientId);
                     var firstOrDefaultclientChatBoxes = clientChatBoxes.FirstOrDefault();
                     if (firstOrDefaultclientChatBoxes != null)
-                    {                        
-                            var currentUserConnectionOfCurrentUser = _ConnectionPresences.Where(x => x.UserId.Equals(client.ClientId.ToString())).Select(x => x.ConnectionId).ToList();
-                            foreach (var connection in currentUserConnectionOfCurrentUser)
-                            {
-                                await Clients.Client(connection).SendAsync("InitializeChat", await GetClientChatBox(client.ClientId.ToString(), clientChatBoxes));
-                                var chatBoxUpdate = await GetClientChatBox(client.ClientId.ToString(),
-                                    await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), client.ClientId));
-                                await Clients.Client(connection).SendAsync("UpdateMessagesForChatBox",
-                                                  chatBoxUpdate.FirstOrDefault());
-                            }
-                       
+                    {
+                        var currentUserConnectionOfCurrentUser = _ConnectionPresences.Where(x => x.UserId.Equals(client.ClientId.ToString())).Select(x => x.ConnectionId).ToList();
+                        foreach (var connection in currentUserConnectionOfCurrentUser)
+                        {
+                            await Clients.Client(connection).SendAsync("InitializeChatOrder", await GetClientChatBox(client.ClientId.ToString(), clientChatBoxes));
+                            var chatBoxUpdate = await GetClientChatBox(client.ClientId.ToString(),
+                                await _clientChatBoxService.GetClientOfChatBoxes(new Guid(chatBoxId), client.ClientId));
+                            await Clients.Client(connection).SendAsync("UpdateMessagesToTop",
+                                              chatBoxUpdate.FirstOrDefault());
+                        }
+
                     }
-                        
+
                 }
             }
-            
+
             //[Nhi]3/4/2024: fix message return type from string to object
         }
 
