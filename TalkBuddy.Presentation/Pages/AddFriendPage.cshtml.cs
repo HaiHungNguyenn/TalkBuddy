@@ -40,12 +40,13 @@ public class AddFriendPage : PageModel
         var list = (await _clientService.FindClient(UserName)).ToList();
 
         var clientId = new Guid(HttpContext.Session.GetString(SessionConstants.USER_ID)!) ;
-        var dtoList =  list.Select( x => new DtoClientForFriend()
+        var dtoList = list.Select(x => new DtoClientForFriend()
         {
             id = x.Id,
             Email = x.Email,
             Name = x.Name,
-            RelationStatus = (clientId.Equals(x.Id)) ? FriendShipRequestStatus.YOURSELF : _friendShipService.GetFriendShipStatus(clientId,x.Id) 
+            RelationStatus = (clientId.Equals(x.Id)) ? FriendShipRequestStatus.YOURSELF : _friendShipService.GetFriendShipStatus(clientId, x.Id),
+            ProfilePicture = x.ProfilePicture ?? "https://a.storyblok.com/f/191576/1200x800/faa88c639f/round_profil_picture_before_.webp"
         });
         TempData["friendList"] = dtoList;
         return Page();
